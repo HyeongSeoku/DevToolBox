@@ -2,9 +2,7 @@ use image::codecs::jpeg::JpegEncoder;
 use image::codecs::png::PngEncoder;
 use image::codecs::webp::WebPEncoder;
 use image::imageops::FilterType;
-use image::{
-    ColorType, DynamicImage, GenericImageView, ImageEncoder, ImageFormat,
-};
+use image::{ColorType, DynamicImage, GenericImageView, ImageEncoder, ImageFormat};
 use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::BufWriter;
@@ -70,6 +68,15 @@ struct ProgressPayload {
     status: String,
 }
 
+#[derive(Debug, Serialize, Clone)]
+struct PartialResultPayload {
+    job_id: String,
+    input: String,
+    output: Option<String>,
+    error: Option<String>,
+    status: String,
+}
+
 #[tauri::command]
 async fn convert_image(path: String, options: ConvertOptions) -> Result<ConversionResult, String> {
     let input_path = path.clone();
@@ -101,6 +108,17 @@ async fn batch_convert(
     tauri::async_runtime::spawn_blocking(move || {
         let mut results = Vec::with_capacity(total);
         for (idx, path) in paths.iter().enumerate() {
+            let _ = app_for_task.emit(
+                "conversion-partial",
+                PartialResultPayload {
+                    job_id: job_id.clone(),
+                    input: path.clone(),
+                    output: None,
+                    error: None,
+                    status: "started".into(),
+                },
+            );
+
             let conversion = convert_single(Path::new(path), &options, idx + 1);
             let payload = ProgressPayload {
                 job_id: job_id.clone(),
@@ -115,16 +133,41 @@ async fn batch_convert(
             let _ = app_for_task.emit("conversion-progress", payload);
 
             match conversion {
-                Ok(out) => results.push(BatchItemResult {
-                    input: path.clone(),
-                    output: out.to_str().map(|s| s.to_string()),
-                    error: None,
-                }),
-                Err(err) => results.push(BatchItemResult {
-                    input: path.clone(),
-                    output: None,
-                    error: Some(err),
-                }),
+                Ok(out) => {
+                    let out_str = out.to_str().map(|s| s.to_string());
+                    results.push(BatchItemResult {
+                        input: path.clone(),
+                        output: out_str.clone(),
+                        error: None,
+                    });
+                    let _ = app_for_task.emit(
+                        "conversion-partial",
+                        PartialResultPayload {
+                            job_id: job_id.clone(),
+                            input: path.clone(),
+                            output: out_str,
+                            error: None,
+                            status: "success".into(),
+                        },
+                    );
+                }
+                Err(err) => {
+                    results.push(BatchItemResult {
+                        input: path.clone(),
+                        output: None,
+                        error: Some(err.clone()),
+                    });
+                    let _ = app_for_task.emit(
+                        "conversion-partial",
+                        PartialResultPayload {
+                            job_id: job_id.clone(),
+                            input: path.clone(),
+                            output: None,
+                            error: Some(err),
+                            status: "error".into(),
+                        },
+                    );
+                }
             }
         }
         let _ = app_for_task.emit(
@@ -215,12 +258,12 @@ async fn video_to_gif(path: String, options: GifOptions) -> Result<String, Strin
 }
 
 #[tauri::command]
-fn pick_files(multiple: bool) -> Result<Vec<String>, String> {
+fn pick_files(multiple: bool, extensions: Option<Vec<String>>) -> Result<Vec<String>, String> {
     let mut dialog = rfd::FileDialog::new();
-    dialog = dialog.add_filter(
-        "Images/Videos",
-        &["jpg", "jpeg", "png", "webp", "bmp", "gif", "mp4", "mov", "mkv", "avi"],
-    );
+    if let Some(exts) = extensions.as_ref() {
+        let exts_ref: Vec<&str> = exts.iter().map(|s| s.as_str()).collect();
+        dialog = dialog.add_filter("Files", &exts_ref);
+    }
     if multiple {
         Ok(dialog
             .pick_files()

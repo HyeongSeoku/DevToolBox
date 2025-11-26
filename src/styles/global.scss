@@ -1,0 +1,96 @@
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+h1 {
+  margin: 0 0 10px;
+  font-size: 28px;
+}
+
+.primary {
+  background: linear-gradient(120deg, var(--secondary-100), var(--secondary-300));
+  color: #0b1224;
+  border: none;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.primary:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 30px rgba(248, 123, 27, 0.35);
+}
+
+.micro {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--text-subtle);
+}
+
+.warning {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--secondary-100);
+  background: rgba(248, 123, 27, 0.08);
+  border: 1px solid rgba(248, 123, 27, 0.3);
+  border-radius: 10px;
+  padding: 10px;
+}
+
+input[type="range"] {
+  width: 100%;
+}
+
+input[type="text"] {
+  width: 100%;
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.ghost {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, transform 0.15s ease;
+}
+
+.ghost:hover {
+  border-color: var(--secondary-300);
+  transform: translateY(-1px);
+}
+
+.chip,
+.mini-chip {
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 8px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.mini-chip {
+  padding: 6px 8px;
+  font-size: 12px;
+}
+
+.chip.active {
+  border-color: var(--secondary-300);
+  background: rgba(248, 123, 27, 0.12);
+}

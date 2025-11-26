@@ -1,0 +1,195 @@
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.dropPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dropZone {
+  border: 1px dashed var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  text-align: center;
+  background: var(--surface-muted);
+  color: var(--text);
+}
+
+.hover .dropZone {
+  border-color: var(--secondary-300);
+  box-shadow: 0 0 0 1px rgba(248, 123, 27, 0.3);
+}
+
+.dropTitle {
+  margin: 0 0 6px;
+  font-size: 18px;
+}
+
+.dropSub {
+  margin: 0 0 12px;
+  color: var(--text-subtle);
+}
+
+.dropActions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.fileList {
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fileListHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.fileScroll {
+  max-height: 220px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fileRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+  background: var(--surface);
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+.fileName {
+  margin: 0;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.filePath {
+  margin: 0;
+  color: var(--text-subtle);
+  font-size: 13px;
+}
+
+.optionsPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.modeSwitch {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.pill {
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.pillActive {
+  border-color: var(--secondary-300);
+  box-shadow: 0 10px 30px rgba(248, 123, 27, 0.12);
+}
+
+.label {
+  margin: 0 0 8px;
+  font-weight: 700;
+}
+
+.chipRow {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.results {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.resultsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.statusText {
+  margin: 0;
+  font-size: 16px;
+}
+
+.statGroup {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  text-align: right;
+}
+
+.resultsBody {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.progressRow {
+  margin-top: 8px;
+}
+
+.progressBar {
+  width: 100%;
+  height: 8px;
+  background: var(--surface-muted);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(120deg, var(--primary-100), var(--secondary-100));
+  transition: width 0.2s ease;
+}
+
+.resultRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface-muted);
+}
+
+.success {
+  background: linear-gradient(120deg, rgba(203, 217, 155, 0.2), rgba(17, 34, 78, 0.08));
+}
+
+.error {
+  background: linear-gradient(120deg, rgba(248, 123, 27, 0.18), rgba(248, 123, 27, 0.08));
+}

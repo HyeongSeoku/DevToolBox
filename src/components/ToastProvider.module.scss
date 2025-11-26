@@ -1,0 +1,32 @@
+.container {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 2000;
+}
+
+.toast {
+  min-width: 240px;
+  max-width: 360px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  color: #0f1625;
+  font-weight: 600;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.info {
+  background: #e0ecff;
+}
+
+.success {
+  background: #d5f5df;
+}
+
+.error {
+  background: #ffe2df;
+  color: #4a1212;
+}
