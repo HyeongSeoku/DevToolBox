@@ -1,26 +1,27 @@
 import { useEffect, useMemo, useState } from "react";
+
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { openPath } from "@tauri-apps/plugin-opener";
-import { useTauriEnv } from "../../hooks/useTauriEnv";
-import { useFileSelection } from "../../hooks/useFileSelection";
-import {
-  useConversionJob,
-  TargetFormat,
-  GifQuality,
-  Mode,
-} from "../../hooks/useConversionJob";
-import { Hero } from "../../components/Hero";
+
+import styles from "./index.module.scss";
+import { ConvertOptions } from "../../components/ConvertOptions";
 import { DropZone } from "../../components/DropZone";
 import { FileList } from "../../components/FileList";
-import { ModeSwitch } from "../../components/ModeSwitch";
-import { ConvertOptions } from "../../components/ConvertOptions";
 import { GifOptions } from "../../components/GifOptions";
+import { Hero } from "../../components/Hero";
+import { ModeSwitch } from "../../components/ModeSwitch";
 import { OutputSettings } from "../../components/OutputSettings";
 import { ResultsPanel } from "../../components/ResultsPanel";
-import styles from "./index.module.scss";
-import { Navigate } from "react-router-dom";
 import { useToast } from "../../components/ToastProvider";
+import {
+  useConversionJob,
+  type TargetFormat,
+  type GifQuality,
+  type Mode,
+} from "../../hooks/useConversionJob";
+import { useFileSelection } from "../../hooks/useFileSelection";
+import { useTauriEnv } from "../../hooks/useTauriEnv";
 
 const qualityPresets = [
   { label: "100% · 거의 무손실", value: 100 },
@@ -145,7 +146,7 @@ export function ConvertPage({ modeOverride, recentAdd }: ConvertPageProps) {
     if (!isTauriEnv) {
       const msg = "Tauri 환경에서 실행하세요. (파일 시스템 접근 필요)";
       setStatus(msg);
-      toast.show(msg, "error");
+      toast.show(msg, { type: "error" });
       return;
     }
     try {
@@ -160,7 +161,7 @@ export function ConvertPage({ modeOverride, recentAdd }: ConvertPageProps) {
     } catch (error) {
       const msg = `파일 선택 실패: ${error}`;
       setStatus(msg);
-      toast.show(msg, "error");
+      toast.show(msg, { type: "error" });
     }
   };
 
@@ -177,7 +178,7 @@ export function ConvertPage({ modeOverride, recentAdd }: ConvertPageProps) {
     } catch (error) {
       const msg = `폴더 선택 실패: ${error}`;
       setStatus(msg);
-      toast.show(msg, "error");
+      toast.show(msg, { type: "error" });
     }
   };
 
@@ -214,7 +215,7 @@ export function ConvertPage({ modeOverride, recentAdd }: ConvertPageProps) {
     } catch (error) {
       const msg = `열기 실패: ${error}. 설정에서 opener 권한을 허용해 주세요.`;
       setStatus(msg);
-      toast.show(msg, "error");
+      toast.show(msg, { type: "error" });
     }
   };
 
@@ -262,7 +263,7 @@ export function ConvertPage({ modeOverride, recentAdd }: ConvertPageProps) {
                 setStatus(
                   mode === "gif"
                     ? "mp4/mov/mkv/avi만 지원합니다."
-                    : "이미지 파일만 지원합니다."
+                    : "이미지 파일만 지원합니다.",
                 );
                 return;
               }

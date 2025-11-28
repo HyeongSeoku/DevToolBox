@@ -1,4 +1,5 @@
-import { useState, DragEvent } from "react";
+import { useState, type DragEvent } from "react";
+
 import panelStyles from "./Panels.module.scss";
 
 type DropZoneProps = {

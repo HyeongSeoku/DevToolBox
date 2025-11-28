@@ -18,17 +18,19 @@ export function parseOpenApiText(text: string): ParsedSpec {
 }
 
 export function parseOpenApiObject(raw: any): ParsedSpec {
-  if (!raw || typeof raw !== "object") throw new Error("스펙이 비어있거나 객체가 아닙니다.");
+  if (!raw || typeof raw !== "object")
+    throw new Error("스펙이 비어있거나 객체가 아닙니다.");
   const version = raw.openapi || raw.swagger || "unknown";
-  const schemas =
-    raw.components?.schemas ??
-    raw.definitions ??
-    {};
+  const schemas = raw.components?.schemas ?? raw.definitions ?? {};
   const paths = raw.paths;
   return { raw, schemas, paths, version };
 }
 
-export function generateTypesFromSchemas(spec: ParsedSpec): { code: string; schemaCount: number; pathCount: number } {
+export function generateTypesFromSchemas(spec: ParsedSpec): {
+  code: string;
+  schemaCount: number;
+  pathCount: number;
+} {
   const lines: string[] = [];
   const seenNames: Record<string, number> = {};
   const ctx = { spec, seenNames };
@@ -98,7 +100,8 @@ function objectToTs(schema: any, ctx: Ctx): string {
     return `  ${key}${optional}: ${schemaToTs(val, ctx)};`;
   });
   if (additional) {
-    const apType = additional === true ? "unknown" : schemaToTs(additional, ctx);
+    const apType =
+      additional === true ? "unknown" : schemaToTs(additional, ctx);
     entries.push(`  [key: string]: ${apType};`);
   }
   return `{\n${entries.join("\n")}\n}`;

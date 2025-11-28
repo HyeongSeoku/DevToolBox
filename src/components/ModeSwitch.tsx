@@ -1,5 +1,5 @@
-import { Mode } from "../hooks/useConversionJob";
 import panelStyles from "./Panels.module.scss";
+import { type Mode } from "../hooks/useConversionJob";
 
 type ModeSwitchProps = {
   mode: Mode;

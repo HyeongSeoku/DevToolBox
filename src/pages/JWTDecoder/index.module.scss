@@ -1,0 +1,236 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.inputCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.inputRow {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.input {
+  flex: 1;
+  min-height: 120px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface-muted);
+  color: var(--text);
+  font-family: "JetBrains Mono", Menlo, Consolas, monospace;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.checkbox {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 12px;
+  color: var(--text-subtle);
+}
+
+.tokenList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tokenItem {
+  border: 1px solid var(--border);
+  background: var(--surface-muted);
+  padding: 8px 10px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.tokenItem.active {
+  border-color: var(--primary-300);
+}
+
+.badge {
+  background: var(--gray-200);
+  color: var(--text);
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 11px;
+}
+
+.tokenText {
+  font-family: "JetBrains Mono", Menlo, Consolas, monospace;
+  font-size: 12px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 12px;
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.panelHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.panelActions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.label {
+  font-size: 12px;
+  color: var(--text-subtle);
+}
+
+.badges {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.secondary {
+  padding: 2px 6px;
+  background: var(--surface-muted);
+  border-radius: 6px;
+  font-size: 11px;
+}
+
+.alert {
+  padding: 2px 6px;
+  background: #ffe4e4;
+  color: #c00;
+  border-radius: 6px;
+  font-size: 11px;
+}
+
+.badgeTime {
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 11px;
+}
+
+.warn {
+  background: #fff3cd;
+  color: #8a6d3b;
+}
+
+.danger {
+  background: #ffe4e4;
+  color: #c00;
+}
+
+.success {
+  background: #dff7e5;
+  color: #0f5132;
+}
+
+.code {
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px;
+  font-family: "JetBrains Mono", Menlo, Consolas, monospace;
+  font-size: 12px;
+  white-space: pre-wrap;
+  min-height: 120px;
+}
+
+.summaryRow {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.summaryCard {
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  padding: 8px;
+  border-radius: 8px;
+  min-width: 120px;
+}
+
+.summaryValue {
+  font-weight: 600;
+}
+
+.history {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.historyHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.historyList {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.historyItem {
+  border: 1px dashed var(--border);
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: var(--surface-muted);
+  font-family: "JetBrains Mono", Menlo, Consolas, monospace;
+  font-size: 12px;
+}
+
+.errorBox {
+  border: 1px solid #f5c2c7;
+  background: #fff1f2;
+  color: #7f1d1d;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.errorItem {
+  font-size: 13px;
+}

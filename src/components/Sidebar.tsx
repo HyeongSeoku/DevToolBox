@@ -1,7 +1,17 @@
-import { ThemeMode } from "../hooks/useTheme";
 import styles from "./Sidebar.module.scss";
+import { type ThemeMode } from "../hooks/useTheme";
 
-type NavKey = "home" | "convert" | "gif" | "typegen";
+type NavKey =
+  | "home"
+  | "convert"
+  | "gif"
+  | "typegen"
+  | "jwt"
+  | "text"
+  | "regex"
+  | "env"
+  | "snippets-git"
+  | "settings";
 
 type SidebarProps = {
   active: NavKey;
@@ -15,6 +25,12 @@ const navItems: { key: NavKey; label: string }[] = [
   { key: "convert", label: "이미지 변환" },
   { key: "gif", label: "비디오 → GIF" },
   { key: "typegen", label: "API 타입 생성" },
+  { key: "jwt", label: "JWT 디코더" },
+  { key: "text", label: "텍스트 변환" },
+  { key: "regex", label: "Regex Tester" },
+  { key: "env", label: ".env Manager" },
+  { key: "snippets-git", label: "Snippets · Git" },
+  { key: "settings", label: "설정 / Vault" },
 ];
 
 export function Sidebar({ active, onNavigate, themeMode, onThemeCycle }: SidebarProps) {

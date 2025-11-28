@@ -1,5 +1,5 @@
-import { Mode } from "../hooks/useConversionJob";
 import styles from "./Hero.module.scss";
+import { type Mode } from "../hooks/useConversionJob";
 
 type HeroProps = {
   qualityPercent: number;

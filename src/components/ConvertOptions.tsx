@@ -1,5 +1,5 @@
-import { TargetFormat } from "../hooks/useConversionJob";
 import panelStyles from "./Panels.module.scss";
+import { type TargetFormat } from "../hooks/useConversionJob";
 
 type QualityPreset = { label: string; value: number };
 

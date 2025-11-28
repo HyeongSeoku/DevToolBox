@@ -1,5 +1,5 @@
-import { ConversionResult } from "../hooks/useConversionJob";
 import panelStyles from "./Panels.module.scss";
+import { type ConversionResult } from "../hooks/useConversionJob";
 
 type Progress = { percent: number; label: string };
 

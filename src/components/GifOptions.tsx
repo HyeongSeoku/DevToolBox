@@ -1,5 +1,5 @@
-import { GifQuality } from "../hooks/useConversionJob";
 import panelStyles from "./Panels.module.scss";
+import { type GifQuality } from "../hooks/useConversionJob";
 
 type GifOptionsProps = {
   fps: number;

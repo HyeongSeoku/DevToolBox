@@ -3,10 +3,11 @@ use image::codecs::png::PngEncoder;
 use image::codecs::webp::WebPEncoder;
 use image::imageops::FilterType;
 use image::{ColorType, DynamicImage, GenericImageView, ImageEncoder, ImageFormat};
+use dirs::data_dir;
 use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::BufWriter;
-use std::path::{Path, PathBuf};
+use std::path::{Component, Path, PathBuf};
 use std::process::Command;
 use std::fs;
 use time::{format_description, OffsetDateTime};
@@ -21,7 +22,14 @@ pub fn run() {
             batch_convert,
             video_to_gif,
             pick_files,
-            pick_folder
+            pick_folder,
+            init_vault,
+            read_settings,
+            save_settings,
+            read_vault_file,
+            write_vault_file,
+            delete_vault_entry,
+            move_vault_entry
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -75,6 +83,94 @@ struct PartialResultPayload {
     output: Option<String>,
     error: Option<String>,
     status: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+struct AppSettings {
+    vault_path: String,
+    last_opened: Option<String>,
+}
+
+fn default_vault_dir() -> Result<PathBuf, String> {
+    data_dir()
+        .map(|p| p.join("DevToolBox"))
+        .ok_or_else(|| "OS 데이터 디렉터리를 찾을 수 없습니다.".to_string())
+}
+
+fn settings_file_path(vault_dir: &Path) -> PathBuf {
+    vault_dir.join("settings.json")
+}
+
+fn ensure_vault_structure(vault_dir: &Path) -> Result<(), String> {
+    fs::create_dir_all(vault_dir).map_err(|e| e.to_string())?;
+    let required_dirs = [
+        "snippets",
+        "api-presets",
+        "history",
+        "history/gif-convert",
+        "history/json-format",
+        "history/jwt-decode",
+        "history/text-convert",
+        "history/regex-tester",
+        "history/env",
+        "snippets",
+        "snippets/git",
+        "snippets/linux",
+        "snippets/fe-utils",
+        "snippets/be-utils",
+    ];
+    for child in required_dirs {
+        fs::create_dir_all(vault_dir.join(child)).map_err(|e| e.to_string())?;
+    }
+    Ok(())
+}
+
+fn write_settings_file(path: &Path, settings: &AppSettings) -> Result<(), String> {
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent).map_err(|e| e.to_string())?;
+    }
+    let json = serde_json::to_string_pretty(settings).map_err(|e| e.to_string())?;
+    fs::write(path, json).map_err(|e| e.to_string())
+}
+
+fn load_settings(vault_dir: &Path) -> Result<AppSettings, String> {
+    let settings_path = settings_file_path(vault_dir);
+    if !settings_path.exists() {
+        let fresh = AppSettings {
+            vault_path: vault_dir
+                .to_str()
+                .unwrap_or_default()
+                .to_string(),
+            last_opened: None,
+        };
+        write_settings_file(&settings_path, &fresh)?;
+        return Ok(fresh);
+    }
+    let text = fs::read_to_string(&settings_path).map_err(|e| e.to_string())?;
+    let mut settings: AppSettings =
+        serde_json::from_str(&text).map_err(|e| format!("settings.json 파싱 실패: {e}"))?;
+    if settings.vault_path.is_empty() {
+        settings.vault_path = vault_dir.to_str().unwrap_or_default().to_string();
+    }
+    Ok(settings)
+}
+
+fn sanitize_relative_path(relative: &str) -> Result<PathBuf, String> {
+    let rel = PathBuf::from(relative);
+    if rel.is_absolute() {
+        return Err("Vault 상대 경로만 허용됩니다.".into());
+    }
+    for comp in rel.components() {
+        if matches!(comp, Component::ParentDir | Component::RootDir | Component::Prefix(_)) {
+            return Err("상위 경로 접근은 허용되지 않습니다.".into());
+        }
+    }
+    Ok(rel)
+}
+
+fn resolve_in_vault(vault_dir: &Path, relative: &str) -> Result<PathBuf, String> {
+    let rel = sanitize_relative_path(relative)?;
+    Ok(vault_dir.join(rel))
 }
 
 #[tauri::command]
@@ -286,6 +382,90 @@ fn pick_folder() -> Result<Option<String>, String> {
     Ok(dialog
         .pick_folder()
         .and_then(|p| p.into_os_string().into_string().ok()))
+}
+
+#[tauri::command]
+fn init_vault(path: Option<String>) -> Result<AppSettings, String> {
+    let vault_dir = match path {
+        Some(p) if !p.is_empty() => PathBuf::from(p),
+        _ => default_vault_dir()?,
+    };
+    ensure_vault_structure(&vault_dir)?;
+    let mut settings = load_settings(&vault_dir)?;
+    settings.vault_path = vault_dir.to_str().unwrap_or_default().to_string();
+    write_settings_file(&settings_file_path(&vault_dir), &settings)?;
+    Ok(settings)
+}
+
+#[tauri::command]
+fn read_settings(path: Option<String>) -> Result<AppSettings, String> {
+    let vault_dir = match path {
+        Some(p) if !p.is_empty() => PathBuf::from(p),
+        _ => default_vault_dir()?,
+    };
+    ensure_vault_structure(&vault_dir)?;
+    load_settings(&vault_dir)
+}
+
+#[tauri::command]
+fn save_settings(settings: AppSettings) -> Result<AppSettings, String> {
+    let vault_dir = PathBuf::from(&settings.vault_path);
+    ensure_vault_structure(&vault_dir)?;
+    write_settings_file(&settings_file_path(&vault_dir), &settings)?;
+    Ok(settings)
+}
+
+#[tauri::command]
+fn read_vault_file(vault_path: String, relative_path: String) -> Result<String, String> {
+    let vault_dir = PathBuf::from(vault_path);
+    ensure_vault_structure(&vault_dir)?;
+    let target = resolve_in_vault(&vault_dir, &relative_path)?;
+    fs::read_to_string(target).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+fn write_vault_file(
+    vault_path: String,
+    relative_path: String,
+    contents: String,
+) -> Result<String, String> {
+    let vault_dir = PathBuf::from(vault_path);
+    ensure_vault_structure(&vault_dir)?;
+    let target = resolve_in_vault(&vault_dir, &relative_path)?;
+    if let Some(parent) = target.parent() {
+        fs::create_dir_all(parent).map_err(|e| e.to_string())?;
+    }
+    fs::write(&target, contents).map_err(|e| e.to_string())?;
+    Ok(target.to_str().unwrap_or_default().to_string())
+}
+
+#[tauri::command]
+fn delete_vault_entry(vault_path: String, relative_path: String) -> Result<(), String> {
+    let vault_dir = PathBuf::from(vault_path);
+    ensure_vault_structure(&vault_dir)?;
+    let target = resolve_in_vault(&vault_dir, &relative_path)?;
+    if target.is_dir() {
+        fs::remove_dir_all(target).map_err(|e| e.to_string())
+    } else {
+        fs::remove_file(target).map_err(|e| e.to_string())
+    }
+}
+
+#[tauri::command]
+fn move_vault_entry(
+    vault_path: String,
+    from: String,
+    to: String,
+) -> Result<String, String> {
+    let vault_dir = PathBuf::from(vault_path);
+    ensure_vault_structure(&vault_dir)?;
+    let from_path = resolve_in_vault(&vault_dir, &from)?;
+    let to_path = resolve_in_vault(&vault_dir, &to)?;
+    if let Some(parent) = to_path.parent() {
+        fs::create_dir_all(parent).map_err(|e| e.to_string())?;
+    }
+    fs::rename(&from_path, &to_path).map_err(|e| e.to_string())?;
+    Ok(to_path.to_str().unwrap_or_default().to_string())
 }
 
 fn convert_single(path: &Path, options: &ConvertOptions, index: usize) -> Result<PathBuf, String> {

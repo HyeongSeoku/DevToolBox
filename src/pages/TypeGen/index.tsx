@@ -1,7 +1,11 @@
 import { useMemo, useState } from "react";
+
 import styles from "./index.module.scss";
-import { generateTypesFromSchemas, parseOpenApiObject, parseOpenApiText } from "../../utils/openapi";
 import { useToast } from "../../components/ToastProvider";
+import {
+  generateTypesFromSchemas,
+  parseOpenApiText,
+} from "../../utils/openapi";
 
 type Tab = "openapi" | "json";
 
@@ -28,11 +32,11 @@ export function TypeGenPage() {
         setPreview(inferred);
         setSummary("JSON 샘플에서 타입을 생성했습니다.");
         setStatus("완료");
-        toast.show("타입 생성 완료", "success");
+        toast.show("타입 생성 완료", { type: "success" });
       } catch (err) {
         const msg = `JSON 파싱 실패: ${err}`;
         setStatus(msg);
-        toast.show(msg, "error");
+        toast.show(msg, { type: "error" });
       }
     } else {
       try {
@@ -40,26 +44,31 @@ export function TypeGenPage() {
         if (!specText) {
           const msg = "스펙 텍스트를 붙여 넣거나 URL을 불러와 주세요.";
           setStatus(msg);
-          toast.show(msg, "error");
+          toast.show(msg, { type: "error" });
           return;
         }
         let spec;
         try {
           spec = parseOpenApiText(specText);
         } catch (innerErr) {
-          const extracted = await fetchSpecFromHtml(specText, url || lastFetchedUrl);
+          const extracted = await fetchSpecFromHtml(
+            specText,
+            url || lastFetchedUrl,
+          );
           if (!extracted) throw innerErr;
           spec = parseOpenApiText(extracted);
         }
         const result = generateTypesFromSchemas(spec);
         setPreview(result.code);
-        setSummary(`스키마 ${result.schemaCount}개, paths ${result.pathCount}개 감지됨 (v${spec.version})`);
+        setSummary(
+          `스키마 ${result.schemaCount}개, paths ${result.pathCount}개 감지됨 (v${spec.version})`,
+        );
         setStatus("OpenAPI/Swagger 스펙에서 타입을 생성했습니다.");
-        toast.show("타입 생성 완료", "success");
+        toast.show("타입 생성 완료", { type: "success" });
       } catch (err) {
         const msg = `스펙 처리 실패: ${err}`;
         setStatus(msg);
-        toast.show(msg, "error");
+        toast.show(msg, { type: "error" });
       }
     }
   };
@@ -68,7 +77,7 @@ export function TypeGenPage() {
     if (!url) {
       const msg = "URL을 입력하세요.";
       setStatus(msg);
-      toast.show(msg, "error");
+      toast.show(msg, { type: "error" });
       return;
     }
     setStatus("불러오는 중...");
@@ -77,7 +86,7 @@ export function TypeGenPage() {
       if (!resp.ok) {
         const msg = `URL 불러오기 실패: HTTP ${resp.status}`;
         setStatus(msg);
-        toast.show(msg, "error");
+        toast.show(msg, { type: "error" });
         return;
       }
       const body = await resp.text();
@@ -87,7 +96,9 @@ export function TypeGenPage() {
         const specText = await fetchSpecFromHtml(body, url);
         if (specText) {
           setInputText(specText);
-          setStatus("HTML에서 스펙을 추출했습니다. 타입 생성 버튼을 눌러주세요.");
+          setStatus(
+            "HTML에서 스펙을 추출했습니다. 타입 생성 버튼을 눌러주세요.",
+          );
           return;
         }
       }
@@ -96,7 +107,7 @@ export function TypeGenPage() {
     } catch (err) {
       const msg = `URL 불러오기 실패: ${err}`;
       setStatus(msg);
-      toast.show(msg, "error");
+      toast.show(msg, { type: "error" });
     }
   };
 
@@ -114,7 +125,8 @@ export function TypeGenPage() {
         <p className="eyebrow">API 타입 생성</p>
         <h1>OpenAPI/Swagger/JSON 샘플로 TypeScript 타입 생성</h1>
         <p className="micro">
-          Swagger/Redoc URL이나 JSON 샘플을 붙여 넣어 타입을 만들어 보세요. (OpenAPI 파서는 추후 업데이트)
+          Swagger/Redoc URL이나 JSON 샘플을 붙여 넣어 타입을 만들어 보세요.
+          (OpenAPI 파서는 추후 업데이트)
         </p>
       </header>
 
@@ -125,14 +137,19 @@ export function TypeGenPage() {
         >
           OpenAPI / Swagger
         </button>
-        <button className={`${styles.tab} ${tab === "json" ? styles.active : ""}`} onClick={() => setTab("json")}>
+        <button
+          className={`${styles.tab} ${tab === "json" ? styles.active : ""}`}
+          onClick={() => setTab("json")}
+        >
           JSON 샘플
         </button>
       </div>
 
       <section className={styles.layout}>
         <div className={styles.inputCard}>
-          <p className={styles.label}>{isJsonTab ? "JSON 입력" : "스펙 URL 또는 스펙 텍스트"}</p>
+          <p className={styles.label}>
+            {isJsonTab ? "JSON 입력" : "스펙 URL 또는 스펙 텍스트"}
+          </p>
           {!isJsonTab && (
             <div className={styles.inlineRow}>
               <input
@@ -206,7 +223,9 @@ function inferType(value: any, rootName: string): string {
     if (t === "boolean") return "boolean";
     if (Array.isArray(val)) {
       if (val.length === 0) return "unknown[]";
-      const itemTypes = Array.from(new Set(val.map((item) => typeFor(item, depth + 1))));
+      const itemTypes = Array.from(
+        new Set(val.map((item) => typeFor(item, depth + 1))),
+      );
       return `Array<${itemTypes.join(" | ")}>`;
     }
     if (t === "object") {
@@ -241,10 +260,17 @@ function uniqueName(base: string, seen: Record<string, number>) {
 
 function looksLikeHtml(text: string) {
   const trimmed = text.trim().toLowerCase();
-  return trimmed.startsWith("<!doctype") || trimmed.startsWith("<html") || trimmed.includes("<body");
+  return (
+    trimmed.startsWith("<!doctype") ||
+    trimmed.startsWith("<html") ||
+    trimmed.includes("<body")
+  );
 }
 
-async function fetchSpecFromHtml(html: string, baseUrl: string): Promise<string | null> {
+async function fetchSpecFromHtml(
+  html: string,
+  baseUrl: string,
+): Promise<string | null> {
   // direct spec url in HTML
   const direct = tryExtractSpecUrl(html, baseUrl);
   if (direct) {
@@ -253,7 +279,9 @@ async function fetchSpecFromHtml(html: string, baseUrl: string): Promise<string 
   }
 
   // swagger-initializer.js 추출
-  const scriptMatch = html.match(/<script[^>]+src=["']([^"']*swagger-initializer[^"']+)["']/i);
+  const scriptMatch = html.match(
+    /<script[^>]+src=["']([^"']*swagger-initializer[^"']+)["']/i,
+  );
   if (scriptMatch && scriptMatch[1]) {
     const scriptUrl = new URL(scriptMatch[1], baseUrl).toString();
     const js = await fetch(scriptUrl);
@@ -273,15 +301,20 @@ async function fetchSpecFromHtml(html: string, baseUrl: string): Promise<string 
 function tryExtractSpecUrl(html: string, baseUrl: string): string | null {
   // Swagger UI initializer typically has url: "..."
   const urlMatch = html.match(/url:\s*["']([^"']+)["']/i);
-  if (urlMatch && urlMatch[1]) return new URL(urlMatch[1], baseUrl || undefined).toString();
+  if (urlMatch && urlMatch[1])
+    return new URL(urlMatch[1], baseUrl || undefined).toString();
 
   // redoc pattern: data-spec-url="..."
   const dataSpec = html.match(/data-spec-url=["']([^"']+)["']/i);
-  if (dataSpec && dataSpec[1]) return new URL(dataSpec[1], baseUrl || undefined).toString();
+  if (dataSpec && dataSpec[1])
+    return new URL(dataSpec[1], baseUrl || undefined).toString();
 
   // link with swagger/openapi.json
-  const linkJson = html.match(/href=["']([^"']+(swagger|openapi)[^"']+\\.json)["']/i);
-  if (linkJson && linkJson[1]) return new URL(linkJson[1], baseUrl || undefined).toString();
+  const linkJson = html.match(
+    /href=["']([^"']+(swagger|openapi)[^"']+\\.json)["']/i,
+  );
+  if (linkJson && linkJson[1])
+    return new URL(linkJson[1], baseUrl || undefined).toString();
 
   return null;
 }
