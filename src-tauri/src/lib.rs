@@ -1,13 +1,13 @@
 use image::codecs::jpeg::JpegEncoder;
 use image::codecs::png::PngEncoder;
 use image::codecs::webp::WebPEncoder;
-use image::imageops::FilterType;
+use image::imageops::{self, FilterType};
 use image::{
     ColorType, DynamicImage, GenericImageView, ImageEncoder, ImageFormat,
 };
 use serde::{Deserialize, Serialize};
 use std::fs::File;
-use std::io::BufWriter;
+use std::io::{BufWriter, Read};
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::fs;
@@ -257,9 +257,11 @@ fn convert_single(path: &Path, options: &ConvertOptions, index: usize) -> Result
     let strip_exif = options.strip_exif.unwrap_or(false);
 
     let input_format = ImageFormat::from_path(path).ok();
+    let orientation = read_exif_orientation(path);
     let image = image::open(path)
         .map_err(|e| format!("Failed to open {}: {e}", path.display()))?;
-    let processed = resize_if_needed(&image, scale_percent);
+    let oriented = apply_exif_orientation(image, orientation);
+    let processed = resize_if_needed(&oriented, scale_percent);
 
     let target_dir = options
         .output_dir
@@ -291,9 +293,11 @@ fn convert_single(path: &Path, options: &ConvertOptions, index: usize) -> Result
         .unwrap_or_else(|| format!("{base_name}_converted.{ext}"));
 
     let output_path = target_dir.join(file_name);
+    let orientation_requires_adjust = matches!(orientation, Some(v) if v != 1);
     let can_copy_without_changes = !strip_exif
         && scale_percent == 100
         && quality == 100
+        && !orientation_requires_adjust
         && input_format.map(|f| f == target_format).unwrap_or(false);
 
     if can_copy_without_changes {
@@ -323,6 +327,118 @@ fn parse_format(format: &str) -> Result<ImageFormat, String> {
         "png" => Ok(ImageFormat::Png),
         "webp" => Ok(ImageFormat::WebP),
         other => Err(format!("Unsupported format: {other}")),
+    }
+}
+
+fn read_exif_orientation(path: &Path) -> Option<u32> {
+    // Reads EXIF orientation (Tag 0x0112) manually to avoid extra deps.
+    let mut file = File::open(path).ok()?;
+    let mut data = Vec::new();
+    file.read_to_end(&mut data).ok()?;
+    extract_orientation(&data)
+}
+
+fn extract_orientation(data: &[u8]) -> Option<u32> {
+    // Only handles JPEG APP1 EXIF blocks; returns Some(orientation) if found.
+    if data.len() < 4 || data[0] != 0xFF || data[1] != 0xD8 {
+        return None;
+    }
+
+    let mut i = 2;
+    while i + 4 < data.len() {
+        if data[i] != 0xFF {
+            break;
+        }
+        let marker = data[i + 1];
+        let size = u16::from_be_bytes([data[i + 2], data[i + 3]]) as usize;
+        if marker == 0xE1 {
+            // APP1 (EXIF) segment length includes the two size bytes.
+            if i + 2 + size > data.len() || size < 8 {
+                return None;
+            }
+            let segment = &data[i + 4..i + 2 + size];
+            return parse_exif_segment(segment);
+        }
+        if marker == 0xDA {
+            // Start of Scan: metadata blocks are finished.
+            break;
+        }
+        i = i.saturating_add(2 + size);
+    }
+    None
+}
+
+fn parse_exif_segment(segment: &[u8]) -> Option<u32> {
+    // segment is after APP1 size, starts with "Exif\0\0" then TIFF header.
+    if segment.len() < 14 || &segment[..6] != b"Exif\0\0" {
+        return None;
+    }
+    let tiff = &segment[6..];
+    if tiff.len() < 8 {
+        return None;
+    }
+
+    let le = match &tiff[..2] {
+        b"II" => true,
+        b"MM" => false,
+        _ => return None,
+    };
+
+    let read_u16 = |offset: usize| -> Option<u16> {
+        if offset + 2 > tiff.len() {
+            return None;
+        }
+        let bytes = [tiff[offset], tiff[offset + 1]];
+        Some(if le { u16::from_le_bytes(bytes) } else { u16::from_be_bytes(bytes) })
+    };
+
+    let read_u32 = |offset: usize| -> Option<u32> {
+        if offset + 4 > tiff.len() {
+            return None;
+        }
+        let bytes = [tiff[offset], tiff[offset + 1], tiff[offset + 2], tiff[offset + 3]];
+        Some(if le { u32::from_le_bytes(bytes) } else { u32::from_be_bytes(bytes) })
+    };
+
+    if read_u16(2)? != 0x002A {
+        return None;
+    }
+    let ifd0_offset = read_u32(4)? as usize;
+    if ifd0_offset + 2 > tiff.len() {
+        return None;
+    }
+
+    let entries = read_u16(ifd0_offset)? as usize;
+    let mut cursor = ifd0_offset + 2;
+    for _ in 0..entries {
+        if cursor + 12 > tiff.len() {
+            break;
+        }
+        let tag = read_u16(cursor)?;
+        if tag == 0x0112 {
+            // Orientation tag; value is a SHORT. Count should be 1.
+            let value = read_u16(cursor + 8)?;
+            return Some(value as u32);
+        }
+        cursor += 12;
+    }
+    None
+}
+
+fn apply_exif_orientation(img: DynamicImage, orientation: Option<u32>) -> DynamicImage {
+    // flip/rotate outputs are ImageBuffer; wrap back to DynamicImage.
+    let base = img.to_rgba8();
+    match orientation {
+        Some(2) => DynamicImage::ImageRgba8(imageops::flip_horizontal(&base)),
+        Some(3) => DynamicImage::ImageRgba8(imageops::rotate180(&base)),
+        Some(4) => DynamicImage::ImageRgba8(imageops::flip_vertical(&base)),
+        Some(5) => DynamicImage::ImageRgba8(imageops::flip_horizontal(&imageops::rotate90(&base))),
+        Some(6) => DynamicImage::ImageRgba8(imageops::rotate90(&base)),
+        Some(7) => {
+            DynamicImage::ImageRgba8(imageops::flip_horizontal(&imageops::rotate270(&base)))
+        }
+        Some(8) => DynamicImage::ImageRgba8(imageops::rotate270(&base)),
+        _ => img,
     }
 }
 

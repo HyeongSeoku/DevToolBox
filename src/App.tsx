@@ -14,7 +14,13 @@ type ConversionResult = {
 };
 
 type Mode = "convert" | "gif";
-type ProgressPayload = { job_id: string; total: number; current: number; path: string; status: string };
+type ProgressPayload = {
+  job_id: string;
+  total: number;
+  current: number;
+  path: string;
+  status: string;
+};
 type CompletePayload = { job_id: string; results: ConversionResult[] };
 
 const qualityPresets = [
@@ -26,9 +32,24 @@ const qualityPresets = [
 ];
 
 const webPresets = [
-  { label: "블로그 최적화", targetFormat: "jpeg" as TargetFormat, quality: 85, scale: 70 },
-  { label: "썸네일", targetFormat: "jpeg" as TargetFormat, quality: 80, scale: 50 },
-  { label: "고품질 WebP", targetFormat: "webp" as TargetFormat, quality: 90, scale: 100 },
+  {
+    label: "블로그 최적화",
+    targetFormat: "jpeg" as TargetFormat,
+    quality: 85,
+    scale: 70,
+  },
+  {
+    label: "썸네일",
+    targetFormat: "jpeg" as TargetFormat,
+    quality: 80,
+    scale: 50,
+  },
+  {
+    label: "고품질 WebP",
+    targetFormat: "webp" as TargetFormat,
+    quality: 90,
+    scale: 100,
+  },
 ];
 
 const detectTauri = () => {
@@ -68,17 +89,20 @@ function App() {
 
   useEffect(() => {
     if (!isTauriEnv) return;
-    const progressUnlistenPromise = listen<ProgressPayload>("conversion-progress", (event) => {
-      const { job_id, total, current, path, status } = event.payload;
-      if (!jobId || jobId !== job_id) return;
-      const percent = Math.round((current / Math.max(total, 1)) * 100);
-      setProgress({
-        percent,
-        label: `${percent}% · ${status === "error" ? "실패" : "진행"} · ${
-          path.split(/[/\\]/).pop() || ""
-        }`,
-      });
-    });
+    const progressUnlistenPromise = listen<ProgressPayload>(
+      "conversion-progress",
+      (event) => {
+        const { job_id, total, current, path, status } = event.payload;
+        if (!jobId || jobId !== job_id) return;
+        const percent = Math.round((current / Math.max(total, 1)) * 100);
+        setProgress({
+          percent,
+          label: `${percent}% · ${status === "error" ? "실패" : "진행"} · ${
+            path.split(/[/\\]/).pop() || ""
+          }`,
+        });
+      }
+    );
 
     const completeUnlistenPromise = listen<CompletePayload>(
       "conversion-complete",
@@ -89,7 +113,7 @@ function App() {
         setBusy(false);
         setProgress({ percent: 100, label: "완료" });
         setJobId(null);
-      },
+      }
     );
 
     const unlistenPromise = listen<string[]>("tauri://file-drop", (event) => {
@@ -234,16 +258,20 @@ function App() {
         const id = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
         setJobId(id);
         await invoke<void>("batch_convert", {
-          job_id: id,
+          // tauri commands expect camelCase args (jobId), while events emit job_id.
+          jobId: id,
           paths: selectedFiles,
           options,
         });
         setStatus("일괄 변환 중...");
       } else {
-        const single = await invoke<{ input: string; output: string }>("convert_image", {
-          path: selectedFiles[0],
-          options,
-        });
+        const single = await invoke<{ input: string; output: string }>(
+          "convert_image",
+          {
+            path: selectedFiles[0],
+            options,
+          }
+        );
         setResults([{ input: single.input, output: single.output }]);
         setStatus("변환 완료");
       }
@@ -252,7 +280,9 @@ function App() {
       setBusy(false);
       setJobId(null);
     } finally {
-      setProgress((prev) => (prev.percent === 0 ? { percent: 100, label: "완료" } : prev));
+      setProgress((prev) =>
+        prev.percent === 0 ? { percent: 100, label: "완료" } : prev
+      );
       if (!batchMode || selectedFiles.length <= 1) {
         setBusy(false);
       }
@@ -275,8 +305,9 @@ function App() {
           <p className="eyebrow">Image Utility · Tauri</p>
           <h1>멀티 포맷 변환 · 압축 · GIF 빌더</h1>
           <p className="lede">
-            로컬 이미지를 원하는 포맷으로 빠르게 변환하고, 품질/스케일/EXIF 옵션을 한번에 조절하세요.
-            드래그 앤 드롭, 배치 변환, 웹 최적화 프리셋까지 지원합니다.
+            로컬 이미지를 원하는 포맷으로 빠르게 변환하고, 품질/스케일/EXIF
+            옵션을 한번에 조절하세요. 드래그 앤 드롭, 배치 변환, 웹 최적화
+            프리셋까지 지원합니다.
           </p>
           <div className="preset-row">
             {webPresets.map((preset) => (
@@ -315,7 +346,9 @@ function App() {
           <button className="primary" onClick={runConversion} disabled={busy}>
             {busy ? "처리 중..." : mode === "gif" ? "GIF 만들기" : "변환 실행"}
           </button>
-          <p className="micro">PNG는 무손실 저장 · 비디오 → GIF 지원 (ffmpeg 필요)</p>
+          <p className="micro">
+            PNG는 무손실 저장 · 비디오 → GIF 지원 (ffmpeg 필요)
+          </p>
         </div>
       </header>
 
@@ -333,7 +366,8 @@ function App() {
           <div className="drop-zone">
             <p className="drop-title">파일 끌어다 놓기</p>
             <p className="drop-sub">
-              이미지 변환: jpg, jpeg, png, webp, bmp, gif · 비디오 → GIF: mp4, mov, mkv, avi
+              이미지 변환: jpg, jpeg, png, webp, bmp, gif · 비디오 → GIF: mp4,
+              mov, mkv, avi
             </p>
             <div className="drop-actions">
               <button className="ghost" onClick={pickFiles} disabled={busy}>
@@ -342,7 +376,11 @@ function App() {
               <button className="ghost" onClick={pickFolder} disabled={busy}>
                 출력 폴더 지정
               </button>
-              <button className="ghost" onClick={() => setSelectedFiles([])} disabled={busy}>
+              <button
+                className="ghost"
+                onClick={() => setSelectedFiles([])}
+                disabled={busy}
+              >
                 리스트 초기화
               </button>
             </div>
@@ -352,7 +390,9 @@ function App() {
             <div className="file-list-header">
               <div>
                 <p className="micro">선택된 파일</p>
-                <p className="subtle">{selectedFiles.length ? `${selectedFiles.length}개` : "없음"}</p>
+                <p className="subtle">
+                  {selectedFiles.length ? `${selectedFiles.length}개` : "없음"}
+                </p>
               </div>
               <label className="switch">
                 <input
@@ -365,7 +405,9 @@ function App() {
             </div>
             <div className="file-scroll">
               {selectedFiles.length === 0 && (
-                <p className="subtle">변환할 파일을 추가하세요. 드래그 앤 드롭 지원.</p>
+                <p className="subtle">
+                  변환할 파일을 추가하세요. 드래그 앤 드롭 지원.
+                </p>
               )}
               {selectedFiles.map((path) => (
                 <div key={path} className="file-row">
@@ -373,7 +415,11 @@ function App() {
                     <p className="file-name">{path.split(/[/\\]/).pop()}</p>
                     <p className="file-path">{path}</p>
                   </div>
-                  <button className="icon-button" onClick={() => removeFile(path)} aria-label="삭제">
+                  <button
+                    className="icon-button"
+                    onClick={() => removeFile(path)}
+                    aria-label="삭제"
+                  >
                     ✕
                   </button>
                 </div>
@@ -407,7 +453,9 @@ function App() {
                     {(["jpeg", "png", "webp"] as TargetFormat[]).map((fmt) => (
                       <button
                         key={fmt}
-                        className={`chip ${targetFormat === fmt ? "active" : ""}`}
+                        className={`chip ${
+                          targetFormat === fmt ? "active" : ""
+                        }`}
                         onClick={() => setTargetFormat(fmt)}
                       >
                         {fmt.toUpperCase()}
@@ -465,43 +513,56 @@ function App() {
               {qualityWarning && <p className="warning">{qualityWarning}</p>}
             </>
           ) : (
-            <div className="option-grid">
-              <div>
-                <p className="label">FPS {gifFps}</p>
-                <input
-                  type="range"
-                  min={1}
-                  max={30}
-                  value={gifFps}
-                  onChange={(e) => setGifFps(Number(e.target.value))}
-                />
-              </div>
-              <div>
-                <p className="label">GIF 품질</p>
-                <div className="chip-row">
-                  {(["low", "medium", "high"] as GifQuality[]).map((preset) => (
-                    <button
-                      key={preset}
-                      className={`chip ${gifQuality === preset ? "active" : ""}`}
-                      onClick={() => setGifQuality(preset)}
-                    >
-                      {preset === "low" ? "Low" : preset === "medium" ? "Medium" : "High"}
-                    </button>
-                  ))}
+            <>
+              <div className="option-grid">
+                <div>
+                  <p className="label">FPS {gifFps}</p>
+                  <input
+                    type="range"
+                    min={1}
+                    max={30}
+                    value={gifFps}
+                    onChange={(e) => setGifFps(Number(e.target.value))}
+                  />
+                </div>
+                <div>
+                  <p className="label">GIF 품질</p>
+                  <div className="chip-row">
+                    {(["low", "medium", "high"] as GifQuality[]).map(
+                      (preset) => (
+                        <button
+                          key={preset}
+                          className={`chip ${
+                            gifQuality === preset ? "active" : ""
+                          }`}
+                          onClick={() => setGifQuality(preset)}
+                        >
+                          {preset === "low"
+                            ? "Low"
+                            : preset === "medium"
+                            ? "Medium"
+                            : "High"}
+                        </button>
+                      )
+                    )}
+                  </div>
+                </div>
+                <div>
+                  <p className="label">스케일 {scalePercent}%</p>
+                  <input
+                    type="range"
+                    min={10}
+                    max={100}
+                    value={scalePercent}
+                    onChange={(e) => setScalePercent(Number(e.target.value))}
+                  />
                 </div>
               </div>
-              <div>
-                <p className="label">스케일 {scalePercent}%</p>
-                <input
-                  type="range"
-                  min={10}
-                  max={100}
-                  value={scalePercent}
-                  onChange={(e) => setScalePercent(Number(e.target.value))}
-                />
-              </div>
-            </div>
-              <p className="micro">비디오는 1개만 사용합니다. 여러 개 선택 시 첫 번째 파일을 변환합니다.</p>
+              <p className="micro">
+                비디오는 1개만 사용합니다. 여러 개 선택 시 첫 번째 파일을
+                변환합니다.
+              </p>
+            </>
           )}
 
           <div className="option-grid">
@@ -528,7 +589,8 @@ function App() {
                 placeholder="{basename}_converted"
               />
               <p className="micro">
-                사용 가능: {"{basename}"}, {"{ext}"}, {"{YYYYMMDD_HHmmss}"}, {"{index_0001}"}
+                사용 가능: {"{basename}"}, {"{ext}"}, {"{YYYYMMDD_HHmmss}"},{" "}
+                {"{index_0001}"}
               </p>
             </div>
           </div>
@@ -564,7 +626,9 @@ function App() {
           </div>
         </div>
         <div className="results-body">
-          {results.length === 0 && <p className="subtle">변환 결과가 여기에 표시됩니다.</p>}
+          {results.length === 0 && (
+            <p className="subtle">변환 결과가 여기에 표시됩니다.</p>
+          )}
           {results.map((item) => (
             <div
               key={`${item.input}-${item.output ?? item.error ?? "err"}`}
@@ -575,7 +639,10 @@ function App() {
                 <p className="file-path">{item.output || item.error}</p>
               </div>
               {item.output && (
-                <button className="ghost" onClick={() => handleOpen(item.output)}>
+                <button
+                  className="ghost"
+                  onClick={() => handleOpen(item.output)}
+                >
                   열기
                 </button>
               )}
