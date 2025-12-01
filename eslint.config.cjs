@@ -11,7 +11,14 @@ const storybookPlugin = require("eslint-plugin-storybook");
 /** @type {import('eslint').Linter.FlatConfig[]} */
 module.exports = [
   {
-    ignores: ["dist", "node_modules", ".storybook-static", "coverage", "*.json", "*.config.**"],
+    ignores: [
+      "dist",
+      "node_modules",
+      ".storybook-static",
+      "coverage",
+      "*.json",
+      "*.config.**",
+    ],
   },
   {
     files: ["**/*.{ts,tsx,js,jsx}"],
@@ -78,7 +85,13 @@ module.exports = [
       "import/order": [
         "warn",
         {
-          groups: ["builtin", "external", "internal", ["parent", "sibling", "index"], "type"],
+          groups: [
+            "builtin",
+            "external",
+            "internal",
+            ["parent", "sibling", "index"],
+            "type",
+          ],
           pathGroups: [
             {
               pattern: "react",
@@ -105,7 +118,11 @@ module.exports = [
     },
   },
   {
-    files: ["**/*.stories.@(ts|tsx|js|jsx)", "**/*.test.@(ts|tsx|js|jsx)", "**/*.spec.@(ts|tsx|js|jsx)"],
+    files: [
+      "**/*.stories.@(ts|tsx|js|jsx)",
+      "**/*.test.@(ts|tsx|js|jsx)",
+      "**/*.spec.@(ts|tsx|js|jsx)",
+    ],
     rules: {
       "import/no-default-export": "off",
     },

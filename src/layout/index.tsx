@@ -9,26 +9,36 @@ export function Layout() {
   const location = useLocation();
   const navigate = useNavigate();
   const path = location.pathname;
-  const active: "home" | Mode | "typegen" | "settings" | "jwt" | "text" | "regex" | "env" | "snippets-git" =
+  const active:
+    | "home"
+    | Mode
+    | "typegen"
+    | "settings"
+    | "jwt"
+    | "text"
+    | "regex"
+    | "env"
+    | "snippets"
+    | "jsdoc" =
     path === "/"
       ? "home"
-      : path.startsWith("/gif")
-        ? "gif"
-        : path.startsWith("/typegen")
+      : path.startsWith("/typegen")
           ? "typegen"
           : path.startsWith("/jwt")
             ? "jwt"
             : path.startsWith("/text")
               ? "text"
-              : path.startsWith("/regex")
-                ? "regex"
-                : path.startsWith("/env")
-                  ? "env"
-                  : path.startsWith("/snippets/git")
-                    ? "snippets-git"
-                    : path.startsWith("/settings")
-                      ? "settings"
-                      : "convert";
+            : path.startsWith("/regex")
+              ? "regex"
+            : path.startsWith("/env")
+              ? "env"
+            : path.startsWith("/snippets")
+              ? "snippets"
+            : path.startsWith("/jsdoc")
+              ? "jsdoc"
+              : path.startsWith("/settings")
+                ? "settings"
+                : "convert";
 
   return (
     <div className="shell">
@@ -37,12 +47,12 @@ export function Layout() {
         onNavigate={(key) => {
           if (key === "home") navigate("/");
           else if (key === "typegen") navigate("/typegen");
-          else if (key === "gif") navigate("/gif");
           else if (key === "jwt") navigate("/jwt");
           else if (key === "text") navigate("/text");
           else if (key === "regex") navigate("/regex");
           else if (key === "env") navigate("/env");
-          else if (key === "snippets-git") navigate("/snippets/git");
+          else if (key === "snippets") navigate("/snippets/git");
+          else if (key === "jsdoc") navigate("/jsdoc");
           else if (key === "settings") navigate("/settings");
           else navigate("/convert");
         }}

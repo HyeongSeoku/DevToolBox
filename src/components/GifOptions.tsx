@@ -22,7 +22,13 @@ export function GifOptions({
     <div className="option-grid">
       <div>
         <p className={panelStyles.label}>FPS {fps}</p>
-        <input type="range" min={1} max={30} value={fps} onChange={(e) => onFpsChange(Number(e.target.value))} />
+        <input
+          type="range"
+          min={1}
+          max={30}
+          value={fps}
+          onChange={(e) => onFpsChange(Number(e.target.value))}
+        />
       </div>
       <div>
         <p className={panelStyles.label}>GIF 품질</p>
@@ -33,7 +39,11 @@ export function GifOptions({
               className={`chip ${gifQuality === preset ? "active" : ""}`}
               onClick={() => onQualityChange(preset)}
             >
-              {preset === "low" ? "Low" : preset === "medium" ? "Medium" : "High"}
+              {preset === "low"
+                ? "Low"
+                : preset === "medium"
+                  ? "Medium"
+                  : "High"}
             </button>
           ))}
         </div>
@@ -48,7 +58,9 @@ export function GifOptions({
           onChange={(e) => onScaleChange(Number(e.target.value))}
         />
       </div>
-      <p className="micro">비디오는 1개만 사용합니다. 여러 개 선택 시 첫 번째 파일을 변환합니다.</p>
+      <p className="micro">
+        비디오는 1개만 사용합니다. 여러 개 선택 시 첫 번째 파일을 변환합니다.
+      </p>
     </div>
   );
 }

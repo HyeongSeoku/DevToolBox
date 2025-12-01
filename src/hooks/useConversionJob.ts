@@ -89,7 +89,7 @@ export function useConversionJob(isTauriEnv: boolean) {
             currentStatus === "error" ? "실패" : "진행"
           } · ${path.split(/[/\\]/).pop() || ""}`,
         });
-      }
+      },
     );
 
     const completeUnlistenPromise = listen<CompletePayload>(
@@ -101,7 +101,7 @@ export function useConversionJob(isTauriEnv: boolean) {
         setBusy(false);
         setProgress({ percent: 100, label: "완료" });
         setJobId(null);
-      }
+      },
     );
 
     const partialUnlistenPromise = listen<PartialPayload>(
@@ -114,7 +114,7 @@ export function useConversionJob(isTauriEnv: boolean) {
           const others = prev.filter((r) => r.input !== input);
           return [...others, { input, output, error }];
         });
-      }
+      },
     );
 
     return () => {
@@ -135,7 +135,7 @@ export function useConversionJob(isTauriEnv: boolean) {
     }: RunArgs) => {
       if (!isTauriEnv) {
         setStatus(
-          "Tauri 환경에서 실행하세요. (파일 변환은 데스크톱 권한 필요)"
+          "Tauri 환경에서 실행하세요. (파일 변환은 데스크톱 권한 필요)",
         );
         return;
       }
@@ -150,7 +150,7 @@ export function useConversionJob(isTauriEnv: boolean) {
         selectedFiles.reduce<Record<string, number>>((acc, path) => {
           acc[path] = 0;
           return acc;
-        }, {})
+        }, {}),
       );
       setProgress({ percent: 0, label: "준비 중..." });
 
@@ -185,7 +185,7 @@ export function useConversionJob(isTauriEnv: boolean) {
             {
               path: selectedFiles[0],
               options: convertOptions,
-            }
+            },
           );
           setResults([{ input: single.input, output: single.output }]);
           setPerFileProgress({ [selectedFiles[0]]: 100 });
@@ -200,7 +200,7 @@ export function useConversionJob(isTauriEnv: boolean) {
         setJobId(null);
       }
     },
-    [isTauriEnv]
+    [isTauriEnv],
   );
 
   return {

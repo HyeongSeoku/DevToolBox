@@ -1,16 +1,38 @@
 import { useEffect, useMemo, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 
 import styles from "./index.module.scss";
 import { useToast } from "@/components/ToastProvider";
-import { useVaultStore } from "@/stores/useVaultStore";
-import { filterSnippets, loadGitSnippets, useSnippetFavorites } from "@/modules/snippets/core";
+import {
+  loadSnippetsByKind,
+  filterSnippets,
+  useSnippetFavorites,
+  type SnippetKind,
+} from "@/modules/snippets/core";
 import { type Snippet } from "@/modules/snippets/types";
+import { useVaultStore } from "@/stores/useVaultStore";
 
-const FAVORITE_KEY = "snippets-git-favorites";
+const FAVORITE_KEYS: Record<SnippetKind, string> = {
+  git: "snippets-git-favorites",
+  linux: "snippets-linux-favorites",
+  fe: "snippets-fe-favorites",
+  be: "snippets-be-favorites",
+};
 
-export function SnippetsGitPage() {
+const titles: Record<SnippetKind, string> = {
+  git: "Git",
+  linux: "Linux",
+  fe: "FE Utils",
+  be: "BE Utils",
+};
+
+export function SnippetHubPage() {
+  const params = useParams();
+  const navigate = useNavigate();
+  const kind = (params.kind as SnippetKind) || "git";
   const vault = useVaultStore();
   const toast = useToast();
+
   const [snippets, setSnippets] = useState<Snippet[]>([]);
   const [search, setSearch] = useState("");
   const [tagFilter, setTagFilter] = useState<string[]>([]);
@@ -18,13 +40,18 @@ export function SnippetsGitPage() {
   const [languageFilter, setLanguageFilter] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
 
-  const { favorites, toggleFavorite } = useSnippetFavorites(FAVORITE_KEY);
+  const { favorites, toggleFavorite } = useSnippetFavorites(
+    FAVORITE_KEYS[kind],
+  );
 
   useEffect(() => {
     const load = async () => {
       setLoading(true);
       try {
-        const data = await loadGitSnippets(vault.settings?.vaultPath ?? null);
+        const data = await loadSnippetsByKind(
+          kind,
+          vault.settings?.vaultPath ?? null,
+        );
         setSnippets(data);
       } catch (err) {
         toast.show(`스니펫 불러오기 실패: ${err}`, { type: "error" });
@@ -33,7 +60,7 @@ export function SnippetsGitPage() {
       }
     };
     void load();
-  }, [vault.settings?.vaultPath, toast]);
+  }, [kind, vault.settings?.vaultPath, toast]);
 
   const filtered = useMemo(
     () =>
@@ -68,13 +95,27 @@ export function SnippetsGitPage() {
     }
   };
 
+  const tabs: SnippetKind[] = ["git", "linux", "fe", "be"];
+
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <p className="eyebrow">Snippets · Git</p>
-        <h1>Git 작업 스니펫 모음</h1>
-        <p className="micro">브랜치/remote/rebase/stash 등 자주 쓰는 명령을 빠르게 복사하세요.</p>
+        <p className="eyebrow">Snippets · {titles[kind]}</p>
+        <h1>{titles[kind]} 스니펫 모음</h1>
+        <p className="micro">검색/필터 후 바로 복사하세요.</p>
       </header>
+
+      <div className={styles.tabRow}>
+        {tabs.map((tab) => (
+          <button
+            key={tab}
+            className={`${styles.button} ${styles.tab} ${tab === kind ? styles.active : ""}`}
+            onClick={() => navigate(`/snippets/${tab}`)}
+          >
+            {titles[tab]}
+          </button>
+        ))}
+      </div>
 
       <section className={styles.filters}>
         <input
@@ -104,6 +145,8 @@ export function SnippetsGitPage() {
           <option value="bash">bash</option>
           <option value="sh">sh</option>
           <option value="zsh">zsh</option>
+          <option value="ts">ts</option>
+          <option value="js">js</option>
         </select>
         <select
           className={styles.input}

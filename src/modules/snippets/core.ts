@@ -1,12 +1,27 @@
 import { gitSeedAdvanced, gitSeedCore } from "./seeds/git";
+import { linuxSeedAdmin, linuxSeedCore } from "./seeds/linux";
+import { feSeedCore } from "./seeds/fe";
+import { beSeedCore } from "./seeds/be";
 import { type Snippet, type SnippetFilter } from "./types";
 import { useVaultStore } from "@/stores/useVaultStore";
 
-export type SnippetSourceKey = "git-core" | "git-advanced";
+export type SnippetKind = "git" | "linux" | "fe" | "be";
+
+export type SnippetSourceKey =
+  | "git-core"
+  | "git-advanced"
+  | "linux-core"
+  | "linux-admin"
+  | "fe-core"
+  | "be-core";
 
 export const snippetFiles: Record<SnippetSourceKey, string> = {
   "git-core": "snippets/git/core.json",
   "git-advanced": "snippets/git/advanced.json",
+  "linux-core": "snippets/linux/core.json",
+  "linux-admin": "snippets/linux/server-admin.json",
+  "fe-core": "snippets/fe-utils/core.json",
+  "be-core": "snippets/be-utils/core.json",
 };
 
 export function filterSnippets(list: Snippet[], filter: SnippetFilter) {
@@ -33,7 +48,6 @@ export function filterSnippets(list: Snippet[], filter: SnippetFilter) {
 }
 
 export function useSnippetFavorites(storageKey: string) {
-  const store = useVaultStore();
   const existing = (() => {
     if (typeof window === "undefined") return [];
     try {
@@ -69,6 +83,40 @@ export async function loadGitSnippets(
   const fromVault: Snippet[] = [];
   if (vaultPath) {
     for (const key of Object.keys(snippetFiles) as SnippetSourceKey[]) {
+      try {
+        const text = await readFile(snippetFiles[key]);
+        const parsed = JSON.parse(text) as { snippets: Snippet[] };
+        fromVault.push(
+          ...(parsed.snippets || []).map((s) => ({ ...s, source: "vault" })),
+        );
+      } catch {
+        // ignore missing files
+      }
+    }
+  }
+  return [...seeds, ...fromVault];
+}
+
+export async function loadSnippetsByKind(
+  kind: SnippetKind,
+  vaultPath: string | null,
+): Promise<Snippet[]> {
+  if (kind === "git") return loadGitSnippets(vaultPath);
+  const seeds =
+    kind === "linux"
+      ? [...linuxSeedCore, ...linuxSeedAdmin]
+      : kind === "fe"
+        ? [...feSeedCore]
+        : [...beSeedCore];
+
+  const fromVault: Snippet[] = [];
+  const store = useVaultStore.getState();
+  const readFile = store.readFile;
+  const fileKeys = Object.keys(snippetFiles).filter((k) =>
+    k.startsWith(kind),
+  ) as SnippetSourceKey[];
+  if (vaultPath) {
+    for (const key of fileKeys) {
       try {
         const text = await readFile(snippetFiles[key]);
         const parsed = JSON.parse(text) as { snippets: Snippet[] };

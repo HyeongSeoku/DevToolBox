@@ -3,3 +3,13 @@
   flex-direction: column;
   gap: 16px;
 }
+
+.modeActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.modeButton {
+  min-width: 180px;
+}

@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "tauri": "tauri",
     "lint": "eslint \"src/**/*.{ts,tsx,js,jsx}\"",
-    "lint:fix": "eslint \"src/**/*.{ts,tsx,js,jsx}\" --fix"
+    "lint:fix": "eslint \"src/**/*.{ts,tsx,js,jsx}\" --fix",
+    "format:fix": "prettier --write \"src/**/*.{ts,tsx,js,jsx}\""
   },
   "dependencies": {
     "@tauri-apps/api": "^2",
@@ -17,25 +18,26 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.9.6",
-    "zustand": "^4.5.5",
-    "yaml": "^2.7.0"
+    "yaml": "^2.7.0",
+    "zustand": "^4.5.5"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
+    "@typescript-eslint/eslint-plugin": "^8.16.0",
+    "@typescript-eslint/parser": "^8.16.0",
     "@vitejs/plugin-react": "^4.6.0",
+    "eslint": "^9.15.0",
+    "eslint-import-resolver-typescript": "^4.4.4",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-react": "^7.37.2",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-storybook": "^0.11.4",
+    "prettier": "^3.4.1",
     "sass": "^1.80.6",
     "sass-embedded": "^1.93.3",
     "typescript": "~5.8.3",
-    "vite": "^7.0.4",
-    "eslint": "^9.15.0",
-    "@typescript-eslint/parser": "^8.16.0",
-    "@typescript-eslint/eslint-plugin": "^8.16.0",
-    "eslint-plugin-react": "^7.37.2",
-    "eslint-plugin-react-hooks": "^5.0.0",
-    "eslint-plugin-import": "^2.31.0",
-    "eslint-plugin-storybook": "^0.11.4",
-    "prettier": "^3.4.1"
+    "vite": "^7.0.4"
   }
 }

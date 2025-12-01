@@ -17,11 +17,15 @@ export function HomePage({ recent }: HomePageProps) {
       <header className={styles.header}>
         <p className="eyebrow">Dashboard</p>
         <h1>최근 작업</h1>
-        <p className="micro">마지막 20개의 변환 기록을 로컬에 저장해 보여줍니다.</p>
+        <p className="micro">
+          마지막 20개의 변환 기록을 로컬에 저장해 보여줍니다.
+        </p>
       </header>
 
       <section className={styles.listSection}>
-        {recent.length === 0 && <p className="subtle">아직 작업 기록이 없습니다.</p>}
+        {recent.length === 0 && (
+          <p className="subtle">아직 작업 기록이 없습니다.</p>
+        )}
         {recent.map((item) => (
           <div key={item.id} className={styles.card}>
             <div>

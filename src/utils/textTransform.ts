@@ -52,10 +52,7 @@ export function detectCase(input: string): CaseStyle {
   return "unknown";
 }
 
-export function splitWords(
-  input: string,
-  options: SplitOptions
-): string[] {
+export function splitWords(input: string, options: SplitOptions): string[] {
   const delimiters = options.delimiters.join("");
   const regex = new RegExp(`[${escapeRegex(delimiters)}]+`, "g");
   let working = input;
@@ -66,9 +63,7 @@ export function splitWords(
   let tokens = working.split(regex).filter(Boolean);
 
   if (options.splitNumbers) {
-    tokens = tokens.flatMap((token) =>
-      token.split(/([0-9]+)/).filter(Boolean)
-    );
+    tokens = tokens.flatMap((token) => token.split(/([0-9]+)/).filter(Boolean));
   }
   return tokens.map((t) => t.trim()).filter(Boolean);
 }
@@ -77,9 +72,7 @@ export function toCase(words: string[], target: CaseStyle): string {
   const normalized = words.map((w) => w.toLowerCase());
   switch (target) {
     case "camel":
-      return normalized
-        .map((w, i) => (i === 0 ? w : capitalize(w)))
-        .join("");
+      return normalized.map((w, i) => (i === 0 ? w : capitalize(w))).join("");
     case "pascal":
       return normalized.map(capitalize).join("");
     case "snake":
@@ -109,7 +102,7 @@ export function toCase(words: string[], target: CaseStyle): string {
 
 export function processLines(
   input: string,
-  options: LineProcessOptions
+  options: LineProcessOptions,
 ): { lines: string[]; combined: string } {
   const rawLines = input.split(/\r?\n/);
   const seen = new Set<string>();
@@ -157,9 +150,10 @@ export function processLines(
   };
 }
 
-export function guessDominantCase(
-  lines: string[]
-): { style: CaseStyle; confidence: number } {
+export function guessDominantCase(lines: string[]): {
+  style: CaseStyle;
+  confidence: number;
+} {
   const counts: Record<CaseStyle, number> = {
     camel: 0,
     pascal: 0,
@@ -189,7 +183,9 @@ export function guessDominantCase(
   };
 }
 
-export function generateCaseVariants(words: string[]): Record<CaseStyle, string> {
+export function generateCaseVariants(
+  words: string[],
+): Record<CaseStyle, string> {
   const targets: CaseStyle[] = [
     "camel",
     "pascal",
@@ -204,10 +200,13 @@ export function generateCaseVariants(words: string[]): Record<CaseStyle, string>
     "upper",
     "lower",
   ];
-  return targets.reduce<Record<CaseStyle, string>>((acc, style) => {
-    acc[style] = toCase(words, style);
-    return acc;
-  }, {} as Record<CaseStyle, string>);
+  return targets.reduce<Record<CaseStyle, string>>(
+    (acc, style) => {
+      acc[style] = toCase(words, style);
+      return acc;
+    },
+    {} as Record<CaseStyle, string>,
+  );
 }
 
 function capitalize(str: string) {

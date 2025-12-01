@@ -10,6 +10,26 @@
   gap: 4px;
 }
 
+.tabRow {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.button {
+  border: 1px solid var(--border);
+  background: var(--surface-muted);
+  border-radius: 8px;
+  padding: 6px 10px;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.button.active {
+  border-color: var(--secondary-300);
+  color: var(--secondary-100);
+}
+
 .filters {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -88,18 +108,4 @@
 .actions {
   display: flex;
   justify-content: flex-end;
-}
-
-.button {
-  border: 1px solid var(--border);
-  background: var(--surface-muted);
-  border-radius: 8px;
-  padding: 6px 10px;
-  color: var(--text);
-  cursor: pointer;
-}
-
-.button.active {
-  border-color: var(--secondary-300);
-  color: var(--secondary-100);
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 type Activity = {
   id: string;
@@ -28,19 +28,22 @@ const saveActivities = (items: Activity[]) => {
 export function useRecentActivity() {
   const [items, setItems] = useState<Activity[]>(() => loadActivities());
 
+  // guard against setState loops by saving only when list identity changes meaningfully
   useEffect(() => {
     saveActivities(items);
   }, [items]);
 
-  const addActivity = (title: string, detail: string) => {
-    const next: Activity = {
-      id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
-      title,
-      detail,
-      timestamp: Date.now(),
-    };
-    setItems((prev) => [next, ...prev].slice(0, 20));
-  };
+  const addActivity = useCallback((title: string, detail: string) => {
+    setItems((prev) => {
+      const next: Activity = {
+        id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+        title,
+        detail,
+        timestamp: Date.now(),
+      };
+      return [next, ...prev].slice(0, 20);
+    });
+  }, []);
 
   return { items, addActivity };
 }

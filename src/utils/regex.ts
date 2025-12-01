@@ -173,7 +173,7 @@ export function runRegex(
   pattern: string,
   flags: string,
   text: string,
-  replace?: string | ((...args: any[]) => string)
+  replace?: string | ((...args: any[]) => string),
 ): RegexRunResult {
   let regex: RegExp;
   try {

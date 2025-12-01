@@ -1,8 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { invoke } from "@tauri-apps/api/core";
-import { listen } from "@tauri-apps/api/event";
+import { type Event as TauriEvent } from "@tauri-apps/api/event";
+import { getCurrentWebview, type DragDropEvent } from "@tauri-apps/api/webview";
 import { openPath } from "@tauri-apps/plugin-opener";
+
+import { Button } from "@/components/ui/Button";
 
 import styles from "./index.module.scss";
 import { ConvertOptions } from "../../components/ConvertOptions";
@@ -10,7 +13,6 @@ import { DropZone } from "../../components/DropZone";
 import { FileList } from "../../components/FileList";
 import { GifOptions } from "../../components/GifOptions";
 import { Hero } from "../../components/Hero";
-import { ModeSwitch } from "../../components/ModeSwitch";
 import { OutputSettings } from "../../components/OutputSettings";
 import { ResultsPanel } from "../../components/ResultsPanel";
 import { useToast } from "../../components/ToastProvider";
@@ -99,22 +101,31 @@ export function ConvertPage({ modeOverride, recentAdd }: ConvertPageProps) {
 
   useEffect(() => {
     if (!isTauriEnv) return;
-    const unlistenPromise = listen<string[]>("tauri://file-drop", (event) => {
-      const paths = (event.payload || []).filter((p) => {
-        const lower = p.toLowerCase();
-        return mode === "gif"
-          ? videoExts.some((ext) => lower.endsWith(`.${ext}`))
-          : imageExts.some((ext) => lower.endsWith(`.${ext}`));
-      });
-      if (paths.length) {
-        addFiles(mode === "gif" ? [paths[0]] : paths);
-      }
-    });
+    const unlistenPromise = getCurrentWebview().onDragDropEvent(
+      (event: TauriEvent<DragDropEvent>) => {
+        if (event.payload.type !== "drop") return;
+        const paths = (event.payload.paths || []).filter((p) => {
+          const lower = p.toLowerCase();
+          return mode === "gif"
+            ? videoExts.some((ext) => lower.endsWith(`.${ext}`))
+            : imageExts.some((ext) => lower.endsWith(`.${ext}`));
+        });
+        if (paths.length) {
+          addFiles(mode === "gif" ? [paths[0]] : paths);
+        } else {
+          setStatus(
+            mode === "gif"
+              ? "지원하지 않는 비디오 형식입니다."
+              : "지원하지 않는 이미지 형식입니다.",
+          );
+        }
+      },
+    );
 
     return () => {
       unlistenPromise.then((unlisten) => unlisten());
     };
-  }, [isTauriEnv, addFiles, mode]);
+  }, [isTauriEnv, addFiles, mode, setStatus]);
 
   useEffect(() => {
     if (!results.length) return;
@@ -221,6 +232,22 @@ export function ConvertPage({ modeOverride, recentAdd }: ConvertPageProps) {
 
   return (
     <div className={styles.page}>
+      <div className={styles.modeActions}>
+        <Button
+          variant={mode === "convert" ? "primary" : "ghost"}
+          className={styles.modeButton}
+          onClick={() => setMode("convert")}
+        >
+          이미지 변환
+        </Button>
+        <Button
+          variant={mode === "gif" ? "primary" : "ghost"}
+          className={styles.modeButton}
+          onClick={() => setMode("gif")}
+        >
+          비디오 → GIF
+        </Button>
+      </div>
       <Hero
         qualityPercent={qualityPercent}
         scalePercent={scalePercent}
@@ -233,9 +260,10 @@ export function ConvertPage({ modeOverride, recentAdd }: ConvertPageProps) {
       {mode === "convert" && (
         <div className="preset-row">
           {webPresets.map((preset) => (
-            <button
+            <Button
               key={preset.label}
               className="chip"
+              variant="pill"
               onClick={() => {
                 setTargetFormat(preset.targetFormat);
                 setQualityPercent(preset.quality);
@@ -244,7 +272,7 @@ export function ConvertPage({ modeOverride, recentAdd }: ConvertPageProps) {
               }}
             >
               {preset.label}
-            </button>
+            </Button>
           ))}
         </div>
       )}
@@ -252,6 +280,12 @@ export function ConvertPage({ modeOverride, recentAdd }: ConvertPageProps) {
       <section className="layout">
         <div>
           <DropZone
+            title={mode === "gif" ? "비디오 끌어다 놓기" : "이미지 끌어다 놓기"}
+            subtitle={
+              mode === "gif"
+                ? "비디오 → GIF: mp4, mov, mkv, avi"
+                : "이미지 변환: jpg, jpeg, png, webp, bmp, gif"
+            }
             onFilesAdded={(paths) => {
               const filtered = paths.filter((p) => {
                 const lower = p.toLowerCase();
@@ -283,8 +317,6 @@ export function ConvertPage({ modeOverride, recentAdd }: ConvertPageProps) {
         </div>
 
         <div className="panel options-panel">
-          <ModeSwitch mode={mode} onChange={setMode} />
-
           {mode === "convert" ? (
             <ConvertOptions
               targetFormat={targetFormat}

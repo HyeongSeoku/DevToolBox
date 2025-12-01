@@ -1,33 +1,172 @@
+// =====================================
+// Design Tokens
+// =====================================
+
+// ---------- Base Colors ----------
+$black: #000000;
+$white: #ffffff;
+$gray-900: #212121;
+$gray-800: #424242;
+$gray-700: #616161;
+$gray-600: #757575;
+$gray-500: #9e9e9e;
+$gray-400: #bdbdbd;
+$gray-300: #e0e0e0;
+$gray-200: #eeeeee;
+$gray-100: #f5f5f5;
+
+// ---------- Brand Colors (from primary/secondary/tertiary) ----------
+$primary-100: #1b336b;
+$primary-300: #152a5b;
+$primary-500: #11224e;
+$primary-700: #0c1a3e;
+
+$secondary-100: #ff9c55;
+$secondary-300: #f87b1b;
+$secondary-500: #d66612;
+
+$tertiary-100: #dce6b8;
+$tertiary-300: #cbd99b;
+$tertiary-500: #a7b474;
+
+$dimmed: #00000080;
+$footer-bg: #222222;
+
+// ---------- Semantic Colors ----------
+// Backgrounds
+$color-bg-default: $white;
+$color-bg-muted: $gray-100;
+$color-bg-footer: $footer-bg;
+
+// Text
+$color-text-default: $gray-900;
+$color-text-muted: $gray-600;
+$color-text-dimmed: $dimmed;
+
+// Borders
+$color-border-default: $gray-300;
+
+// Actions
+$color-action-primary: $primary-500;
+$color-action-primary-hover: $primary-700;
+
+// ---------- State Colors ----------
+@function hover-opacity($color, $opacity: 0.5) {
+  @return rgba($color, $opacity);
+}
+
+$state-hover-gray-900: hover-opacity($gray-900);
+$state-hover-gray-800: hover-opacity($gray-800);
+$state-hover-gray-700: hover-opacity($gray-700);
+$state-hover-gray-600: hover-opacity($gray-600);
+$state-hover-gray-500: hover-opacity($gray-500);
+$state-hover-gray-400: hover-opacity($gray-400);
+$state-hover-gray-300: hover-opacity($gray-300);
+$state-hover-gray-200: hover-opacity($gray-200);
+$state-hover-gray-100: hover-opacity($gray-100);
+
+// ---------- Spacing (4pt scale) ----------
+$space-0: 0;
+$space-1: 4px;
+$space-2: 8px;
+$space-3: 12px;
+$space-4: 16px;
+$space-5: 20px;
+$space-6: 24px;
+$space-8: 32px;
+$space-10: 40px;
+$space-12: 48px;
+$space-16: 64px;
+
+// ---------- Border Radius ----------
+$radius-xs: 2px;
+$radius-sm: 4px;
+$radius-md: 6px;
+$radius-lg: 8px;
+$radius-xl: 12px;
+$radius-full: 9999px;
+
+// ---------- Shadows ----------
+$shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.15);
+$shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.2);
+
+// ---------- Typography ----------
+$font-family-base: "Manrope", "Noto Sans KR", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+  system-ui, sans-serif;
+
+$font-size-xs: 12px;
+$font-size-sm: 14px;
+$font-size-md: 16px;
+$font-size-lg: 18px;
+$font-size-xl: 20px;
+
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-bold: 700;
+
+$line-height-tight: 1.2;
+$line-height-base: 1.5;
+$line-height-relaxed: 1.7;
+
 :root {
-  font-family: "Manrope", "Noto Sans KR", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: $font-family-base;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  --primary-100: #1b336b;
-  --primary-300: #152a5b;
-  --primary-500: #11224e;
-  --primary-700: #0c1a3e;
-  --secondary-100: #ff9c55;
-  --secondary-300: #f87b1b;
-  --secondary-500: #d66612;
-  --tertiary-100: #dce6b8;
-  --tertiary-300: #cbd99b;
-  --tertiary-500: #a7b474;
-  --accent-100: #eeeeee;
-  --accent-300: #d8d8d8;
+  --primary-100: #{$primary-100};
+  --primary-300: #{$primary-300};
+  --primary-500: #{$primary-500};
+  --primary-700: #{$primary-700};
+  --secondary-100: #{$secondary-100};
+  --secondary-300: #{$secondary-300};
+  --secondary-500: #{$secondary-500};
+  --tertiary-100: #{$tertiary-100};
+  --tertiary-300: #{$tertiary-300};
+  --tertiary-500: #{$tertiary-500};
+  --accent-100: #{$gray-200};
+  --accent-300: #{$gray-300};
 
   --gray-50: #f7f8fb;
-  --gray-100: #eceff4;
-  --gray-200: #d8dde7;
-  --gray-300: #c2cad7;
-  --gray-400: #9aa4b8;
-  --gray-500: #7a8499;
-  --gray-600: #5b6478;
-  --gray-700: #3d4556;
-  --gray-800: #252b38;
-  --gray-900: #0f121a;
+  --gray-100: #{$gray-100};
+  --gray-200: #{$gray-200};
+  --gray-300: #{$gray-300};
+  --gray-400: #{$gray-400};
+  --gray-500: #{$gray-500};
+  --gray-600: #{$gray-600};
+  --gray-700: #{$gray-700};
+  --gray-800: #{$gray-800};
+  --gray-900: #{$gray-900};
+
+  // spacing
+  --space-0: #{$space-0};
+  --space-1: #{$space-1};
+  --space-2: #{$space-2};
+  --space-3: #{$space-3};
+  --space-4: #{$space-4};
+  --space-5: #{$space-5};
+  --space-6: #{$space-6};
+  --space-8: #{$space-8};
+  --space-10: #{$space-10};
+  --space-12: #{$space-12};
+  --space-16: #{$space-16};
+
+  // radius
+  --radius-xs: #{$radius-xs};
+  --radius-sm: #{$radius-sm};
+  --radius-md: #{$radius-md};
+  --radius-lg: #{$radius-lg};
+  --radius-xl: #{$radius-xl};
+  --radius-full: #{$radius-full};
+
+  // shadows
+  --shadow-sm: #{$shadow-sm};
+  --shadow-md: #{$shadow-md};
+  --shadow-lg: #{$shadow-lg};
+  --shadow-xl: #{$shadow-xl};
 }
 
 :root[data-theme="light"] {

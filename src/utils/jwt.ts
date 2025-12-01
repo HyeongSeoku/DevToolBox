@@ -1,6 +1,4 @@
-type PartDecode =
-  | { ok: true; value: string }
-  | { ok: false; error: string };
+type PartDecode = { ok: true; value: string } | { ok: false; error: string };
 
 export type ParsedJwt = {
   raw: string;
@@ -22,8 +20,7 @@ export type TimestampInfo = {
 };
 
 export function detectJwtStrings(text: string): string[] {
-  const pattern =
-    /([A-Za-z0-9\-_]+)\.([A-Za-z0-9\-_]+)\.([A-Za-z0-9\-_]*)/g;
+  const pattern = /([A-Za-z0-9\-_]+)\.([A-Za-z0-9\-_]+)\.([A-Za-z0-9\-_]*)/g;
   const matches = new Set<string>();
   let m: RegExpExecArray | null;
   while ((m = pattern.exec(text)) !== null) {
@@ -36,13 +33,14 @@ export function detectJwtStrings(text: string): string[] {
 export function decodeBase64Url(input: string): PartDecode {
   try {
     const normalized = input.replace(/-/g, "+").replace(/_/g, "/");
-    const padded =
-      normalized + "===".slice((normalized.length + 3) % 4);
+    const padded = normalized + "===".slice((normalized.length + 3) % 4);
     let decoded = "";
     if (typeof window !== "undefined" && typeof window.atob === "function") {
       decoded = window.atob(padded);
     } else if ((globalThis as any).Buffer) {
-      decoded = (globalThis as any).Buffer.from(padded, "base64").toString("utf-8");
+      decoded = (globalThis as any).Buffer.from(padded, "base64").toString(
+        "utf-8",
+      );
     } else {
       throw new Error("Base64 디코더가 없습니다.");
     }
@@ -107,7 +105,7 @@ export function parseJwt(token: string): ParsedJwt {
 
 export function detectTimestamps(
   payload: any,
-  now = Date.now()
+  now = Date.now(),
 ): TimestampInfo[] {
   if (!payload || typeof payload !== "object") return [];
   const keys = ["iat", "exp", "nbf"];

@@ -12,8 +12,8 @@ h1 {
   background: linear-gradient(120deg, var(--secondary-100), var(--secondary-300));
   color: #0b1224;
   border: none;
-  padding: 12px 14px;
-  border-radius: 12px;
+  padding: var(--space-4) var(--space-4);
+  border-radius: var(--radius-xl);
   font-weight: 700;
   font-size: 15px;
   cursor: pointer;
@@ -63,8 +63,8 @@ input[type="text"] {
   border: 1px solid var(--border);
   background: transparent;
   color: var(--text);
-  padding: 10px 12px;
-  border-radius: 10px;
+  padding: var(--space-3) var(--space-3);
+  border-radius: var(--radius-lg);
   cursor: pointer;
   transition: border-color 0.2s ease, transform 0.15s ease;
 }
@@ -79,14 +79,14 @@ input[type="text"] {
   background: var(--surface-muted);
   border: 1px solid var(--border);
   color: var(--text);
-  padding: 8px 10px;
-  border-radius: 999px;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-full);
   cursor: pointer;
   font-weight: 600;
 }
 
 .mini-chip {
-  padding: 6px 8px;
+  padding: var(--space-2);
   font-size: 12px;
 }
 

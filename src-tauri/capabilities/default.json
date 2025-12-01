@@ -1,11 +1,18 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "Capability for the main window",
+  "description": "Main window capability (fs/opener/drag 등)",
   "windows": ["main"],
   "permissions": [
     "core:default",
     "opener:default",
-    "opener:allow-open-path"
+    "core:window:allow-start-dragging",
+    {
+      "identifier": "opener:allow-open-path",
+      "allow": [
+        { "path": "$HOME/**/*" },
+        { "path": "$HOME/Library/Mobile Documents/**/*" }
+      ]
+    }
   ]
 }

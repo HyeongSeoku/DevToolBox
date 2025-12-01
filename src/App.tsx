@@ -12,8 +12,9 @@ import { ConvertPage } from "./pages/Convert";
 import { EnvManagerPage } from "./pages/EnvManager";
 import { HomePage } from "./pages/Home";
 import { JWTDecoderPage } from "./pages/JWTDecoder";
+import { JSDocGeneratorPage } from "./pages/JSDocGenerator";
 import { RegexTesterPage } from "./pages/RegexTester";
-import { SnippetsGitPage } from "./pages/SnippetsGit";
+import { SnippetHubPage } from "./pages/SnippetsHub";
 import { SettingsPage } from "./pages/Settings";
 import { TextToolsPage } from "./pages/TextTools";
 import { TypeGenPage } from "./pages/TypeGen";
@@ -51,7 +52,12 @@ export function App() {
             <Route path="text" element={<TextToolsPage />} />
             <Route path="regex" element={<RegexTesterPage />} />
             <Route path="env" element={<EnvManagerPage />} />
-            <Route path="snippets/git" element={<SnippetsGitPage />} />
+            <Route path="snippets/:kind" element={<SnippetHubPage />} />
+            <Route
+              path="snippets"
+              element={<Navigate to="/snippets/git" replace />}
+            />
+            <Route path="jsdoc" element={<JSDocGeneratorPage />} />
             <Route path="typegen" element={<TypeGenPage />} />
             <Route path="settings" element={<SettingsPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />

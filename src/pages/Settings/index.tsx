@@ -10,21 +10,15 @@ import { useVaultStore } from "@/stores/useVaultStore";
 export function SettingsPage() {
   const toast = useToast();
   const isTauriEnv = useTauriEnv();
-  const {
-    settings,
-    loading,
-    error,
-    initVault,
-    setVaultPath,
-    reload,
-  } = useVaultStore((state) => ({
-    settings: state.settings,
-    loading: state.loading,
-    error: state.error,
-    initVault: state.initVault,
-    setVaultPath: state.setVaultPath,
-    reload: state.reload,
-  }));
+  const { settings, loading, error, initVault, setVaultPath, reload } =
+    useVaultStore((state) => ({
+      settings: state.settings,
+      loading: state.loading,
+      error: state.error,
+      initVault: state.initVault,
+      setVaultPath: state.setVaultPath,
+      reload: state.reload,
+    }));
 
   useEffect(() => {
     if (!isTauriEnv || settings || loading) return;
@@ -33,7 +27,9 @@ export function SettingsPage() {
 
   const handlePickVault = async () => {
     if (!isTauriEnv) {
-      toast.show("Vault 변경은 Tauri 환경에서만 가능합니다.", { type: "error" });
+      toast.show("Vault 변경은 Tauri 환경에서만 가능합니다.", {
+        type: "error",
+      });
       return;
     }
     try {
@@ -101,19 +97,23 @@ export function SettingsPage() {
         <p className={styles.label}>폴더 구조</p>
         <ul className={styles.list}>
           <li>
-            <span className={styles.folder}>settings.json</span> · Vault 설정 저장
+            <span className={styles.folder}>settings.json</span> · Vault 설정
+            저장
           </li>
           <li>
             <span className={styles.folder}>snippets/</span> · 코드/SQL 스니펫
           </li>
           <li>
-            <span className={styles.folder}>api-presets/</span> · API 환경 프리셋
+            <span className={styles.folder}>api-presets/</span> · API 환경
+            프리셋
           </li>
           <li>
-            <span className={styles.folder}>history/gif-convert/</span> · GIF 변환 기록
+            <span className={styles.folder}>history/gif-convert/</span> · GIF
+            변환 기록
           </li>
           <li>
-            <span className={styles.folder}>history/json-format/</span> · JSON 포맷 기록
+            <span className={styles.folder}>history/json-format/</span> · JSON
+            포맷 기록
           </li>
         </ul>
       </section>

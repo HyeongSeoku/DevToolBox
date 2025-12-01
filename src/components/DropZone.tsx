@@ -1,6 +1,7 @@
 import { useState, type DragEvent } from "react";
 
 import panelStyles from "./Panels.module.scss";
+import { Button } from "@/components/ui/Button";
 
 type DropZoneProps = {
   onFilesAdded: (paths: string[]) => void;
@@ -9,9 +10,19 @@ type DropZoneProps = {
   onPickFolder: () => void;
   onClear: () => void;
   busy: boolean;
+  title?: string;
+  subtitle?: string;
 };
 
-export function DropZone({ onFilesAdded, onPickFiles, onPickFolder, onClear, busy }: DropZoneProps) {
+export function DropZone({
+  onFilesAdded,
+  onPickFiles,
+  onPickFolder,
+  onClear,
+  busy,
+  title,
+  subtitle,
+}: DropZoneProps) {
   const [isHovering, setIsHovering] = useState(false);
 
   const handleDrop = (event: DragEvent<HTMLDivElement>) => {
@@ -30,6 +41,7 @@ export function DropZone({ onFilesAdded, onPickFiles, onPickFolder, onClear, bus
     if (paths.length) {
       onFilesAdded(paths);
     }
+    onHoverChange?.(false);
   };
 
   return (
@@ -41,27 +53,36 @@ export function DropZone({ onFilesAdded, onPickFiles, onPickFolder, onClear, bus
         setIsHovering(true);
         onHoverChange?.(true);
       }}
-      onDragLeave={() => {
+      onDragLeave={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
         setIsHovering(false);
         onHoverChange?.(false);
       }}
       onDrop={handleDrop}
+      onDragEnter={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsHovering(true);
+        onHoverChange?.(true);
+      }}
     >
       <div className={panelStyles.dropZone}>
-        <p className={panelStyles.dropTitle}>파일 끌어다 놓기</p>
+        <p className={panelStyles.dropTitle}>{title ?? "파일 끌어다 놓기"}</p>
         <p className={panelStyles.dropSub}>
-          이미지 변환: jpg, jpeg, png, webp, bmp, gif · 비디오 → GIF: mp4, mov, mkv, avi
+          {subtitle ??
+            "이미지 변환: jpg, jpeg, png, webp, bmp, gif · 비디오 → GIF: mp4, mov, mkv, avi"}
         </p>
         <div className={panelStyles.dropActions}>
-          <button className="ghost" onClick={onPickFiles} disabled={busy}>
+          <Button variant="ghost" onClick={onPickFiles} disabled={busy}>
             파일 선택
-          </button>
-          <button className="ghost" onClick={onPickFolder} disabled={busy}>
+          </Button>
+          <Button variant="ghost" onClick={onPickFolder} disabled={busy}>
             출력 폴더 지정
-          </button>
-          <button className="ghost" onClick={onClear} disabled={busy}>
+          </Button>
+          <Button variant="ghost" onClick={onClear} disabled={busy}>
             리스트 초기화
-          </button>
+          </Button>
         </div>
       </div>
     </div>

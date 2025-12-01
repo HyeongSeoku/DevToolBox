@@ -220,17 +220,17 @@ export function RegexTesterPage() {
           <div className={styles.snippets}>
             <p className={styles.label}>스니펫</p>
             <div className={styles.tabRow}>
-              {(["all", "frontend", "backend", "common", "custom"] as const).map(
-                (cat) => (
-                  <button
-                    key={cat}
-                    className={`${styles.button} ${styles.tab} ${snippetCategory === cat ? styles.active : ""}`}
-                    onClick={() => setSnippetCategory(cat)}
-                  >
-                    {cat}
-                  </button>
-                ),
-              )}
+              {(
+                ["all", "frontend", "backend", "common", "custom"] as const
+              ).map((cat) => (
+                <button
+                  key={cat}
+                  className={`${styles.button} ${styles.tab} ${snippetCategory === cat ? styles.active : ""}`}
+                  onClick={() => setSnippetCategory(cat)}
+                >
+                  {cat}
+                </button>
+              ))}
             </div>
             <div className={styles.snippetList}>
               {filteredSnippets.map((s) => (

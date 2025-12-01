@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/Button";
+
 import panelStyles from "./Panels.module.scss";
 
 type OutputSettingsProps = {
@@ -26,9 +28,9 @@ export function OutputSettings({
             placeholder="입력 폴더와 동일"
             onChange={(e) => onOutputDirChange(e.target.value || null)}
           />
-          <button className="ghost" onClick={onBrowseOutput}>
+          <Button variant="ghost" onClick={onBrowseOutput}>
             찾기
-          </button>
+          </Button>
         </div>
       </div>
       <div>
@@ -39,7 +41,10 @@ export function OutputSettings({
           onChange={(e) => onRenamePatternChange(e.target.value)}
           placeholder="{basename}_converted"
         />
-        <p className="micro">사용 가능: {"{basename}"}, {"{ext}"}, {"{YYYYMMDD_HHmmss}"}, {"{index_0001}"}</p>
+        <p className="micro">
+          사용 가능: {"{basename}"}, {"{ext}"}, {"{YYYYMMDD_HHmmss}"},{" "}
+          {"{index_0001}"}
+        </p>
       </div>
     </div>
   );

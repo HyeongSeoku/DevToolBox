@@ -22,7 +22,7 @@ type Toast = {
 type ToastContextValue = {
   show: (
     message: string,
-    options?: { type?: ToastType; duration?: number }
+    options?: { type?: ToastType; duration?: number },
   ) => void;
 };
 

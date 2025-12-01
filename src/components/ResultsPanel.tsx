@@ -1,4 +1,5 @@
 import panelStyles from "./Panels.module.scss";
+import { Button } from "@/components/ui/Button";
 import { type ConversionResult } from "../hooks/useConversionJob";
 
 type Progress = { percent: number; label: string };
@@ -31,7 +32,10 @@ export function ResultsPanel({
           {progress.percent > 0 && (
             <div className={panelStyles.progressRow}>
               <div className={panelStyles.progressBar}>
-                <div className={panelStyles.progressFill} style={{ width: `${Math.min(progress.percent, 100)}%` }} />
+                <div
+                  className={panelStyles.progressFill}
+                  style={{ width: `${Math.min(progress.percent, 100)}%` }}
+                />
               </div>
               <p className="micro">{progress.label}</p>
             </div>
@@ -49,7 +53,9 @@ export function ResultsPanel({
         </div>
       </div>
       <div className={panelStyles.resultsBody}>
-        {results.length === 0 && <p className="subtle">변환 결과가 여기에 표시됩니다.</p>}
+        {results.length === 0 && (
+          <p className="subtle">변환 결과가 여기에 표시됩니다.</p>
+        )}
         {results.map((item) => (
           <div
             key={`${item.input}-${item.output ?? item.error ?? "err"}`}
@@ -60,14 +66,16 @@ export function ResultsPanel({
               <p className="file-path">{item.output || item.error}</p>
             </div>
             {item.output && (
-              <button className="ghost" onClick={() => onOpen(item.output)}>
+              <Button variant="ghost" onClick={() => onOpen(item.output)}>
                 열기
-              </button>
+              </Button>
             )}
             <div className={panelStyles.progressBar} style={{ maxWidth: 160 }}>
               <div
                 className={panelStyles.progressFill}
-                style={{ width: `${Math.min(perFileProgress[item.input] ?? 0, 100)}%` }}
+                style={{
+                  width: `${Math.min(perFileProgress[item.input] ?? 0, 100)}%`,
+                }}
               />
             </div>
           </div>

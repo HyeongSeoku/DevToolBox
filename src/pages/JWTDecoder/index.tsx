@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import styles from "./index.module.scss";
+import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ToastProvider";
 import { useTauriEnv } from "@/hooks/useTauriEnv";
 import { useVaultStore } from "@/stores/useVaultStore";
@@ -173,7 +174,10 @@ export function JWTDecoderPage() {
       .toISOString()
       .slice(0, 10)}-${Date.now()}.json`;
     try {
-      await vault.writeFile(filename, JSON.stringify(parsed.payloadJson, null, 2));
+      await vault.writeFile(
+        filename,
+        JSON.stringify(parsed.payloadJson, null, 2),
+      );
       toast.show("Vault에 저장했습니다.", { type: "success" });
     } catch {
       toast.show("Vault 저장 실패: 설정을 확인하세요.", { type: "error" });
@@ -188,7 +192,8 @@ export function JWTDecoderPage() {
         <p className="eyebrow">JWT 디코더</p>
         <h1>JWT를 자동 감지하고 안전하게 디코딩</h1>
         <p className="micro">
-          붙여넣기만 하면 header/payload를 디코드합니다. 민감 정보는 로컬에서만 처리됩니다.
+          붙여넣기만 하면 header/payload를 디코드합니다. 민감 정보는 로컬에서만
+          처리됩니다.
         </p>
       </header>
 
@@ -202,9 +207,9 @@ export function JWTDecoderPage() {
           />
           <div className={styles.actions}>
             {clipboardReady && (
-              <button className="ghost" onClick={handleClipboard}>
+              <Button variant="ghost" onClick={handleClipboard}>
                 클립보드에서 가져오기
-              </button>
+              </Button>
             )}
             <label className={styles.checkbox}>
               <input
@@ -222,15 +227,17 @@ export function JWTDecoderPage() {
               />
               Cmd+V 자동 디코드 허용
             </label>
-            <button className="primary" onClick={handleParse}>
+            <Button variant="primary" onClick={handleParse}>
               디코드
-            </button>
+            </Button>
           </div>
         </div>
         <div className={styles.tokenList}>
-          {tokens.length === 0 && <p className="subtle">JWT가 감지되지 않았습니다.</p>}
+          {tokens.length === 0 && (
+            <p className="subtle">JWT가 감지되지 않았습니다.</p>
+          )}
           {tokens.map((tkn) => (
-            <button
+            <Button
               key={tkn}
               className={`${styles.tokenItem} ${selected === tkn ? styles.active : ""}`}
               onClick={() => setSelected(tkn)}
@@ -239,7 +246,7 @@ export function JWTDecoderPage() {
                 {parseJwt(tkn).unsigned ? "Unsigned" : "Signed"}
               </span>
               <span className={styles.tokenText}>{maskMiddle(tkn)}</span>
-            </button>
+            </Button>
           ))}
         </div>
       </section>
@@ -270,15 +277,15 @@ export function JWTDecoderPage() {
               </div>
             </div>
             <div className={styles.panelActions}>
-              <button
-                className="ghost"
+              <Button
+                variant="ghost"
                 onClick={() => copyText(parsed?.headerB64 || "")}
               >
                 Copy Base64URL
-              </button>
-              <button className="ghost" onClick={() => copyText(decodedHeader)}>
+              </Button>
+              <Button variant="ghost" onClick={() => copyText(decodedHeader)}>
                 Copy JSON
-              </button>
+              </Button>
             </div>
           </div>
           <pre className={styles.code}>{decodedHeader || "// 내용 없음"}</pre>
@@ -306,35 +313,32 @@ export function JWTDecoderPage() {
               </div>
             </div>
             <div className={styles.panelActions}>
-              <button
-                className="ghost"
+              <Button
+                variant="ghost"
                 onClick={() => copyText(parsed?.payloadB64 || "")}
               >
                 Copy Base64URL
-              </button>
-              <button className="ghost" onClick={() => copyText(decodedPayload)}>
+              </Button>
+              <Button variant="ghost" onClick={() => copyText(decodedPayload)}>
                 Copy JSON
-              </button>
-              <button className="ghost" onClick={() => copyText(minifiedPayload)}>
+              </Button>
+              <Button variant="ghost" onClick={() => copyText(minifiedPayload)}>
                 Minify & Copy
-              </button>
-              <button className="ghost" onClick={handleExport}>
+              </Button>
+              <Button variant="ghost" onClick={handleExport}>
                 JSON 저장
-              </button>
-              <button
-                className="ghost"
-                onClick={() => setMasking((m) => !m)}
-              >
+              </Button>
+              <Button variant="ghost" onClick={() => setMasking((m) => !m)}>
                 {masking ? "마스킹 해제" : "마스킹"}
-              </button>
-              <button
-                className="ghost"
+              </Button>
+              <Button
+                variant="ghost"
                 onClick={() =>
                   setViewMode((m) => (m === "pretty" ? "raw" : "pretty"))
                 }
               >
                 {viewMode === "pretty" ? "Raw 보기" : "Pretty 보기"}
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -356,8 +360,8 @@ export function JWTDecoderPage() {
       <section className={styles.history}>
         <div className={styles.historyHeader}>
           <p className={styles.label}>최근 디코드</p>
-          <button
-            className="ghost"
+          <Button
+            variant="ghost"
             onClick={() => {
               setHistory([]);
               if (typeof window !== "undefined") {
@@ -366,12 +370,12 @@ export function JWTDecoderPage() {
             }}
           >
             모두 지우기
-          </button>
+          </Button>
         </div>
         <div className={styles.historyList}>
           {history.length === 0 && <p className="subtle">기록 없음</p>}
           {history.map((item) => (
-            <button
+            <Button
               key={item}
               className={styles.historyItem}
               onClick={() => {
@@ -381,13 +385,15 @@ export function JWTDecoderPage() {
               }}
             >
               {maskMiddle(item)}
-            </button>
+            </Button>
           ))}
         </div>
       </section>
 
       {!isTauriEnv && (
-        <p className="micro">Tauri 환경에서 Vault 저장 및 클립보드 기능이 더 완전하게 작동합니다.</p>
+        <p className="micro">
+          Tauri 환경에서 Vault 저장 및 클립보드 기능이 더 완전하게 작동합니다.
+        </p>
       )}
     </div>
   );

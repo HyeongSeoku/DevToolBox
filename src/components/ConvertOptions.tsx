@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/Button";
+
 import panelStyles from "./Panels.module.scss";
 import { type TargetFormat } from "../hooks/useConversionJob";
 
@@ -35,13 +37,14 @@ export function ConvertOptions({
           <p className={panelStyles.label}>타겟 포맷</p>
           <div className={panelStyles.chipRow}>
             {(["jpeg", "png", "webp"] as TargetFormat[]).map((fmt) => (
-              <button
+              <Button
                 key={fmt}
-                className={`chip ${targetFormat === fmt ? "active" : ""}`}
+                variant="pill"
+                active={targetFormat === fmt}
                 onClick={() => onTargetChange(fmt)}
               >
                 {fmt.toUpperCase()}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -56,9 +59,13 @@ export function ConvertOptions({
           />
           <div className={panelStyles.chipRow}>
             {qualityPresets.map((preset) => (
-              <button key={preset.label} className="mini-chip" onClick={() => onQualityChange(preset.value)}>
+              <Button
+                key={preset.label}
+                variant="pill"
+                onClick={() => onQualityChange(preset.value)}
+              >
                 {preset.label}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -79,7 +86,11 @@ export function ConvertOptions({
         <div>
           <p className={panelStyles.label}>EXIF 제거</p>
           <label className="switch">
-            <input type="checkbox" checked={stripExif} onChange={(e) => onStripExifChange(e.target.checked)} />
+            <input
+              type="checkbox"
+              checked={stripExif}
+              onChange={(e) => onStripExifChange(e.target.checked)}
+            />
             <span>EXIF 제거 (기본 Off)</span>
           </label>
         </div>

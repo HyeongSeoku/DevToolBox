@@ -32,7 +32,7 @@ export function parseEnv(text: string): EnvFile {
 
 export function diffEnv(
   base: EnvFile,
-  compare: EnvFile
+  compare: EnvFile,
 ): { missing: EnvEntry[]; extras: EnvEntry[]; common: EnvEntry[] } {
   const missing = base.entries.filter((e) => !compare.map[e.key]);
   const extras = compare.entries.filter((e) => !base.map[e.key]);
@@ -40,7 +40,10 @@ export function diffEnv(
   return { missing, extras, common };
 }
 
-export function maskEnv(entries: EnvEntry[], mode: "full" | "partial" | "none") {
+export function maskEnv(
+  entries: EnvEntry[],
+  mode: "full" | "partial" | "none",
+) {
   if (mode === "none") return entries;
   return entries.map((e) => ({
     ...e,

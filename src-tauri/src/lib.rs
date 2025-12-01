@@ -118,6 +118,7 @@ fn ensure_vault_structure(vault_dir: &Path) -> Result<(), String> {
         "snippets/linux",
         "snippets/fe-utils",
         "snippets/be-utils",
+        "snippets/custom",
     ];
     for child in required_dirs {
         fs::create_dir_all(vault_dir.join(child)).map_err(|e| e.to_string())?;

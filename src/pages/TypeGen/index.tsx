@@ -1,5 +1,7 @@
 import { useMemo, useState } from "react";
 
+import { Button } from "@/components/ui/Button";
+
 import styles from "./index.module.scss";
 import { useToast } from "../../components/ToastProvider";
 import {
@@ -28,7 +30,8 @@ export function TypeGenPage() {
     if (isJsonTab) {
       try {
         const json = JSON.parse(inputText);
-        const inferred = inferType(json, typeName);
+        const enumsMap = json.enums as Record<string, string[]> | undefined;
+        const inferred = generateInterfaces(json, typeName || "Root", enumsMap);
         setPreview(inferred);
         setSummary("JSON 샘플에서 타입을 생성했습니다.");
         setStatus("완료");
@@ -131,18 +134,18 @@ export function TypeGenPage() {
       </header>
 
       <div className={styles.tabRow}>
-        <button
+        <Button
           className={`${styles.tab} ${tab === "openapi" ? styles.active : ""}`}
           onClick={() => setTab("openapi")}
         >
           OpenAPI / Swagger
-        </button>
-        <button
+        </Button>
+        <Button
           className={`${styles.tab} ${tab === "json" ? styles.active : ""}`}
           onClick={() => setTab("json")}
         >
           JSON 샘플
-        </button>
+        </Button>
       </div>
 
       <section className={styles.layout}>
@@ -158,9 +161,9 @@ export function TypeGenPage() {
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
               />
-              <button className="ghost" onClick={handleFetch}>
+              <Button variant="ghost" onClick={handleFetch}>
                 URL 불러오기
-              </button>
+              </Button>
             </div>
           )}
           <textarea
@@ -181,11 +184,11 @@ export function TypeGenPage() {
             </div>
           )}
           <div className={styles.buttonRow}>
-            <button className="primary" onClick={handleGenerate}>
+            <Button variant="primary" onClick={handleGenerate}>
               타입 생성
-            </button>
-            <button
-              className="ghost"
+            </Button>
+            <Button
+              variant="ghost"
               onClick={() => {
                 setInputText("");
                 setPreview(defaultCode);
@@ -194,7 +197,7 @@ export function TypeGenPage() {
               }}
             >
               초기화
-            </button>
+            </Button>
           </div>
           {status && <p className="micro">{status}</p>}
         </div>
@@ -203,59 +206,22 @@ export function TypeGenPage() {
           <div className={styles.previewHeader}>
             <p className={styles.label}>미리보기</p>
             {summary && <p className="micro">{summary}</p>}
+            <Button
+              variant="ghost"
+              onClick={() => {
+                navigator.clipboard.writeText(preview).catch(() => {
+                  toast.show("클립보드 복사 실패", { type: "error" });
+                });
+              }}
+            >
+              Copy
+            </Button>
           </div>
           <pre className={styles.code}>{preview}</pre>
         </div>
       </section>
     </div>
   );
-}
-
-function inferType(value: any, rootName: string): string {
-  const lines: string[] = [];
-  const seen: Record<string, number> = {};
-
-  const typeFor = (val: any, depth = 0): string => {
-    if (val === null) return "null";
-    const t = typeof val;
-    if (t === "string") return "string";
-    if (t === "number") return "number";
-    if (t === "boolean") return "boolean";
-    if (Array.isArray(val)) {
-      if (val.length === 0) return "unknown[]";
-      const itemTypes = Array.from(
-        new Set(val.map((item) => typeFor(item, depth + 1))),
-      );
-      return `Array<${itemTypes.join(" | ")}>`;
-    }
-    if (t === "object") {
-      return objectToType(val, depth + 1);
-    }
-    return "unknown";
-  };
-
-  const objectToType = (obj: Record<string, any>, depth: number) => {
-    const pad = "  ".repeat(depth);
-    const padClose = "  ".repeat(Math.max(depth - 1, 0));
-    const entries = Object.entries(obj);
-    const linesInner = entries.map(([key, val]) => {
-      const opt = val === undefined ? "?" : "";
-      return `${pad}${key}${opt}: ${typeFor(val, depth)};`;
-    });
-    return `{\n${linesInner.join("\n")}\n${padClose}}`;
-  };
-
-  const rootType = typeFor(value, 1);
-  const rootFinalName = uniqueName(rootName, seen);
-  lines.push(`export type ${rootFinalName} = ${rootType};`);
-  return lines.join("\n");
-}
-
-function uniqueName(base: string, seen: Record<string, number>) {
-  const norm = base.replace(/[^A-Za-z0-9_]/g, "") || "GeneratedType";
-  const count = seen[norm] ?? 0;
-  seen[norm] = count + 1;
-  return count === 0 ? norm : `${norm}${count + 1}`;
 }
 
 function looksLikeHtml(text: string) {
@@ -317,4 +283,115 @@ function tryExtractSpecUrl(html: string, baseUrl: string): string | null {
     return new URL(linkJson[1], baseUrl || undefined).toString();
 
   return null;
+}
+
+function generateInterfaces(
+  value: any,
+  rootName: string,
+  enumsMap?: Record<string, string[]>,
+): string {
+  const interfaces: string[] = [];
+  const enums: string[] = [];
+  const seen: Record<string, number> = {};
+  const enumMapLocal: Record<string, string[]> = enumsMap
+    ? { ...enumsMap }
+    : {};
+
+  const pascal = (str: string) => {
+    const clean = str.replace(/[^A-Za-z0-9]/g, " ").trim();
+    const parts = clean.split(/\s+/).filter(Boolean);
+    const base = parts.map((p) => p[0].toUpperCase() + p.slice(1)).join("");
+    return base || "Generated";
+  };
+
+  const uniqueName = (base: string) => {
+    const norm = pascal(base);
+    const count = seen[norm] ?? 0;
+    seen[norm] = count + 1;
+    return count === 0 ? norm : `${norm}${count + 1}`;
+  };
+
+  const isDateString = (str: string) =>
+    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(str);
+
+  const normalize = (str: string) =>
+    str.replace(/[^a-z0-9]/gi, "").toLowerCase();
+
+  const pickEnum = (key: string, sample?: string): string | null => {
+    if (!Object.keys(enumMapLocal).length) return null;
+    const keyLower = normalize(key);
+    for (const enumName of Object.keys(enumMapLocal)) {
+      const lower = normalize(enumName);
+      const nameMatches =
+        lower === keyLower ||
+        keyLower.endsWith(lower) ||
+        lower.endsWith(keyLower);
+      if (!nameMatches) continue;
+      if (sample && !enumMapLocal[enumName].includes(sample)) continue;
+      return enumName;
+    }
+    return null;
+  };
+
+  const collectInlineEnums = (node: any) => {
+    if (!node || typeof node !== "object" || Array.isArray(node)) return;
+    Object.entries(node).forEach(([key, val]) => {
+      if (
+        Array.isArray(val) &&
+        val.length > 0 &&
+        val.every((v) => typeof v === "string" && /^[A-Z0-9_]+$/.test(v))
+      ) {
+        enumMapLocal[key] = val;
+      } else if (val && typeof val === "object") {
+        collectInlineEnums(val);
+      }
+    });
+  };
+
+  if (!enumsMap) {
+    collectInlineEnums(value);
+  }
+
+  if (Object.keys(enumMapLocal).length) {
+    Object.entries(enumMapLocal).forEach(([name, values]) => {
+      const enumLines = values.map((v) => `  ${v} = "${v}",`);
+      enums.push(`export enum ${name} {\n${enumLines.join("\n")}\n}`);
+    });
+  }
+
+  const walk = (node: any, name: string): string => {
+    if (node === null) return "null";
+    const t = typeof node;
+    if (t === "string") {
+      const enumHit = pickEnum(name, node);
+      if (enumHit) return enumHit;
+      return isDateString(node) ? "Date" : "string";
+    }
+    if (t === "number") return "number";
+    if (t === "boolean") return "boolean";
+    if (Array.isArray(node)) {
+      if (node.length === 0) return "any[]";
+      const itemType = walk(node[0], name + "Item");
+      return `${itemType}[]`;
+    }
+    if (t === "object") {
+      const ifaceName = uniqueName(name);
+      const lines = Object.entries(node).map(([key, val]) => {
+        const type = walk(val, key);
+        return `  ${key}: ${type};`;
+      });
+      interfaces.push(
+        `export interface ${ifaceName} {\n${lines.join("\n")}\n}`,
+      );
+      return ifaceName;
+    }
+    return "any";
+  };
+
+  const rootInterface = walk(value, rootName || "Root");
+  if (!interfaces.find((i) => i.includes(`interface ${rootInterface}`))) {
+    interfaces.push(`export interface ${rootInterface} {}`);
+  }
+  const enumsBlock = enums.length ? `${enums.join("\n\n")}\n\n` : "";
+  return `${enumsBlock}${interfaces.reverse().join("\n\n")}`;
 }

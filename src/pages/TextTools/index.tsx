@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import styles from "./index.module.scss";
+import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ToastProvider";
 import { useVaultStore } from "@/stores/useVaultStore";
 import {
@@ -32,7 +33,9 @@ export function TextToolsPage() {
   const [suffix, setSuffix] = useState("");
   const [wrapTemplate, setWrapTemplate] = useState("{{text}}");
   const [useDatePrefix, setUseDatePrefix] = useState(false);
-  const [numbering, setNumbering] = useState<"numeric" | "padded" | "alpha" | null>(null);
+  const [numbering, setNumbering] = useState<
+    "numeric" | "padded" | "alpha" | null
+  >(null);
   const [numberWidth, setNumberWidth] = useState(3);
   const [dedupe, setDedupe] = useState(false);
   const [uppercaseSplit, setUppercaseSplit] = useState(true);
@@ -40,7 +43,8 @@ export function TextToolsPage() {
 
   const lines = useMemo(() => input.split(/\r?\n/), [input]);
   const guessed = useMemo(() => guessDominantCase(lines), [lines]);
-  const showGuessStrong = guessed.confidence >= 0.7 && guessed.style !== "unknown";
+  const showGuessStrong =
+    guessed.confidence >= 0.7 && guessed.style !== "unknown";
 
   const splitOptions = useMemo(
     () => ({
@@ -120,7 +124,8 @@ export function TextToolsPage() {
         <p className="eyebrow">텍스트 변환기</p>
         <h1>케이스 변환 · Prefix/Suffix · 라인 처리</h1>
         <p className="micro">
-          snake, camel, kebab 등 다양한 케이스로 변환하고 줄 단위 파이프라인을 적용합니다.
+          snake, camel, kebab 등 다양한 케이스로 변환하고 줄 단위 파이프라인을
+          적용합니다.
         </p>
       </header>
 
@@ -128,14 +133,14 @@ export function TextToolsPage() {
         <div className={styles.card}>
           <div className={styles.row}>
             <label className={styles.label}>입력</label>
-            <button
-              className="ghost"
+            <Button
+              variant="ghost"
               onClick={() => {
                 setInput("");
               }}
             >
               지우기
-            </button>
+            </Button>
           </div>
           <textarea
             className={styles.textarea}
@@ -287,7 +292,9 @@ export function TextToolsPage() {
               <input
                 type="checkbox"
                 checked={joinMode === "one"}
-                onChange={(e) => setJoinMode(e.target.checked ? "one" : "lines")}
+                onChange={(e) =>
+                  setJoinMode(e.target.checked ? "one" : "lines")
+                }
               />
               결과를 한 줄로 합치기
             </label>
@@ -338,9 +345,7 @@ export function TextToolsPage() {
                   key={d || "space"}
                   className={styles.delimChip}
                   onClick={() =>
-                    setDelimiters((prev) =>
-                      prev.filter((item) => item !== d)
-                    )
+                    setDelimiters((prev) => prev.filter((item) => item !== d))
                   }
                   title="클릭하면 제거"
                 >
@@ -355,12 +360,12 @@ export function TextToolsPage() {
           <div className={styles.row}>
             <p className={styles.label}>결과</p>
             <div className={styles.inlineActions}>
-              <button className="ghost" onClick={handleCopy}>
+              <Button className={styles.button} onClick={handleCopy}>
                 Copy
-              </button>
-              <button className="ghost" onClick={handleSave}>
+              </Button>
+              <Button className={styles.button} onClick={handleSave}>
                 Vault 저장
-              </button>
+              </Button>
             </div>
           </div>
           <div className={styles.variants}>
