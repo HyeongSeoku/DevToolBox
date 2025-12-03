@@ -1,10 +1,10 @@
 .sidebar {
   background: linear-gradient(180deg, var(--primary-500), var(--primary-700));
   color: #f8fafc;
-  padding: 20px 16px;
+  padding: var(--space-5) var(--space-4);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-4);
   height: 100vh;
   overflow: hidden;
 }
@@ -12,7 +12,7 @@
 .brand {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-3);
 }
 
 .logo {
@@ -40,8 +40,8 @@
 .nav {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-top: 8px;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
 }
 
 .scroll {
@@ -55,8 +55,8 @@
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.08);
   color: #f8fafc;
-  padding: 10px 12px;
-  border-radius: 10px;
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
   cursor: pointer;
   transition:
     background 0.15s ease,
