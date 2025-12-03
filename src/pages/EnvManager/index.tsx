@@ -3,17 +3,20 @@ import { useMemo, useState } from "react";
 import styles from "./index.module.scss";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ToastProvider";
-import { useVaultStore } from "@/stores/useVaultStore";
-import { diffEnv, maskEnv, parseEnv, type EnvEntry } from "@/utils/env";
-
-const HISTORY_PATH = "history/env";
+import {
+  diffEnvDetailed,
+  generateExample,
+  maskEnv,
+  parseEnv,
+  scanSecrets,
+  type DiffItem,
+} from "@/utils/env";
 
 type MaskMode = "none" | "partial" | "full";
-type SortMode = "alpha" | "group" | "example";
+type Tab = "compare" | "example" | "security";
 
 export function EnvManagerPage() {
   const toast = useToast();
-  const vault = useVaultStore();
   const [baseText, setBaseText] = useState(
     "API_URL=https://api.dev\nDB_HOST=localhost\nDB_USER=user\nDB_PASS=secret",
   );
@@ -21,65 +24,91 @@ export function EnvManagerPage() {
     "API_URL=https://api.prod\nDB_HOST=prod.db\nDB_USER=user\n",
   );
   const [maskMode, setMaskMode] = useState<MaskMode>("partial");
-  const [sortMode, setSortMode] = useState<SortMode>("alpha");
-  const [showMissingOnly, setShowMissingOnly] = useState(true);
+  const [tab, setTab] = useState<Tab>("compare");
 
   const baseEnv = useMemo(() => parseEnv(baseText), [baseText]);
   const compareEnv = useMemo(() => parseEnv(compareText), [compareText]);
   const diff = useMemo(
-    () => diffEnv(baseEnv, compareEnv),
+    () => diffEnvDetailed(baseEnv, compareEnv),
     [baseEnv, compareEnv],
   );
-
-  const maskedMissing = useMemo(
-    () => maskEnv(diff.missing, maskMode),
-    [diff.missing, maskMode],
+  const exampleText = useMemo(
+    () => generateExample(baseEnv.entries),
+    [baseEnv.entries],
   );
-  const maskedExtras = useMemo(
-    () => maskEnv(diff.extras, maskMode),
-    [diff.extras, maskMode],
-  );
-  const maskedCommon = useMemo(
-    () => maskEnv(diff.common, maskMode),
-    [diff.common, maskMode],
+  const secrets = useMemo(
+    () => scanSecrets(baseEnv.entries),
+    [baseEnv.entries],
   );
 
-  const sortedCommon = useMemo(
-    () => sortEntries(maskedCommon, sortMode, baseEnv),
-    [maskedCommon, sortMode, baseEnv],
+  const maskedDiff = useMemo(
+    () =>
+      diff.map((item) => ({
+        ...item,
+        base: item.base ? maskEnv([item.base], maskMode)[0] : undefined,
+        compare: item.compare
+          ? maskEnv([item.compare], maskMode)[0]
+          : undefined,
+      })),
+    [diff, maskMode],
   );
 
-  const saveHistory = async () => {
+  const handleCopy = async (text: string) => {
     try {
-      const filename = `${HISTORY_PATH}/${Date.now()}.json`;
-      await vault.writeFile(
-        filename,
-        JSON.stringify(
-          {
-            base: baseText,
-            compare: compareText,
-            mask: maskMode,
-            sort: sortMode,
-          },
-          null,
-          2,
-        ),
-      );
-      toast.show("Vault에 저장했습니다.", { type: "success" });
+      await navigator.clipboard.writeText(text);
+      toast.show("복사 완료", { type: "success" });
     } catch {
-      toast.show("Vault 저장 실패: 설정을 확인하세요.", { type: "error" });
+      toast.show("복사 실패", { type: "error" });
     }
+  };
+
+  const renderDiffRow = (item: DiffItem & { base?: any; compare?: any }) => {
+    const status = item.status;
+    const className =
+      status === "match"
+        ? styles.match
+        : status === "missing"
+          ? styles.missing
+          : status === "extra"
+            ? styles.extra
+            : styles.diff;
+    return (
+      <div key={item.key} className={`${styles.diffRow} ${className}`}>
+        <div className={styles.keyCol}>{item.key}</div>
+        <div className={styles.valueCol}>{item.base?.value ?? "-"}</div>
+        <div className={styles.valueCol}>{item.compare?.value ?? "-"}</div>
+        <div className={styles.status}>{status}</div>
+      </div>
+    );
   };
 
   return (
     <div className={styles.page}>
       <header className={styles.header}>
         <p className="eyebrow">.env Manager</p>
-        <h1>멀티 env 비교 · 마스킹 · 정렬</h1>
+        <h1>env 비교 · 예제 생성 · 보안 검사</h1>
         <p className="micro">
-          base/.env와 대상 환경을 비교하고 누락/차이를 한눈에 확인하세요.
+          두 개의 env 텍스트를 붙여 넣어 차이를 확인하고, 예제/보안 점검을
+          수행하세요.
         </p>
       </header>
+
+      <div className={styles.tabs}>
+        {(["compare", "example", "security"] as Tab[]).map((t) => (
+          <Button
+            key={t}
+            variant="pill"
+            active={tab === t}
+            onClick={() => setTab(t)}
+          >
+            {t === "compare"
+              ? "Compare"
+              : t === "example"
+                ? "Example"
+                : "Security"}
+          </Button>
+        ))}
+      </div>
 
       <section className={styles.grid}>
         <div className={styles.card}>
@@ -123,107 +152,48 @@ export function EnvManagerPage() {
             <option value="none">마스킹 없음</option>
           </select>
         </div>
-        <div className={styles.inline}>
-          <label className={styles.label}>정렬</label>
-          <select
-            value={sortMode}
-            onChange={(e) => setSortMode(e.target.value as SortMode)}
-          >
-            <option value="alpha">알파벳</option>
-            <option value="group">그룹(DB_/API_/SERVICE_)</option>
-            <option value="example">example 우선</option>
-          </select>
-        </div>
-        <label className={styles.checkbox}>
-          <input
-            type="checkbox"
-            checked={showMissingOnly}
-            onChange={(e) => setShowMissingOnly(e.target.checked)}
-          />
-          누락만 표시
-        </label>
-        <Button variant="ghost" onClick={saveHistory}>
-          Vault 저장
-        </Button>
       </section>
 
-      <section className={styles.grid}>
-        <div className={styles.card}>
-          <p className={styles.label}>누락 ({maskedMissing.length})</p>
-          {maskedMissing.length === 0 ? (
-            <p className="subtle">누락 없음</p>
-          ) : (
-            <EntryList entries={maskedMissing} tone="warn" />
-          )}
-        </div>
-        <div className={styles.card}>
-          <p className={styles.label}>추가 ({maskedExtras.length})</p>
-          {maskedExtras.length === 0 ? (
-            <p className="subtle">추가 없음</p>
-          ) : (
-            <EntryList entries={maskedExtras} tone="info" />
-          )}
-        </div>
-      </section>
-
-      {!showMissingOnly && (
+      {tab === "compare" && (
         <section className={styles.card}>
-          <p className={styles.label}>공통 키 ({sortedCommon.length})</p>
-          <EntryList entries={sortedCommon} tone="neutral" />
+          <div className={styles.diffHeader}>
+            <span className={styles.keyCol}>Key</span>
+            <span className={styles.valueCol}>Base</span>
+            <span className={styles.valueCol}>Compare</span>
+            <span className={styles.status}>Status</span>
+          </div>
+          <div className={styles.diffList}>{maskedDiff.map(renderDiffRow)}</div>
+        </section>
+      )}
+
+      {tab === "example" && (
+        <section className={styles.card}>
+          <div className={styles.row}>
+            <p className={styles.label}>.env.example 생성</p>
+            <Button variant="primary" onClick={() => handleCopy(exampleText)}>
+              Copy
+            </Button>
+          </div>
+          <pre className={styles.code}>{exampleText}</pre>
+        </section>
+      )}
+
+      {tab === "security" && (
+        <section className={styles.card}>
+          <p className={styles.label}>보안 스캔</p>
+          {secrets.length === 0 ? (
+            <p className="subtle">의심 키가 없습니다.</p>
+          ) : (
+            <ul className={styles.secretList}>
+              {secrets.map((s) => (
+                <li key={s} className={styles.secretItem}>
+                  {s}
+                </li>
+              ))}
+            </ul>
+          )}
         </section>
       )}
     </div>
   );
-}
-
-type EntryListProps = {
-  entries: EnvEntry[];
-  tone: "warn" | "info" | "neutral";
-};
-
-function EntryList({ entries, tone }: EntryListProps) {
-  return (
-    <div className={styles.list}>
-      {entries.map((e) => (
-        <div key={e.key} className={`${styles.item} ${styles[tone]}`}>
-          <span className={styles.key}>{e.key}</span>
-          <span className={styles.value}>{e.value}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function sortEntries(
-  entries: EnvEntry[],
-  mode: SortMode,
-  base: { entries: EnvEntry[] },
-) {
-  if (mode === "alpha") {
-    return [...entries].sort((a, b) => a.key.localeCompare(b.key));
-  }
-  if (mode === "group") {
-    const weight = (key: string) => {
-      if (key.startsWith("DB_")) return 0;
-      if (key.startsWith("API_")) return 1;
-      if (key.startsWith("SERVICE_")) return 2;
-      return 3;
-    };
-    return [...entries].sort(
-      (a, b) => weight(a.key) - weight(b.key) || a.key.localeCompare(b.key),
-    );
-  }
-  if (mode === "example") {
-    const baseIndex = base.entries.reduce<Record<string, number>>(
-      (acc, e, idx) => {
-        acc[e.key] = idx;
-        return acc;
-      },
-      {},
-    );
-    return [...entries].sort(
-      (a, b) => (baseIndex[a.key] ?? 9999) - (baseIndex[b.key] ?? 9999),
-    );
-  }
-  return entries;
 }

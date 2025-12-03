@@ -1,6 +1,14 @@
 body {
   background: var(--bg);
   color: var(--text);
+  scrollbar-gutter: stable both-edges;
+  overflow: hidden;
+  height: 100%;
+}
+
+html,
+#root {
+  height: 100%;
 }
 
 h1 {
@@ -9,7 +17,11 @@ h1 {
 }
 
 .primary {
-  background: linear-gradient(120deg, var(--secondary-100), var(--secondary-300));
+  background: linear-gradient(
+    120deg,
+    var(--secondary-100),
+    var(--secondary-300)
+  );
   color: #0b1224;
   border: none;
   padding: var(--space-4) var(--space-4);
@@ -17,7 +29,9 @@ h1 {
   font-weight: 700;
   font-size: 15px;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
 }
 
 .primary:disabled {
@@ -63,10 +77,12 @@ input[type="text"] {
   border: 1px solid var(--border);
   background: transparent;
   color: var(--text);
-  padding: var(--space-3) var(--space-3);
-  border-radius: var(--radius-lg);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-xl);
   cursor: pointer;
-  transition: border-color 0.2s ease, transform 0.15s ease;
+  transition:
+    border-color 0.2s ease,
+    transform 0.15s ease;
 }
 
 .ghost:hover {
@@ -79,8 +95,8 @@ input[type="text"] {
   background: var(--surface-muted);
   border: 1px solid var(--border);
   color: var(--text);
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-full);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-xl);
   cursor: pointer;
   font-weight: 600;
 }
@@ -93,4 +109,33 @@ input[type="text"] {
 .chip.active {
   border-color: var(--secondary-300);
   background: rgba(248, 123, 27, 0.12);
+}
+
+/* Scrollbar styling */
+* {
+  scrollbar-width: thin;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--bg);
+  border-radius: var(--radius-lg);
+}
+
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    var(--secondary-100),
+    var(--secondary-300)
+  );
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--surface-muted);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary-500);
 }

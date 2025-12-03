@@ -59,8 +59,8 @@ export function SettingsPage() {
         <p className="eyebrow">설정</p>
         <h1>Vault 및 데이터 경로</h1>
         <p className="micro">
-          모든 히스토리와 설정은 로컬 Vault에 저장됩니다. iCloud Drive 등 동기화
-          폴더를 지정하면 자동으로 동기화됩니다.
+          모든 히스토리와 설정은 로컬 Vault에 저장됩니다. 기본 경로가 없으면
+          실행 시 자동으로 생성합니다.
         </p>
       </header>
 
@@ -98,22 +98,20 @@ export function SettingsPage() {
         <ul className={styles.list}>
           <li>
             <span className={styles.folder}>settings.json</span> · Vault 설정
-            저장
           </li>
           <li>
-            <span className={styles.folder}>snippets/</span> · 코드/SQL 스니펫
+            <span className={styles.folder}>env-history/</span> · .env 백업
           </li>
           <li>
-            <span className={styles.folder}>api-presets/</span> · API 환경
-            프리셋
+            <span className={styles.folder}>convert-history/</span> · 변환
+            기록(JSON)
           </li>
           <li>
-            <span className={styles.folder}>history/gif-convert/</span> · GIF
-            변환 기록
+            <span className={styles.folder}>diff/</span> · 파일 비교 임시 저장
           </li>
           <li>
-            <span className={styles.folder}>history/json-format/</span> · JSON
-            포맷 기록
+            <span className={styles.folder}>tmp/</span> · 임시 파일 (필요 시
+            정리)
           </li>
         </ul>
       </section>

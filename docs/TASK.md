@@ -8,11 +8,11 @@
 
 ### 1. Tauri + React 프로젝트 초기 세팅
 
-- [ ] Tauri(V2) + React(Vite) 프로젝트 생성
-- [ ] 타입스크립트 + eslint/prettier 설정
-- [ ] alias("@/") 설정
-- [ ] Zustand or Jotai 기본 세팅
-- [ ] UI 기본 레이아웃 구성 (좌측 사이드바 + 메인 페이지)
+- [x] Tauri(V2) + React(Vite) 프로젝트 생성
+- [x] 타입스크립트 + eslint/prettier 설정
+- [x] alias("@/") 설정
+- [x] Zustand or Jotai 기본 세팅
+- [x] UI 기본 레이아웃 구성 (좌측 사이드바 + 메인 페이지)
 
 ---
 

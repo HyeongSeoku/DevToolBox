@@ -24,6 +24,8 @@ pub fn run() {
             pick_files,
             pick_folder,
             init_vault,
+            read_settings_json,
+            write_settings_json,
             read_settings,
             save_settings,
             read_vault_file,
@@ -85,10 +87,15 @@ struct PartialResultPayload {
     status: String,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
-struct AppSettings {
+#[derive(Debug, Serialize, Deserialize, Clone, Default)]
+#[serde(rename_all = "camelCase")]
+struct VaultSettings {
+    #[serde(default)]
     vault_path: String,
-    last_opened: Option<String>,
+    #[serde(default)]
+    recent_files: Vec<String>,
+    #[serde(default)]
+    last_open_path: Option<String>,
 }
 
 fn default_vault_dir() -> Result<PathBuf, String> {
@@ -101,9 +108,20 @@ fn settings_file_path(vault_dir: &Path) -> PathBuf {
     vault_dir.join("settings.json")
 }
 
+fn normalize_settings(mut settings: VaultSettings, vault_dir: &Path) -> VaultSettings {
+    if settings.vault_path.trim().is_empty() {
+        settings.vault_path = vault_dir.to_string_lossy().to_string();
+    }
+    settings
+}
+
 fn ensure_vault_structure(vault_dir: &Path) -> Result<(), String> {
     fs::create_dir_all(vault_dir).map_err(|e| e.to_string())?;
     let required_dirs = [
+        "env-history",
+        "convert-history",
+        "diff",
+        "tmp",
         "snippets",
         "api-presets",
         "history",
@@ -113,12 +131,6 @@ fn ensure_vault_structure(vault_dir: &Path) -> Result<(), String> {
         "history/text-convert",
         "history/regex-tester",
         "history/env",
-        "snippets",
-        "snippets/git",
-        "snippets/linux",
-        "snippets/fe-utils",
-        "snippets/be-utils",
-        "snippets/custom",
     ];
     for child in required_dirs {
         fs::create_dir_all(vault_dir.join(child)).map_err(|e| e.to_string())?;
@@ -126,7 +138,18 @@ fn ensure_vault_structure(vault_dir: &Path) -> Result<(), String> {
     Ok(())
 }
 
-fn write_settings_file(path: &Path, settings: &AppSettings) -> Result<(), String> {
+fn ensure_settings_file(vault_dir: &Path) -> Result<(), String> {
+    let path = settings_file_path(vault_dir);
+    if path.exists() {
+        return Ok(());
+    }
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent).map_err(|e| e.to_string())?;
+    }
+    fs::write(&path, "{}").map_err(|e| e.to_string())
+}
+
+fn write_settings_file(path: &Path, settings: &VaultSettings) -> Result<(), String> {
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent).map_err(|e| e.to_string())?;
     }
@@ -134,26 +157,16 @@ fn write_settings_file(path: &Path, settings: &AppSettings) -> Result<(), String
     fs::write(path, json).map_err(|e| e.to_string())
 }
 
-fn load_settings(vault_dir: &Path) -> Result<AppSettings, String> {
+fn load_settings(vault_dir: &Path) -> Result<VaultSettings, String> {
+    ensure_settings_file(vault_dir)?;
     let settings_path = settings_file_path(vault_dir);
-    if !settings_path.exists() {
-        let fresh = AppSettings {
-            vault_path: vault_dir
-                .to_str()
-                .unwrap_or_default()
-                .to_string(),
-            last_opened: None,
-        };
-        write_settings_file(&settings_path, &fresh)?;
-        return Ok(fresh);
-    }
     let text = fs::read_to_string(&settings_path).map_err(|e| e.to_string())?;
-    let mut settings: AppSettings =
-        serde_json::from_str(&text).map_err(|e| format!("settings.json 파싱 실패: {e}"))?;
-    if settings.vault_path.is_empty() {
-        settings.vault_path = vault_dir.to_str().unwrap_or_default().to_string();
+    if text.trim().is_empty() {
+        return Ok(normalize_settings(VaultSettings::default(), vault_dir));
     }
-    Ok(settings)
+    let settings: VaultSettings =
+        serde_json::from_str(&text).map_err(|e| format!("settings.json 파싱 실패: {e}"))?;
+    Ok(normalize_settings(settings, vault_dir))
 }
 
 fn sanitize_relative_path(relative: &str) -> Result<PathBuf, String> {
@@ -172,6 +185,13 @@ fn sanitize_relative_path(relative: &str) -> Result<PathBuf, String> {
 fn resolve_in_vault(vault_dir: &Path, relative: &str) -> Result<PathBuf, String> {
     let rel = sanitize_relative_path(relative)?;
     Ok(vault_dir.join(rel))
+}
+
+fn resolve_vault_dir(path: Option<String>) -> Result<PathBuf, String> {
+    match path {
+        Some(p) if !p.trim().is_empty() => Ok(PathBuf::from(p)),
+        _ => default_vault_dir(),
+    }
 }
 
 #[tauri::command]
@@ -386,34 +406,40 @@ fn pick_folder() -> Result<Option<String>, String> {
 }
 
 #[tauri::command]
-fn init_vault(path: Option<String>) -> Result<AppSettings, String> {
-    let vault_dir = match path {
-        Some(p) if !p.is_empty() => PathBuf::from(p),
-        _ => default_vault_dir()?,
-    };
+fn init_vault(path: Option<String>) -> Result<VaultSettings, String> {
+    let vault_dir = resolve_vault_dir(path)?;
     ensure_vault_structure(&vault_dir)?;
-    let mut settings = load_settings(&vault_dir)?;
-    settings.vault_path = vault_dir.to_str().unwrap_or_default().to_string();
-    write_settings_file(&settings_file_path(&vault_dir), &settings)?;
-    Ok(settings)
+    let settings = load_settings(&vault_dir)?;
+    let normalized = normalize_settings(settings, &vault_dir);
+    write_settings_file(&settings_file_path(&vault_dir), &normalized)?;
+    Ok(normalized)
 }
 
 #[tauri::command]
-fn read_settings(path: Option<String>) -> Result<AppSettings, String> {
-    let vault_dir = match path {
-        Some(p) if !p.is_empty() => PathBuf::from(p),
-        _ => default_vault_dir()?,
-    };
+fn read_settings_json(path: Option<String>) -> Result<VaultSettings, String> {
+    let vault_dir = resolve_vault_dir(path)?;
     ensure_vault_structure(&vault_dir)?;
     load_settings(&vault_dir)
 }
 
 #[tauri::command]
-fn save_settings(settings: AppSettings) -> Result<AppSettings, String> {
-    let vault_dir = PathBuf::from(&settings.vault_path);
+fn write_settings_json(settings: VaultSettings) -> Result<VaultSettings, String> {
+    let vault_dir = resolve_vault_dir(Some(settings.vault_path.clone()))?;
     ensure_vault_structure(&vault_dir)?;
-    write_settings_file(&settings_file_path(&vault_dir), &settings)?;
-    Ok(settings)
+    let normalized = normalize_settings(settings, &vault_dir);
+    write_settings_file(&settings_file_path(&vault_dir), &normalized)?;
+    Ok(normalized)
+}
+
+// Legacy command names for compatibility
+#[tauri::command]
+fn read_settings(path: Option<String>) -> Result<VaultSettings, String> {
+    read_settings_json(path)
+}
+
+#[tauri::command]
+fn save_settings(settings: VaultSettings) -> Result<VaultSettings, String> {
+    write_settings_json(settings)
 }
 
 #[tauri::command]

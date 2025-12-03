@@ -1,7 +1,8 @@
 import { useState, type DragEvent } from "react";
 
-import panelStyles from "./Panels.module.scss";
 import { Button } from "@/components/ui/Button";
+
+import panelStyles from "./Panels.module.scss";
 
 type DropZoneProps = {
   onFilesAdded: (paths: string[]) => void;
@@ -19,6 +20,7 @@ export function DropZone({
   onPickFiles,
   onPickFolder,
   onClear,
+  onHoverChange,
   busy,
   title,
   subtitle,

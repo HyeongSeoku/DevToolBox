@@ -4,11 +4,16 @@ import { generateJSDoc } from "@/modules/jsdoc/generator";
 import { parseInterfaces } from "@/modules/jsdoc/parser";
 import { type JSDocMode } from "@/modules/jsdoc/types";
 
-const SAMPLE = `interface ParkingManageContextValue {
-  isOpen: boolean;
-  setOpen: (v: boolean) => void;
-  parkingIds: string[];
-  cameraTypeMap: Record<string, number>;
+const SAMPLE = `interface UserProfileProps {
+  userId: string;
+  name: string;
+  email?: string;
+  isActive: boolean;
+  roles: string[];
+  metadata: Record<string, string>;
+  createdAt: Date;
+  onSelect: (id: string) => void;
+  setName: (value: string) => void;
 }`;
 
 export function useJSDocGenerator() {

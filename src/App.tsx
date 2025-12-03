@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+
 import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
 
 import { useVaultStore } from "@/stores/useVaultStore";
@@ -10,12 +11,13 @@ import { useTauriEnv } from "./hooks/useTauriEnv";
 import { Layout } from "./layout";
 import { ConvertPage } from "./pages/Convert";
 import { EnvManagerPage } from "./pages/EnvManager";
+import { HistoryPage } from "./pages/History";
 import { HomePage } from "./pages/Home";
-import { JWTDecoderPage } from "./pages/JWTDecoder";
 import { JSDocGeneratorPage } from "./pages/JSDocGenerator";
+import { JWTDecoderPage } from "./pages/JWTDecoder";
 import { RegexTesterPage } from "./pages/RegexTester";
-import { SnippetHubPage } from "./pages/SnippetsHub";
 import { SettingsPage } from "./pages/Settings";
+import { SnippetHubPage } from "./pages/SnippetsHub";
 import { TextToolsPage } from "./pages/TextTools";
 import { TypeGenPage } from "./pages/TypeGen";
 
@@ -38,6 +40,10 @@ export function App() {
             <Route
               path="convert"
               element={<ConvertPage recentAdd={recent.addActivity} />}
+            />
+            <Route
+              path="history"
+              element={<HistoryPage recent={recent.items} />}
             />
             <Route
               path="gif"

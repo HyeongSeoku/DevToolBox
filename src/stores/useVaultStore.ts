@@ -3,7 +3,8 @@ import { create } from "zustand";
 
 export type VaultSettings = {
   vaultPath: string;
-  lastOpened?: string | null;
+  recentFiles: string[];
+  lastOpenPath?: string | null;
 };
 
 type VaultState = {
@@ -63,7 +64,7 @@ export const useVaultStore = create<VaultState>((set, get) => ({
     }
     set({ loading: true, error: undefined });
     try {
-      const settings = await invoke<VaultSettings>("read_settings", {
+      const settings = await invoke<VaultSettings>("read_settings_json", {
         path: get().settings?.vaultPath ?? null,
       });
       set({ settings, loading: false });
@@ -82,7 +83,7 @@ export const useVaultStore = create<VaultState>((set, get) => ({
     const next = { ...current, ...partial };
     set({ loading: true, error: undefined });
     try {
-      const saved = await invoke<VaultSettings>("save_settings", {
+      const saved = await invoke<VaultSettings>("write_settings_json", {
         settings: next,
       });
       set({ settings: saved, loading: false });

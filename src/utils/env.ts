@@ -2,11 +2,21 @@ export type EnvEntry = {
   key: string;
   value: string;
   comment?: string;
+  raw?: string;
 };
 
 export type EnvFile = {
   entries: EnvEntry[];
   map: Record<string, EnvEntry>;
+};
+
+export type DiffStatus = "match" | "missing" | "extra" | "diff";
+
+export type DiffItem = {
+  key: string;
+  base?: EnvEntry;
+  compare?: EnvEntry;
+  status: DiffStatus;
 };
 
 export function parseEnv(text: string): EnvFile {
@@ -22,7 +32,7 @@ export function parseEnv(text: string): EnvFile {
     const key = line.slice(0, idx).trim();
     const valueRaw = line.slice(idx + 1).trim();
     const value = stripQuotes(valueRaw);
-    const entry = { key, value };
+    const entry = { key, value, raw: line };
     entries.push(entry);
     map[key] = entry;
   });
@@ -30,14 +40,22 @@ export function parseEnv(text: string): EnvFile {
   return { entries, map };
 }
 
-export function diffEnv(
-  base: EnvFile,
-  compare: EnvFile,
-): { missing: EnvEntry[]; extras: EnvEntry[]; common: EnvEntry[] } {
-  const missing = base.entries.filter((e) => !compare.map[e.key]);
-  const extras = compare.entries.filter((e) => !base.map[e.key]);
-  const common = base.entries.filter((e) => compare.map[e.key]);
-  return { missing, extras, common };
+export function diffEnvDetailed(base: EnvFile, compare: EnvFile): DiffItem[] {
+  const keys = new Set([
+    ...base.entries.map((e) => e.key),
+    ...compare.entries.map((e) => e.key),
+  ]);
+  const items: DiffItem[] = [];
+  keys.forEach((key) => {
+    const b = base.map[key];
+    const c = compare.map[key];
+    let status: DiffStatus = "match";
+    if (b && !c) status = "missing";
+    else if (!b && c) status = "extra";
+    else if (b && c && b.value !== c.value) status = "diff";
+    items.push({ key, base: b, compare: c, status });
+  });
+  return items.sort((a, b) => a.key.localeCompare(b.key));
 }
 
 export function maskEnv(
@@ -65,4 +83,17 @@ function stripQuotes(value: string) {
     return value.slice(1, -1);
   }
   return value;
+}
+
+export function generateExample(entries: EnvEntry[]): string {
+  return entries
+    .map((e) => `${e.key}=${e.value ? `"${e.value}"` : ""}`)
+    .join("\n");
+}
+
+export function scanSecrets(entries: EnvEntry[]) {
+  const patterns = [/SECRET/i, /TOKEN/i, /KEY/i, /PASSWORD/i, /AWS/];
+  return entries
+    .filter((e) => patterns.some((p) => p.test(e.key) || p.test(e.value)))
+    .map((e) => e.key);
 }

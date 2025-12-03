@@ -1,17 +1,8 @@
+import { type NavKey } from "@/types/nav";
+
 import styles from "./Sidebar.module.scss";
 import { type ThemeMode } from "../hooks/useTheme";
-
-type NavKey =
-  | "home"
-  | "convert"
-  | "typegen"
-  | "jwt"
-  | "text"
-  | "regex"
-  | "env"
-  | "snippets"
-  | "jsdoc"
-  | "settings";
+import { ScrollArea } from "./ui/ScrollArea";
 
 type SidebarProps = {
   active: NavKey;
@@ -30,7 +21,8 @@ const navItems: { key: NavKey; label: string }[] = [
   { key: "env", label: ".env Manager" },
   { key: "snippets", label: "Snippets" },
   { key: "jsdoc", label: "JSDoc Generator" },
-  { key: "settings", label: "설정 / Vault" },
+  { key: "history", label: "작업 History" },
+  { key: "settings", label: "설정" },
 ];
 
 export function Sidebar({
@@ -56,23 +48,30 @@ export function Sidebar({
         </div>
       </div>
 
-      <nav className={styles.nav}>
-        {navItems.map((item) => (
-          <button
-            key={item.key}
-            className={`${styles.navItem} ${active === item.key ? styles.active : ""}`}
-            onClick={() => onNavigate(item.key)}
-          >
-            {item.label}
-          </button>
-        ))}
-      </nav>
+      <ScrollArea className={styles.scroll}>
+        <nav className={styles.nav}>
+          {navItems.map((item) => (
+            <button
+              key={item.key}
+              className={`${styles.navItem} ${active === item.key ? styles.active : ""}`}
+              onClick={() => onNavigate(item.key)}
+              draggable
+              onDragStart={(e) => {
+                e.dataTransfer.setData("application/x-nav-key", item.key);
+                e.dataTransfer.effectAllowed = "copy";
+              }}
+            >
+              {item.label}
+            </button>
+          ))}
+        </nav>
 
-      <div className={styles.footer}>
-        <button className={styles.navItem} onClick={onThemeCycle}>
-          테마: {themeLabel}
-        </button>
-      </div>
+        <div className={styles.footer}>
+          <button className={styles.navItem} onClick={onThemeCycle}>
+            테마: {themeLabel}
+          </button>
+        </div>
+      </ScrollArea>
     </aside>
   );
 }
