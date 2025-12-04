@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
+  min-height: 100%;
 }
 
 .header h1 {
@@ -18,7 +19,10 @@
 .grid {
   display: grid;
   gap: var(--space-3);
-  min-height: 200px;
+  min-height: 0;
+  flex: 1;
+  grid-auto-rows: 1fr;
+  align-items: stretch;
 }
 
 .gridTwo {
@@ -27,20 +31,22 @@
 
 .gridFour {
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-template-rows: repeat(2, minmax(160px, 1fr));
+  grid-template-rows: repeat(2, 1fr);
 }
 
 .dragOver {
   border: 1px dashed var(--accent);
   border-radius: var(--radius-xl);
   padding: var(--space-2);
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--overlay-white-02);
 }
 
 .gridSection {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  flex: 1;
+  min-height: 0;
 }
 
 .sectionHeader {
@@ -64,12 +70,25 @@
   flex-direction: column;
   gap: var(--space-2);
   color: var(--text);
+  height: 100%;
+  min-height: 0;
 }
 
 .cardHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.cardContent {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
+.paneScroll {
+  height: 100%;
+  min-height: 0;
 }
 
 .cardBody {
@@ -159,6 +178,35 @@
   background: var(--surface-muted);
 }
 
+.summaryRow {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: var(--radius-full);
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  font-size: 12px;
+}
+
+.okCount {
+  color: var(--tertiary-300);
+  border-color: var(--tertiary-300);
+  background: color-mix(in srgb, var(--tertiary-300) 12%, transparent);
+}
+
+.warnCount {
+  color: var(--secondary-300);
+  border-color: var(--secondary-300);
+  background: var(--overlay-secondary-08);
+}
+
 .snippet {
   border: 1px solid var(--border);
   background: var(--surface-muted);
@@ -197,6 +245,12 @@
   background: var(--surface);
   color: var(--text);
   font-size: 28px;
+}
+
+.split {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-2);
 }
 
 .select {

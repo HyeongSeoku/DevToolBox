@@ -34,7 +34,9 @@ export function QuickEnvPane() {
             <p className="subtle">****{e.value.slice(-2)}</p>
           </div>
         ))}
-        {entries.length === 0 && <p className="subtle">입력된 키가 없습니다.</p>}
+        {entries.length === 0 && (
+          <p className="subtle">입력된 키가 없습니다.</p>
+        )}
       </div>
     </div>
   );

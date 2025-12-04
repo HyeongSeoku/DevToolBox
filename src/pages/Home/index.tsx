@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useToast } from "@/components/ToastProvider";
+import { ScrollArea } from "@/components/ui/ScrollArea";
 import { useQuickLayoutStore } from "@/stores/useQuickLayout";
 import { type NavKey } from "@/types/nav";
 import { AddCard } from "./quick/AddCard";
@@ -14,6 +15,7 @@ import { QuickSnippetsPane } from "./quick/QuickSnippetsPane";
 import { QuickTextPane } from "./quick/QuickTextPane";
 import { QuickTypegenPane } from "./quick/QuickTypegenPane";
 import { QuickConvertPane } from "./quick/QuickConvertPane";
+import { QuickI18nPane } from "./quick/QuickI18nPane";
 import styles from "./index.module.scss";
 
 type RecentItem = {
@@ -39,6 +41,7 @@ const navMeta: Record<NavKey, { title: string; detail: string }> = {
   env: { title: ".env Manager", detail: "환경 변수 관리" },
   snippets: { title: "Snippets", detail: "코드/SQL 스니펫" },
   jsdoc: { title: "JSDoc Generator", detail: "주석 자동 생성" },
+  i18n: { title: "i18n Inspector", detail: "로케일 키/값 비교" },
 };
 
 const allKeys: NavKey[] = [
@@ -51,6 +54,7 @@ const allKeys: NavKey[] = [
   "regex",
   "env",
   "history",
+  "i18n",
 ];
 
 function PaneRenderer({
@@ -79,6 +83,8 @@ function PaneRenderer({
       return <QuickEnvPane />;
     case "history":
       return <QuickHistoryPane recent={recent} />;
+    case "i18n":
+      return <QuickI18nPane />;
     default:
       return null;
   }
@@ -157,11 +163,18 @@ export function HomePage({ recent }: HomePageProps) {
                   <p className={styles.title}>{navMeta[key].title}</p>
                   <p className="subtle">{navMeta[key].detail}</p>
                 </div>
-                <button className={styles.remove} onClick={() => removePane(key)}>
+                <button
+                  className={styles.remove}
+                  onClick={() => removePane(key)}
+                >
                   ×
                 </button>
               </div>
-              <PaneRenderer keyName={key} recent={recent} />
+              <div className={styles.cardContent}>
+                <ScrollArea className={styles.paneScroll}>
+                  <PaneRenderer keyName={key} recent={recent} />
+                </ScrollArea>
+              </div>
             </div>
           ))}
           {panes.length < 4 && (

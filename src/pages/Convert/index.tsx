@@ -20,7 +20,7 @@ import {
   useConversionJob,
   type TargetFormat,
   type GifQuality,
-  type Mode,
+  type ImageConvertMode,
 } from "../../hooks/useConversionJob";
 import { useFileSelection } from "../../hooks/useFileSelection";
 import { useTauriEnv } from "../../hooks/useTauriEnv";
@@ -58,7 +58,7 @@ const imageExts = ["jpg", "jpeg", "png", "webp", "bmp", "gif"];
 const videoExts = ["mp4", "mov", "mkv", "avi"];
 
 type ConvertPageProps = {
-  modeOverride?: Mode;
+  modeOverride?: ImageConvertMode;
   recentAdd: (title: string, detail: string) => void;
 };
 
@@ -71,7 +71,7 @@ export function ConvertPage({ modeOverride, recentAdd }: ConvertPageProps) {
     clearFiles,
   } = useFileSelection();
   const toast = useToast();
-  const [mode, setMode] = useState<Mode>(modeOverride ?? "convert");
+  const [mode, setMode] = useState<ImageConvertMode>(modeOverride ?? "convert");
   const [targetFormat, setTargetFormat] = useState<TargetFormat>("webp");
   const [qualityPercent, setQualityPercent] = useState(90);
   const [scalePercent, setScalePercent] = useState(100);

@@ -5,7 +5,7 @@ import { listen } from "@tauri-apps/api/event";
 
 export type TargetFormat = "jpeg" | "png" | "webp";
 export type GifQuality = "low" | "medium" | "high";
-export type Mode = "convert" | "gif";
+export type ImageConvertMode = "convert" | "gif";
 
 export type ConversionResult = {
   input: string;
@@ -46,7 +46,7 @@ type GifOptionsPayload = {
 };
 
 type RunArgs = {
-  mode: Mode;
+  mode: ImageConvertMode;
   selectedFiles: string[];
   batchMode: boolean;
   convertOptions: ConvertOptionsPayload;

@@ -1,11 +1,11 @@
 import styles from "./Hero.module.scss";
-import { type Mode } from "../hooks/useConversionJob";
+import { type ImageConvertMode } from "../hooks/useConversionJob";
 
 type HeroProps = {
   qualityPercent: number;
   scalePercent: number;
   fileCount: number;
-  mode: Mode;
+  mode: ImageConvertMode;
   busy: boolean;
   onRun: () => void;
 };

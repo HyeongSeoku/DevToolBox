@@ -52,7 +52,7 @@ $color-action-primary-hover: $primary-700;
 
 // ---------- State Colors ----------
 @function hover-opacity($color, $opacity: 0.5) {
-  @return rgba($color, $opacity);
+  @return color-mix(in srgb, $color $opacity * 100%, transparent);
 }
 
 $state-hover-gray-900: hover-opacity($gray-900);
@@ -87,10 +87,10 @@ $radius-xl: 12px;
 $radius-full: 9999px;
 
 // ---------- Shadows ----------
-$shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-$shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-$shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.15);
-$shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.2);
+$shadow-sm: 0 1px 2px color-mix(in srgb, $black 5%, transparent);
+$shadow-md: 0 4px 6px color-mix(in srgb, $black 10%, transparent);
+$shadow-lg: 0 10px 15px color-mix(in srgb, $black 15%, transparent);
+$shadow-xl: 0 20px 25px color-mix(in srgb, $black 20%, transparent);
 
 // ---------- Typography ----------
 $font-family-base:
@@ -145,6 +145,33 @@ $line-height-relaxed: 1.7;
   --gray-700: #{$gray-700};
   --gray-800: #{$gray-800};
   --gray-900: #{$gray-900};
+  --white: #{$white};
+  --black: #{$black};
+
+  --overlay-secondary-08: color-mix(in srgb, var(--secondary-300) 8%, transparent);
+  --overlay-secondary-12: color-mix(in srgb, var(--secondary-300) 12%, transparent);
+  --overlay-secondary-18: color-mix(in srgb, var(--secondary-300) 18%, transparent);
+  --overlay-secondary-30: color-mix(in srgb, var(--secondary-300) 30%, transparent);
+  --overlay-secondary-35: color-mix(in srgb, var(--secondary-300) 35%, transparent);
+  --overlay-primary-35: color-mix(in srgb, var(--primary-500) 35%, transparent);
+  --overlay-primary-78: color-mix(in srgb, var(--primary-500) 78%, transparent);
+  --overlay-primary-94: color-mix(in srgb, var(--primary-500) 94%, transparent);
+  --overlay-white-06: color-mix(in srgb, var(--white) 6%, transparent);
+  --overlay-white-02: color-mix(in srgb, var(--white) 2%, transparent);
+  --overlay-white-04: color-mix(in srgb, var(--white) 4%, transparent);
+  --overlay-white-08: color-mix(in srgb, var(--white) 8%, transparent);
+  --overlay-white-10: color-mix(in srgb, var(--white) 10%, transparent);
+  --overlay-white-12: color-mix(in srgb, var(--white) 12%, transparent);
+  --overlay-white-24: color-mix(in srgb, var(--white) 24%, transparent);
+  --overlay-white-70: color-mix(in srgb, var(--white) 70%, transparent);
+  --overlay-white-75: color-mix(in srgb, var(--white) 75%, transparent);
+  --overlay-white-78: color-mix(in srgb, var(--white) 78%, transparent);
+  --overlay-white-80: color-mix(in srgb, var(--white) 80%, transparent);
+
+  --overlay-black-08: color-mix(in srgb, var(--black) 8%, transparent);
+  --overlay-black-15: color-mix(in srgb, var(--black) 15%, transparent);
+  --overlay-black-20: color-mix(in srgb, var(--black) 20%, transparent);
+  --overlay-black-25: color-mix(in srgb, var(--black) 25%, transparent);
 
   // spacing
   --space-0: #{$space-0};

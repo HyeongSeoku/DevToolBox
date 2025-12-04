@@ -1,5 +1,6 @@
-import panelStyles from "./Panels.module.scss";
 import { Button } from "@/components/ui/Button";
+
+import panelStyles from "./Panels.module.scss";
 import { type ConversionResult } from "../hooks/useConversionJob";
 
 type Progress = { percent: number; label: string };

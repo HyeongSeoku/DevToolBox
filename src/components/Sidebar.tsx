@@ -1,3 +1,5 @@
+import classNames from "classnames";
+
 import { type NavKey } from "@/types/nav";
 
 import styles from "./Sidebar.module.scss";
@@ -22,6 +24,7 @@ const navItems: { key: NavKey; label: string }[] = [
   { key: "snippets", label: "Snippets" },
   { key: "jsdoc", label: "JSDoc Generator" },
   { key: "history", label: "작업 History" },
+  { key: "i18n", label: "i18n Inspector" },
   { key: "settings", label: "설정" },
 ];
 
@@ -53,7 +56,10 @@ export function Sidebar({
           {navItems.map((item) => (
             <button
               key={item.key}
-              className={`${styles.navItem} ${active === item.key ? styles.active : ""}`}
+              // className={`${styles.navItem} ${active === item.key ? styles.active : ""}`}
+              className={classNames(styles.navItem, {
+                [styles.active]: item.key === active,
+              })}
               onClick={() => onNavigate(item.key)}
               draggable
               onDragStart={(e) => {

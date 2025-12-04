@@ -30,7 +30,7 @@
   right: 2px;
   width: 8px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.04); /* 살짝 보이는 트랙 */
+  background: var(--overlay-white-04); /* 살짝 보이는 트랙 */
   pointer-events: auto;
 }
 
@@ -45,7 +45,7 @@
     var(--secondary-100, #6ee7ff),
     var(--secondary-300, #3b82f6)
   );
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 0 0 1px var(--overlay-black-25);
   cursor: grab;
   transition:
     background 0.15s ease,

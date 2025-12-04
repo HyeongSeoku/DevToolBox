@@ -1,9 +1,9 @@
 import panelStyles from "./Panels.module.scss";
-import { type Mode } from "../hooks/useConversionJob";
+import { type ImageConvertMode } from "../hooks/useConversionJob";
 
 type ModeSwitchProps = {
-  mode: Mode;
-  onChange: (mode: Mode) => void;
+  mode: ImageConvertMode;
+  onChange: (mode: ImageConvertMode) => void;
 };
 
 export function ModeSwitch({ mode, onChange }: ModeSwitchProps) {

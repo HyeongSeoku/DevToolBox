@@ -3,7 +3,7 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
   padding: var(--space-4);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 30px var(--overlay-black-08);
 }
 
 .dropPanel {
@@ -23,7 +23,7 @@
 
 .hover .dropZone {
   border-color: var(--secondary-300);
-  box-shadow: 0 0 0 1px rgba(248, 123, 27, 0.3);
+  box-shadow: 0 0 0 1px var(--overlay-secondary-30);
 }
 
 .dropTitle {
@@ -113,7 +113,7 @@
 
 .pillActive {
   border-color: var(--secondary-300);
-  box-shadow: 0 10px 30px rgba(248, 123, 27, 0.12);
+  box-shadow: 0 10px 30px var(--overlay-secondary-12);
 }
 
 .label {
@@ -187,9 +187,17 @@
 }
 
 .success {
-  background: linear-gradient(120deg, rgba(203, 217, 155, 0.2), rgba(17, 34, 78, 0.08));
+  background: linear-gradient(
+    120deg,
+    color-mix(in srgb, var(--tertiary-300) 20%, transparent),
+    color-mix(in srgb, var(--primary-500) 8%, transparent)
+  );
 }
 
 .error {
-  background: linear-gradient(120deg, rgba(248, 123, 27, 0.18), rgba(248, 123, 27, 0.08));
+  background: linear-gradient(
+    120deg,
+    color-mix(in srgb, var(--secondary-300) 18%, transparent),
+    var(--overlay-secondary-08)
+  );
 }

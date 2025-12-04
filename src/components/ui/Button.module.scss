@@ -16,7 +16,7 @@
 
 .primary {
   background: linear-gradient(120deg, var(--secondary-100), var(--secondary-300));
-  color: #0b1224;
+  color: var(--text);
   border: none;
   padding: var(--space-4) var(--space-4);
   font-size: 15px;
@@ -24,7 +24,7 @@
 
 .primary:not(:disabled):hover {
   transform: translateY(-1px);
-  box-shadow: 0 12px 30px rgba(248, 123, 27, 0.35);
+  box-shadow: 0 12px 30px var(--overlay-secondary-35);
 }
 
 .ghost {

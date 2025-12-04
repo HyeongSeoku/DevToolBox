@@ -24,7 +24,7 @@
 
 .active {
   border-color: var(--secondary-300);
-  box-shadow: 0 8px 20px rgba(248, 123, 27, 0.15);
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--secondary-300) 15%, transparent);
 }
 
 .layout {

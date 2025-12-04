@@ -21,7 +21,8 @@ function inferJson(json: any): string {
     if (type === "boolean") return "boolean";
     if (type !== "object") return "any";
 
-    const ifaceName = depth === 0 ? name : `${name[0].toUpperCase()}${name.slice(1)}`;
+    const ifaceName =
+      depth === 0 ? name : `${name[0].toUpperCase()}${name.slice(1)}`;
     lines.push(`${indent(depth)}interface ${ifaceName} {`);
     Object.entries(value).forEach(([k, v]) => {
       const childType = render(v, k, depth + 1);
@@ -70,7 +71,10 @@ export function QuickTypegenPane() {
         <button className="primary" onClick={generate}>
           타입 생성
         </button>
-        <button className="ghost" onClick={() => navigator.clipboard.writeText(output)}>
+        <button
+          className="ghost"
+          onClick={() => navigator.clipboard.writeText(output)}
+        >
           복사
         </button>
       </div>

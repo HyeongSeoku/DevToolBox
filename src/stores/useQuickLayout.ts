@@ -20,6 +20,7 @@ const allowed: NavKey[] = [
   "snippets",
   "jsdoc",
   "history",
+  "i18n",
 ];
 const defaultPanes: NavKey[] = ["convert", "typegen", "jsdoc", "snippets"];
 const MAX_PANES = 4;

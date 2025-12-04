@@ -113,18 +113,18 @@
 }
 
 .missing {
-  border-color: #f59e0b;
-  background: rgba(245, 158, 11, 0.08);
+  border-color: var(--secondary-300);
+  background: var(--overlay-secondary-08);
 }
 
 .extra {
-  border-color: #38bdf8;
-  background: rgba(56, 189, 248, 0.08);
+  border-color: var(--primary-100);
+  background: color-mix(in srgb, var(--primary-100) 8%, transparent);
 }
 
 .diff {
-  border-color: #f87171;
-  background: rgba(248, 113, 113, 0.08);
+  border-color: var(--secondary-500);
+  background: var(--overlay-secondary-08);
 }
 
 .code {
@@ -149,5 +149,5 @@
   padding: var(--space-2);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  background: rgba(248, 113, 113, 0.08);
+  background: var(--overlay-secondary-08);
 }

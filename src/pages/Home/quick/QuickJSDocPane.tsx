@@ -5,7 +5,9 @@ import { parseInterfaces } from "@/modules/jsdoc/parser";
 import styles from "../index.module.scss";
 
 export function QuickJSDocPane() {
-  const [input, setInput] = useState(`interface Props {\n  name: string;\n  age?: number;\n}`);
+  const [input, setInput] = useState(
+    `interface Props {\n  name: string;\n  age?: number;\n}`,
+  );
   const [output, setOutput] = useState<string>("");
   const [error, setError] = useState<string>("");
 

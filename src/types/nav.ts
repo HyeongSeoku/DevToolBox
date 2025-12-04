@@ -9,4 +9,5 @@ export type NavKey =
   | "regex"
   | "env"
   | "snippets"
-  | "jsdoc";
+  | "jsdoc"
+  | "i18n";

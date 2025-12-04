@@ -13,6 +13,7 @@ import { ConvertPage } from "./pages/Convert";
 import { EnvManagerPage } from "./pages/EnvManager";
 import { HistoryPage } from "./pages/History";
 import { HomePage } from "./pages/Home";
+import { I18nInspectorPage } from "./pages/I18nInspector";
 import { JSDocGeneratorPage } from "./pages/JSDocGenerator";
 import { JWTDecoderPage } from "./pages/JWTDecoder";
 import { RegexTesterPage } from "./pages/RegexTester";
@@ -57,6 +58,7 @@ export function App() {
             <Route path="jwt" element={<JWTDecoderPage />} />
             <Route path="text" element={<TextToolsPage />} />
             <Route path="regex" element={<RegexTesterPage />} />
+            <Route path="i18n" element={<I18nInspectorPage />} />
             <Route path="env" element={<EnvManagerPage />} />
             <Route path="snippets/:kind" element={<SnippetHubPage />} />
             <Route

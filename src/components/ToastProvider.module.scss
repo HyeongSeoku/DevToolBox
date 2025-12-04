@@ -13,20 +13,21 @@
   max-width: 360px;
   padding: 12px 14px;
   border-radius: 10px;
-  color: #0f1625;
+  color: var(--text);
   font-weight: 600;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 10px 30px var(--overlay-black-15);
+  background: var(--surface);
 }
 
 .info {
-  background: #e0ecff;
+  background: color-mix(in srgb, var(--primary-100) 20%, var(--surface));
 }
 
 .success {
-  background: #d5f5df;
+  background: color-mix(in srgb, var(--tertiary-300) 24%, var(--surface));
 }
 
 .error {
-  background: #ffe2df;
-  color: #4a1212;
+  background: color-mix(in srgb, var(--secondary-300) 22%, var(--surface));
+  color: var(--text);
 }
