@@ -1,7 +1,8 @@
 import { useState } from "react";
 
 import { type NavKey } from "@/types/nav";
-import styles from "../index.module.scss";
+
+import styles from "./AddCard.module.scss";
 
 type AddCardProps = {
   options: NavKey[];

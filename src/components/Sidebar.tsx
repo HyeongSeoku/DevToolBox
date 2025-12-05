@@ -20,6 +20,7 @@ const navItems: { key: NavKey; label: string }[] = [
   { key: "jwt", label: "JWT 디코더" },
   { key: "text", label: "텍스트 변환" },
   { key: "regex", label: "Regex Tester" },
+  { key: "json", label: "JSON Formatter" },
   { key: "env", label: ".env Manager" },
   { key: "snippets", label: "Snippets" },
   { key: "jsdoc", label: "JSDoc Generator" },

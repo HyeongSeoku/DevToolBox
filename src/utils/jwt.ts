@@ -186,3 +186,47 @@ export function summarizeClaims(payload: any): Array<{
       value: String((payload as any)[key]),
     }));
 }
+
+export function decodeFirstJwt(
+  text: string,
+  options?: { maskSensitive?: boolean },
+): {
+  tokens: string[];
+  selected: string | null;
+  payloadPretty: string;
+  error?: string;
+  parsed?: ParsedJwt;
+} {
+  const tokens = detectJwtStrings(text);
+  if (!tokens.length) {
+    return {
+      tokens,
+      selected: null,
+      payloadPretty: "",
+      error: "JWT를 찾지 못했습니다.",
+    };
+  }
+
+  const selected = tokens[0];
+  const parsed = parseJwt(selected);
+  if (parsed.errors.length) {
+    return {
+      tokens,
+      selected,
+      payloadPretty: "",
+      error: parsed.errors.join("\n"),
+      parsed,
+    };
+  }
+
+  const payload = options?.maskSensitive
+    ? maskSensitiveClaims(parsed.payloadJson)
+    : parsed.payloadJson;
+
+  return {
+    tokens,
+    selected,
+    payloadPretty: prettyJson(payload),
+    parsed,
+  };
+}

@@ -26,8 +26,8 @@ const normalizeQuotes = (text: string) =>
   text.replace(/[\u201C\u201D]/g, '"').replace(/[\u2018\u2019]/g, "'");
 
 export function I18nInspectorPage() {
-  const [pattern, setPattern] = useState<LocalePattern>("flat");
-  const [mode, setMode] = useState<TranslateMode>("text");
+  const mode: TranslateMode = "text"; // 단일 텍스트/파일 불러오기 모드 고정
+  const pattern: LocalePattern = "flat";
   const [baseLocale, setBaseLocale] = useState("en");
   const [targetLocale, setTargetLocale] = useState("ko");
   const [root, setRoot] = useState("");
@@ -274,37 +274,15 @@ export function I18nInspectorPage() {
     { code: "ja", label: "일본어(JP)" },
   ];
 
-  const modeOptions: Array<{ key: TranslateMode; label: string; desc: string }> = [
-    { key: "text", label: "텍스트 입력", desc: "붙여넣기/직접 입력" },
-    { key: "file", label: "폴더 스캔", desc: "로케일 폴더에서 읽기" },
-    { key: "mixed", label: "혼합 비교", desc: "파일 + 텍스트" },
-  ];
-
-  const patternOptions: Array<{ key: LocalePattern; label: string; desc: string }> = [
-    { key: "flat", label: "단일 파일", desc: "root/<locale>.json" },
-    { key: "namespace", label: "네임스페이스", desc: "root/<locale>/<ns>.json" },
-  ];
-
   useEffect(() => {
     const baseVal = baseText.trim();
     const targetVal = targetText.trim();
-    const hasRoot = root.trim().length > 0;
+    if (!baseVal || !targetVal) return;
 
-    const needsText = mode !== "file";
-    const needsRoot = mode !== "text";
-
-    if (needsRoot && !hasRoot) return;
-    if (needsText && (!baseVal || !targetVal)) return;
-
-    // JSON 유효성 체크 (텍스트가 필요한 모드에만)
-    if (needsText) {
-      const okBase = isJsonValid(baseVal, "base");
-      const okTarget = isJsonValid(targetVal, "target");
-      if (!okBase || !okTarget) return;
-    } else {
-      setBaseError(null);
-      setTargetError(null);
-    }
+    // JSON 유효성 체크 (텍스트 모드 고정)
+    const okBase = isJsonValid(baseVal, "base");
+    const okTarget = isJsonValid(targetVal, "target");
+    if (!okBase || !okTarget) return;
     setError(null);
 
     if (compareTimer.current) window.clearTimeout(compareTimer.current);
@@ -315,7 +293,7 @@ export function I18nInspectorPage() {
     return () => {
       if (compareTimer.current) window.clearTimeout(compareTimer.current);
     };
-  }, [mode, pattern, root, baseLocale, targetLocale, baseText, targetText]);
+  }, [baseLocale, targetLocale, baseText, targetText]);
 
   const sortObject = (obj: any): any => {
     if (Array.isArray(obj)) return obj.map(sortObject);
@@ -378,39 +356,10 @@ export function I18nInspectorPage() {
       </header>
 
       <div className={styles.card}>
-        <div className={styles.row}>
-          <div className={styles.pillRow}>
-            {modeOptions.map((opt) => (
-              <button
-                key={opt.key}
-                className={`${styles.pill} ${mode === opt.key ? styles.pillActive : ""}`}
-                onClick={() => setMode(opt.key)}
-              >
-                <span className={styles.pillTitle}>{opt.label}</span>
-                <span className={styles.pillDesc}>{opt.desc}</span>
-              </button>
-            ))}
-          </div>
-          <div className={styles.pillRow}>
-            {patternOptions.map((opt) => (
-              <button
-                key={opt.key}
-                className={`${styles.pill} ${pattern === opt.key ? styles.pillActive : ""}`}
-                onClick={() => setPattern(opt.key)}
-              >
-                <span className={styles.pillTitle}>{opt.label}</span>
-                <span className={styles.pillDesc}>{opt.desc}</span>
-              </button>
-            ))}
-          </div>
-        </div>
         <p className="micro subtle">
-          {mode === "text" && "텍스트만 붙여넣어 비교합니다."}
-          {mode === "file" && "선택한 폴더에서 로케일 JSON을 읽어 비교합니다."}
-          {mode === "mixed" && "폴더에서 읽은 값과 텍스트 입력을 함께 비교합니다."} · 구조:{" "}
-          {pattern === "flat"
-            ? "단일 파일 (locale.json)"
-            : "네임스페이스 (locale/namespace.json)"}
+          텍스트를 직접 입력하거나 각 패널의 파일 버튼으로 JSON을 불러와 바로
+          비교합니다. 폴더 선택은 필요 시 네임스페이스 구조를 읽어올 때만
+          사용하세요 (예: locales/en/common.json).
         </p>
         <div className={styles.errorSlot}>
           {error && <span className="micro warning">{error}</span>}

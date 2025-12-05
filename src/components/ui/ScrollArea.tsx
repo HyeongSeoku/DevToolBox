@@ -1,11 +1,5 @@
-import React, {
-  type PropsWithChildren,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import * as React from "react";
+import { type PropsWithChildren } from "react";
 
 import styles from "./ScrollArea.module.scss";
 
@@ -22,18 +16,18 @@ export const ScrollArea: React.FC<PropsWithChildren<ScrollAreaProps>> = ({
   maxHeight,
   className,
 }) => {
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const [thumbHeight, setThumbHeight] = useState(0);
-  const [thumbTop, setThumbTop] = useState(0);
-  const [visible, setVisible] = useState(false);
+  const containerRef = React.useRef<HTMLDivElement | null>(null);
+  const [thumbHeight, setThumbHeight] = React.useState(0);
+  const [thumbTop, setThumbTop] = React.useState(0);
+  const [visible, setVisible] = React.useState(false);
 
   // 드래그 상태
-  const isDraggingRef = useRef(false);
-  const dragStartYRef = useRef(0);
-  const dragStartThumbTopRef = useRef(0);
+  const isDraggingRef = React.useRef(false);
+  const dragStartYRef = React.useRef(0);
+  const dragStartThumbTopRef = React.useRef(0);
 
   // 스크롤 / 사이즈 기준으로 thumb 크기 & 위치 계산
-  const updateThumb = useCallback(() => {
+  const updateThumb = React.useCallback(() => {
     const el = containerRef.current;
     if (!el) return;
 
@@ -62,7 +56,7 @@ export const ScrollArea: React.FC<PropsWithChildren<ScrollAreaProps>> = ({
   }, []);
 
   // 스크롤 + 리사이즈 대응
-  useLayoutEffect(() => {
+  React.useLayoutEffect(() => {
     const el = containerRef.current;
     if (!el) return;
 
@@ -98,7 +92,7 @@ export const ScrollArea: React.FC<PropsWithChildren<ScrollAreaProps>> = ({
   };
 
   // 문서 전체에 드래그 이벤트 붙이기
-  useEffect(() => {
+  React.useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!isDraggingRef.current || !containerRef.current) return;
 

@@ -1,0 +1,55 @@
+@use "./quickBase.scss";
+
+.pane {
+  @extend %pane;
+}
+
+.paneHeader {
+  @extend %paneHeader;
+}
+
+.title {
+  @extend %title;
+}
+
+.split {
+  @extend %split;
+}
+
+.input {
+  @extend %input;
+}
+
+.textarea {
+  @extend %textarea;
+}
+
+.badge {
+  @extend %badge;
+}
+
+.okCount {
+  @extend %okCount;
+}
+
+.warnCount {
+  @extend %warnCount;
+}
+
+.missingCount {
+  color: #f87171;
+  border: 1px solid #f87171;
+  background: color-mix(in srgb, #f87171 12%, transparent);
+}
+
+.historyList {
+  @extend %historyList;
+}
+
+.historyItem {
+  @extend %historyItem;
+}
+
+.summaryRow {
+  @extend %summaryRow;
+}

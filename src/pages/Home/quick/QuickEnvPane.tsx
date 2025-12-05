@@ -1,18 +1,14 @@
 import { useMemo, useState } from "react";
 
-import styles from "../index.module.scss";
+import { maskEnv, parseEnv } from "@/utils/env";
+
+import styles from "./QuickEnvPane.module.scss";
 
 export function QuickEnvPane() {
   const [raw, setRaw] = useState("");
   const entries = useMemo(() => {
-    return raw
-      .split("\n")
-      .map((line) => line.trim())
-      .filter(Boolean)
-      .map((line) => {
-        const [key, ...rest] = line.split("=");
-        return { key, value: rest.join("=") };
-      });
+    const parsed = parseEnv(raw);
+    return maskEnv(parsed.entries, "partial");
   }, [raw]);
 
   return (

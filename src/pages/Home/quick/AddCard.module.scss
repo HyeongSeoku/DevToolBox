@@ -1,0 +1,13 @@
+@use "./quickBase.scss";
+
+.addCard {
+  @extend %addCard;
+}
+
+.addButton {
+  @extend %addButton;
+}
+
+.select {
+  @extend %select;
+}

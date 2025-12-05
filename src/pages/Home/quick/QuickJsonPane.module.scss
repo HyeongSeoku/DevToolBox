@@ -1,0 +1,29 @@
+@use "./quickBase.scss";
+
+.pane {
+  @extend %pane;
+}
+
+.paneHeader {
+  @extend %paneHeader;
+}
+
+.title {
+  @extend %title;
+}
+
+.paneScroll {
+  @extend %paneScroll;
+}
+
+.textarea {
+  @extend %textarea;
+}
+
+.paneActions {
+  @extend %paneActions;
+}
+
+.code {
+  @extend %code;
+}

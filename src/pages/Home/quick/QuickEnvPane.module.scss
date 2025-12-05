@@ -1,0 +1,25 @@
+@use "./quickBase.scss";
+
+.pane {
+  @extend %pane;
+}
+
+.paneHeader {
+  @extend %paneHeader;
+}
+
+.title {
+  @extend %title;
+}
+
+.textarea {
+  @extend %textarea;
+}
+
+.historyList {
+  @extend %historyList;
+}
+
+.historyItem {
+  @extend %historyItem;
+}

@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
-import styles from "./index.module.scss";
-import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ToastProvider";
+import { Button } from "@/components/ui/Button";
 import { useTauriEnv } from "@/hooks/useTauriEnv";
 import { useVaultStore } from "@/stores/useVaultStore";
 import {
@@ -14,6 +13,8 @@ import {
   summarizeClaims,
   type ParsedJwt,
 } from "@/utils/jwt";
+
+import styles from "./index.module.scss";
 
 type ViewMode = "pretty" | "raw";
 

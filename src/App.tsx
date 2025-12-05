@@ -16,6 +16,7 @@ import { HomePage } from "./pages/Home";
 import { I18nInspectorPage } from "./pages/I18nInspector";
 import { JSDocGeneratorPage } from "./pages/JSDocGenerator";
 import { JWTDecoderPage } from "./pages/JWTDecoder";
+import { JsonFormatterPage } from "./pages/JsonFormatter";
 import { RegexTesterPage } from "./pages/RegexTester";
 import { SettingsPage } from "./pages/Settings";
 import { SnippetHubPage } from "./pages/SnippetsHub";
@@ -56,6 +57,7 @@ export function App() {
               }
             />
             <Route path="jwt" element={<JWTDecoderPage />} />
+            <Route path="json" element={<JsonFormatterPage />} />
             <Route path="text" element={<TextToolsPage />} />
             <Route path="regex" element={<RegexTesterPage />} />
             <Route path="i18n" element={<I18nInspectorPage />} />

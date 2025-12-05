@@ -7,6 +7,7 @@ export type NavKey =
   | "jwt"
   | "text"
   | "regex"
+  | "json"
   | "env"
   | "snippets"
   | "jsdoc"

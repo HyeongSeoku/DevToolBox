@@ -8,6 +8,7 @@ import {
   generateTypesFromSchemas,
   parseOpenApiText,
 } from "../../utils/openapi";
+import { generateInterfaces } from "@/utils/typegen";
 
 type Tab = "openapi" | "json";
 
@@ -283,115 +284,4 @@ function tryExtractSpecUrl(html: string, baseUrl: string): string | null {
     return new URL(linkJson[1], baseUrl || undefined).toString();
 
   return null;
-}
-
-function generateInterfaces(
-  value: any,
-  rootName: string,
-  enumsMap?: Record<string, string[]>,
-): string {
-  const interfaces: string[] = [];
-  const enums: string[] = [];
-  const seen: Record<string, number> = {};
-  const enumMapLocal: Record<string, string[]> = enumsMap
-    ? { ...enumsMap }
-    : {};
-
-  const pascal = (str: string) => {
-    const clean = str.replace(/[^A-Za-z0-9]/g, " ").trim();
-    const parts = clean.split(/\s+/).filter(Boolean);
-    const base = parts.map((p) => p[0].toUpperCase() + p.slice(1)).join("");
-    return base || "Generated";
-  };
-
-  const uniqueName = (base: string) => {
-    const norm = pascal(base);
-    const count = seen[norm] ?? 0;
-    seen[norm] = count + 1;
-    return count === 0 ? norm : `${norm}${count + 1}`;
-  };
-
-  const isDateString = (str: string) =>
-    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(str);
-
-  const normalize = (str: string) =>
-    str.replace(/[^a-z0-9]/gi, "").toLowerCase();
-
-  const pickEnum = (key: string, sample?: string): string | null => {
-    if (!Object.keys(enumMapLocal).length) return null;
-    const keyLower = normalize(key);
-    for (const enumName of Object.keys(enumMapLocal)) {
-      const lower = normalize(enumName);
-      const nameMatches =
-        lower === keyLower ||
-        keyLower.endsWith(lower) ||
-        lower.endsWith(keyLower);
-      if (!nameMatches) continue;
-      if (sample && !enumMapLocal[enumName].includes(sample)) continue;
-      return enumName;
-    }
-    return null;
-  };
-
-  const collectInlineEnums = (node: any) => {
-    if (!node || typeof node !== "object" || Array.isArray(node)) return;
-    Object.entries(node).forEach(([key, val]) => {
-      if (
-        Array.isArray(val) &&
-        val.length > 0 &&
-        val.every((v) => typeof v === "string" && /^[A-Z0-9_]+$/.test(v))
-      ) {
-        enumMapLocal[key] = val;
-      } else if (val && typeof val === "object") {
-        collectInlineEnums(val);
-      }
-    });
-  };
-
-  if (!enumsMap) {
-    collectInlineEnums(value);
-  }
-
-  if (Object.keys(enumMapLocal).length) {
-    Object.entries(enumMapLocal).forEach(([name, values]) => {
-      const enumLines = values.map((v) => `  ${v} = "${v}",`);
-      enums.push(`export enum ${name} {\n${enumLines.join("\n")}\n}`);
-    });
-  }
-
-  const walk = (node: any, name: string): string => {
-    if (node === null) return "null";
-    const t = typeof node;
-    if (t === "string") {
-      const enumHit = pickEnum(name, node);
-      if (enumHit) return enumHit;
-      return isDateString(node) ? "Date" : "string";
-    }
-    if (t === "number") return "number";
-    if (t === "boolean") return "boolean";
-    if (Array.isArray(node)) {
-      if (node.length === 0) return "any[]";
-      const itemType = walk(node[0], name + "Item");
-      return `${itemType}[]`;
-    }
-    if (t === "object") {
-      const ifaceName = uniqueName(name);
-      const lines = Object.entries(node).map(([key, val]) => {
-        const type = walk(val, key);
-        return `  ${key}: ${type};`;
-      });
-      interfaces.push(
-        `export interface ${ifaceName} {\n${lines.join("\n")}\n}`,
-      );
-      return ifaceName;
-    }
-    return "any";
-  };
-
-  const rootInterface = walk(value, rootName || "Root");
-  if (!interfaces.find((i) => i.includes(`interface ${rootInterface}`))) {
-    interfaces.push(`export interface ${rootInterface} {}`);
-  }
-  const enumsBlock = enums.length ? `${enums.join("\n\n")}\n\n` : "";
-  return `${enumsBlock}${interfaces.reverse().join("\n\n")}`;
 }

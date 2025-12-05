@@ -5,7 +5,8 @@ import { feSeedCore } from "@/modules/snippets/seeds/fe";
 import { gitSeedCore } from "@/modules/snippets/seeds/git";
 import { linuxSeedCore } from "@/modules/snippets/seeds/linux";
 import { type Snippet } from "@/modules/snippets/types";
-import styles from "../index.module.scss";
+
+import styles from "./QuickSnippetsPane.module.scss";
 
 export function QuickSnippetsPane() {
   const seeds: Snippet[] = useMemo(

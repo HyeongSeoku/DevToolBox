@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 
+import { type I18nKeyStatus } from "@/pages/I18nInspector/types";
 import {
   flattenJson,
   compareLocales,
   detectLanguage,
 } from "@/pages/I18nInspector/utils";
-import { type I18nKeyStatus } from "@/pages/I18nInspector/types";
-import styles from "../index.module.scss";
+
+import styles from "./QuickI18nPane.module.scss";
 
 const localeOptions = [
   { code: "en", label: "영어(EN)" },
@@ -43,7 +44,8 @@ export function QuickI18nPane() {
       const detected = detectLanguage(sample);
       if (detected && ["en", "ko", "ja"].includes(detected)) {
         if (role === "base" && detected !== baseLocale) setBaseLocale(detected);
-        if (role === "target" && detected !== targetLocale) setTargetLocale(detected);
+        if (role === "target" && detected !== targetLocale)
+          setTargetLocale(detected);
       }
     } catch {
       // ignore
@@ -186,7 +188,7 @@ export function QuickI18nPane() {
           <span className={`${styles.badge} ${styles.okCount}`}>
             OK {summary.OK}
           </span>
-          <span className={`${styles.badge} ${styles.warnCount}`}>
+          <span className={`${styles.badge} ${styles.missingCount}`}>
             MISSING {summary.MISSING}
           </span>
           <span className={`${styles.badge} ${styles.warnCount}`}>
@@ -202,7 +204,9 @@ export function QuickI18nPane() {
           <div key={`${s.key}-${s.status}`} className={styles.historyItem}>
             <div className={styles.paneActions}>
               <span className={styles.title}>{s.key}</span>
-              <span className={`${styles.badge} ${styles.warnCount}`}>
+              <span
+                className={`${styles.badge} ${s.status === "MISSING" ? styles.missingCount : styles.warnCount}`}
+              >
                 {s.status}
               </span>
             </div>

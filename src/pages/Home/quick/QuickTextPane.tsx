@@ -1,9 +1,51 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
-import styles from "../index.module.scss";
+import {
+  processLines,
+  type CaseStyle,
+  type LineProcessOptions,
+} from "@/utils/textTransform";
+
+import styles from "./QuickTextPane.module.scss";
 
 export function QuickTextPane() {
   const [value, setValue] = useState("");
+  const [targetCase, setTargetCase] = useState<CaseStyle>("upper");
+  const [trim, setTrim] = useState(true);
+
+  const baseOptions = useMemo(
+    (): LineProcessOptions => ({
+      targetCase,
+      trim,
+      skipEmpty: false,
+      joinMode: "lines",
+      splitOptions: {
+        delimiters: [" ", "_", "-", "."],
+        splitNumbers: false,
+        uppercaseAcronyms: true,
+      },
+      prefix: undefined,
+      suffix: undefined,
+      wrapTemplate: undefined,
+      datePrefix: false,
+      numbering: null,
+      numberWidth: 3,
+      dedupe: false,
+    }),
+    [targetCase, trim],
+  );
+
+  const processed = useMemo(
+    () => processLines(value, baseOptions),
+    [value, baseOptions],
+  );
+
+  const applyCase = (next: CaseStyle) => {
+    setTargetCase(next);
+    const opts = { ...baseOptions, targetCase: next };
+    setValue(processLines(value, opts).combined);
+  };
+
   const handleCopy = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
@@ -25,16 +67,26 @@ export function QuickTextPane() {
         onChange={(e) => setValue(e.target.value)}
       />
       <div className={styles.paneActions}>
-        <button className="ghost" onClick={() => setValue(value.toUpperCase())}>
+        <button className="ghost" onClick={() => applyCase("upper")}>
           대문자
         </button>
-        <button className="ghost" onClick={() => setValue(value.toLowerCase())}>
+        <button className="ghost" onClick={() => applyCase("lower")}>
           소문자
         </button>
-        <button className="ghost" onClick={() => setValue(value.trim())}>
+        <button
+          className="ghost"
+          onClick={() => {
+            setTrim(true);
+            const opts = { ...baseOptions, trim: true };
+            setValue(processLines(value, opts).combined);
+          }}
+        >
           Trim
         </button>
-        <button className="primary" onClick={() => handleCopy(value)}>
+        <button
+          className="primary"
+          onClick={() => handleCopy(processed.combined)}
+        >
           복사
         </button>
       </div>

@@ -1,4 +1,4 @@
-import styles from "../index.module.scss";
+import styles from "./QuickHistoryPane.module.scss";
 
 type RecentItem = {
   id: string;

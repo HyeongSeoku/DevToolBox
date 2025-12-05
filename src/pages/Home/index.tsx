@@ -16,6 +16,7 @@ import { QuickTextPane } from "./quick/QuickTextPane";
 import { QuickTypegenPane } from "./quick/QuickTypegenPane";
 import { QuickConvertPane } from "./quick/QuickConvertPane";
 import { QuickI18nPane } from "./quick/QuickI18nPane";
+import { QuickJsonPane } from "./quick/QuickJsonPane";
 import styles from "./index.module.scss";
 
 type RecentItem = {
@@ -38,6 +39,7 @@ const navMeta: Record<NavKey, { title: string; detail: string }> = {
   jwt: { title: "JWT 디코더", detail: "토큰 복호화/검증" },
   text: { title: "텍스트 변환", detail: "케이스/치환/트리밍" },
   regex: { title: "Regex Tester", detail: "정규식 테스트" },
+  json: { title: "JSON Formatter", detail: "포맷/미니파이/검증" },
   env: { title: ".env Manager", detail: "환경 변수 관리" },
   snippets: { title: "Snippets", detail: "코드/SQL 스니펫" },
   jsdoc: { title: "JSDoc Generator", detail: "주석 자동 생성" },
@@ -52,6 +54,7 @@ const allKeys: NavKey[] = [
   "text",
   "jwt",
   "regex",
+  "json",
   "env",
   "history",
   "i18n",
@@ -81,6 +84,8 @@ function PaneRenderer({
       return <QuickRegexPane />;
     case "env":
       return <QuickEnvPane />;
+    case "json":
+      return <QuickJsonPane />;
     case "history":
       return <QuickHistoryPane recent={recent} />;
     case "i18n":

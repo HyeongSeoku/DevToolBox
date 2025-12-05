@@ -1,12 +1,16 @@
 import { useState } from "react";
 
-import { invoke } from "@tauri-apps/api/core";
-
 import { useToast } from "@/components/ToastProvider";
 import { useTauriEnv } from "@/hooks/useTauriEnv";
-import styles from "../index.module.scss";
+import {
+  convertImagesQuick,
+  defaultQuickConvertOptions,
+  filterByExtensions,
+  imageExtensions,
+  pickFilesByExtensions,
+} from "@/utils/convert";
 
-const imageExts = ["jpg", "jpeg", "png", "webp", "bmp", "gif"];
+import styles from "./QuickConvertPane.module.scss";
 
 export function QuickConvertPane() {
   const toast = useToast();
@@ -22,29 +26,23 @@ export function QuickConvertPane() {
     try {
       setBusy(true);
       setStatus("파일 선택 중...");
-      const paths = await invoke<string[]>("pick_files", {
-        multiple: true,
-        extensions: imageExts,
-      });
+      const paths = await pickFilesByExtensions(imageExtensions, true);
       if (!paths || !paths.length) {
         setStatus("선택된 파일이 없습니다.");
         setBusy(false);
         return;
       }
-      setStatus("변환 중...");
-      for (const path of paths.slice(0, 2)) {
-        await invoke("convert_image", {
-          path,
-          options: {
-            target_format: "webp",
-            quality_percent: 90,
-            scale_percent: 100,
-            output_dir: null,
-            rename_pattern: "{basename}_quick",
-            strip_exif: false,
-          },
-        });
+      const filtered = filterByExtensions(paths, imageExtensions);
+      if (!filtered.length) {
+        setStatus("이미지 파일만 선택하세요.");
+        setBusy(false);
+        return;
       }
+      setStatus("변환 중...");
+      await convertImagesQuick(
+        filtered.slice(0, 2),
+        defaultQuickConvertOptions,
+      );
       setStatus("완료! 동일 폴더에 _quick.webp 저장.");
       toast.show("빠른 변환 완료", { type: "success" });
     } catch (error) {

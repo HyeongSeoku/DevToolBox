@@ -24,6 +24,12 @@ import {
 } from "../../hooks/useConversionJob";
 import { useFileSelection } from "../../hooks/useFileSelection";
 import { useTauriEnv } from "../../hooks/useTauriEnv";
+import {
+  filterByExtensions,
+  imageExtensions,
+  pickFilesByExtensions,
+  videoExtensions,
+} from "../../utils/convert";
 
 const qualityPresets = [
   { label: "100% · 거의 무손실", value: 100 },
@@ -53,9 +59,6 @@ const webPresets = [
     scale: 100,
   },
 ];
-
-const imageExts = ["jpg", "jpeg", "png", "webp", "bmp", "gif"];
-const videoExts = ["mp4", "mov", "mkv", "avi"];
 
 type ConvertPageProps = {
   modeOverride?: ImageConvertMode;
@@ -104,12 +107,10 @@ export function ConvertPage({ modeOverride, recentAdd }: ConvertPageProps) {
     const unlistenPromise = getCurrentWebview().onDragDropEvent(
       (event: TauriEvent<DragDropEvent>) => {
         if (event.payload.type !== "drop") return;
-        const paths = (event.payload.paths || []).filter((p) => {
-          const lower = p.toLowerCase();
-          return mode === "gif"
-            ? videoExts.some((ext) => lower.endsWith(`.${ext}`))
-            : imageExts.some((ext) => lower.endsWith(`.${ext}`));
-        });
+        const paths =
+          mode === "gif"
+            ? filterByExtensions(event.payload.paths || [], videoExtensions)
+            : filterByExtensions(event.payload.paths || [], imageExtensions);
         if (paths.length) {
           addFiles(mode === "gif" ? [paths[0]] : paths);
         } else {
@@ -161,11 +162,8 @@ export function ConvertPage({ modeOverride, recentAdd }: ConvertPageProps) {
       return;
     }
     try {
-      const exts = mode === "gif" ? videoExts : imageExts;
-      const paths = await invoke<string[]>("pick_files", {
-        multiple: true,
-        extensions: exts,
-      });
+      const exts = mode === "gif" ? videoExtensions : imageExtensions;
+      const paths = await pickFilesByExtensions(exts, true);
       if (paths && paths.length) {
         addFiles(mode === "gif" ? [paths[0]] : paths);
       }
@@ -287,12 +285,10 @@ export function ConvertPage({ modeOverride, recentAdd }: ConvertPageProps) {
                 : "이미지 변환: jpg, jpeg, png, webp, bmp, gif"
             }
             onFilesAdded={(paths) => {
-              const filtered = paths.filter((p) => {
-                const lower = p.toLowerCase();
-                return mode === "gif"
-                  ? videoExts.some((ext) => lower.endsWith(`.${ext}`))
-                  : imageExts.some((ext) => lower.endsWith(`.${ext}`));
-              });
+              const filtered =
+                mode === "gif"
+                  ? filterByExtensions(paths, videoExtensions)
+                  : filterByExtensions(paths, imageExtensions);
               if (!filtered.length) {
                 setStatus(
                   mode === "gif"

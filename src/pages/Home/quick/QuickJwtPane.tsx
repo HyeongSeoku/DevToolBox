@@ -1,6 +1,8 @@
 import { useState } from "react";
 
-import styles from "../index.module.scss";
+import { decodeFirstJwt } from "@/utils/jwt";
+
+import styles from "./QuickJwtPane.module.scss";
 
 export function QuickJwtPane() {
   const [token, setToken] = useState("");
@@ -8,17 +10,14 @@ export function QuickJwtPane() {
   const [error, setError] = useState<string>("");
 
   const decode = () => {
-    try {
-      const parts = token.split(".");
-      if (parts.length < 2) throw new Error("형식이 올바르지 않습니다.");
-      const json = atob(parts[1].replace(/-/g, "+").replace(/_/g, "/"));
-      const parsed = JSON.parse(decodeURIComponent(escape(json)));
-      setPayload(JSON.stringify(parsed, null, 2));
-      setError("");
-    } catch (err) {
-      setError(String(err));
+    const result = decodeFirstJwt(token, { maskSensitive: true });
+    if (result.error) {
+      setError(result.error);
       setPayload("");
+      return;
     }
+    setPayload(result.payloadPretty);
+    setError("");
   };
 
   return (

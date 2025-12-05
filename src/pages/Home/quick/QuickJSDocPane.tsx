@@ -2,7 +2,8 @@ import { useState } from "react";
 
 import { generateJSDoc } from "@/modules/jsdoc/generator";
 import { parseInterfaces } from "@/modules/jsdoc/parser";
-import styles from "../index.module.scss";
+
+import styles from "./QuickJSDocPane.module.scss";
 
 export function QuickJSDocPane() {
   const [input, setInput] = useState(

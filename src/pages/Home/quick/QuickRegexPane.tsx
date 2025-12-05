@@ -1,20 +1,34 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
-import styles from "../index.module.scss";
+import { runRegex } from "@/utils/regex";
+
+import styles from "./QuickRegexPane.module.scss";
 
 export function QuickRegexPane() {
   const [pattern, setPattern] = useState("");
   const [text, setText] = useState("");
   const [result, setResult] = useState<string>("");
 
+  const regexResult = useMemo(() => {
+    if (!pattern) return null;
+    return runRegex(pattern, "g", text);
+  }, [pattern, text]);
+
   const run = () => {
-    try {
-      const regex = new RegExp(pattern, "g");
-      const matches = [...text.matchAll(regex)].map((m) => m[0]);
-      setResult(matches.length ? matches.join(", ") : "일치 없음");
-    } catch (err) {
-      setResult(`오류: ${err}`);
+    if (!pattern) {
+      setResult("패턴을 입력하세요.");
+      return;
     }
+    if (regexResult?.error) {
+      setResult(`오류: ${regexResult.error}`);
+      return;
+    }
+    if (!regexResult) {
+      setResult("패턴을 입력하세요.");
+      return;
+    }
+    const matches = regexResult.matches.map((m) => m.match).filter(Boolean);
+    setResult(matches.length ? matches.join(", ") : "일치 없음");
   };
 
   return (
