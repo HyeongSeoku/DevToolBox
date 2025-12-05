@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/Button";
+import { copyWithToast } from "@/utils/clipboard";
 
 import styles from "./index.module.scss";
 import { useToast } from "../../components/ToastProvider";
@@ -209,11 +210,7 @@ export function TypeGenPage() {
             {summary && <p className="micro">{summary}</p>}
             <Button
               variant="ghost"
-              onClick={() => {
-                navigator.clipboard.writeText(preview).catch(() => {
-                  toast.show("클립보드 복사 실패", { type: "error" });
-                });
-              }}
+              onClick={() => copyWithToast(preview, toast)}
             >
               Copy
             </Button>

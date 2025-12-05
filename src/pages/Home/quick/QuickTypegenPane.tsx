@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { useToast } from "@/components/ToastProvider";
+import { copyWithToast } from "@/utils/clipboard";
 import { generateInterfaces } from "@/utils/typegen";
 
 import styles from "./QuickTypegenPane.module.scss";
@@ -42,7 +43,7 @@ export function QuickTypegenPane() {
         </button>
         <button
           className="ghost"
-          onClick={() => navigator.clipboard.writeText(output)}
+          onClick={() => copyWithToast(output, toast)}
         >
           복사
         </button>

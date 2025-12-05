@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import styles from "./index.module.scss";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ToastProvider";
+import { copyWithToast } from "@/utils/clipboard";
 import { useVaultStore } from "@/stores/useVaultStore";
 import {
   generateCaseVariants,
@@ -95,10 +96,8 @@ export function TextToolsPage() {
     ],
   );
 
-  const handleCopy = async () => {
-    await navigator.clipboard.writeText(processed.combined);
-    toast.show("복사 완료", { type: "success" });
-  };
+  const handleCopy = async () =>
+    copyWithToast(processed.combined, toast, { success: "복사 완료" });
 
   const handleSave = async () => {
     try {
@@ -373,7 +372,7 @@ export function TextToolsPage() {
               <button
                 key={style}
                 className={styles.variant}
-                onClick={() => navigator.clipboard.writeText(value)}
+                onClick={() => copyWithToast(value, toast)}
               >
                 <span className={styles.variantLabel}>{style}</span>
                 <span className={styles.variantValue}>{value}</span>

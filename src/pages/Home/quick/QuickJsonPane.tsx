@@ -1,6 +1,8 @@
 import { useState } from "react";
 
 import { ScrollArea } from "@/components/ui/ScrollArea";
+import { useToast } from "@/components/ToastProvider";
+import { copyWithToast } from "@/utils/clipboard";
 import { computePosition, formatJson } from "@/utils/jsonFormat";
 
 import styles from "./QuickJsonPane.module.scss";
@@ -9,6 +11,7 @@ export function QuickJsonPane() {
   const [input, setInput] = useState('{"hello":"world"}');
   const [output, setOutput] = useState("{}");
   const [error, setError] = useState<string | null>(null);
+  const toast = useToast();
 
   const format = () => {
     try {
@@ -70,7 +73,7 @@ export function QuickJsonPane() {
         </button>
         <button
           className="ghost"
-          onClick={() => navigator.clipboard.writeText(output || "")}
+          onClick={() => copyWithToast(output || "", toast)}
         >
           Copy
         </button>

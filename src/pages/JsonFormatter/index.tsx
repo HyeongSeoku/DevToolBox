@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 
+import { useToast } from "@/components/ToastProvider";
 import { ScrollArea } from "@/components/ui/ScrollArea";
+import { copyWithToast } from "@/utils/clipboard";
 import { computePosition, formatJson } from "@/utils/jsonFormat";
 
 import styles from "./index.module.scss";
@@ -14,6 +16,7 @@ export function JsonFormatterPage() {
   const [allowJsLike, setAllowJsLike] = useState(true);
   const [indent, setIndent] = useState<"2" | "4" | "tab">("2");
   const [sortAll, setSortAll] = useState(false);
+  const toast = useToast();
 
   const indentValue = useMemo(() => {
     if (indent === "tab") return "\t";
@@ -84,12 +87,6 @@ export function JsonFormatterPage() {
           <button className="ghost" onClick={() => format({ sort: true })}>
             Beautify + Sort
           </button>
-          <button
-            className="ghost"
-            onClick={() => navigator.clipboard.writeText(output || "")}
-          >
-            Copy
-          </button>
         </div>
         {error && <p className="micro warning">{error}</p>}
       </header>
@@ -119,7 +116,16 @@ export function JsonFormatterPage() {
         <div className={styles.card}>
           <div className={styles.cardHeader}>
             <p className={styles.title}>결과</p>
-            <p className="micro subtle">포맷/미니파이/정렬 결과</p>
+
+            <div className={styles.cardHeaderSubContainer}>
+              <p className="micro subtle">포맷/미니파이/정렬 결과</p>
+              <button
+                className="ghost"
+                onClick={() => copyWithToast(output || "", toast)}
+              >
+                Copy
+              </button>
+            </div>
           </div>
           <ScrollArea className={styles.scrollArea}>
             <pre className={styles.output}>{output}</pre>

@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 
 import { useToast } from "@/components/ToastProvider";
+import { copyWithToast } from "@/utils/clipboard";
 import { useVaultStore } from "@/stores/useVaultStore";
 import {
   commonRegexSnippets,
@@ -205,7 +206,7 @@ export function RegexTesterPage() {
             />
             <button
               className={`${styles.button} ${styles.ghost}`}
-              onClick={() => navigator.clipboard.writeText(pattern)}
+              onClick={() => copyWithToast(pattern, toast)}
             >
               패턴 복사
             </button>

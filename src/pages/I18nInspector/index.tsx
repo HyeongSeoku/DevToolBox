@@ -5,6 +5,8 @@ import { join } from "@tauri-apps/api/path";
 import { readDir, readTextFile } from "@tauri-apps/plugin-fs";
 
 import { ScrollArea } from "@/components/ui/ScrollArea";
+import { useToast } from "@/components/ToastProvider";
+import { copyWithToast } from "@/utils/clipboard";
 
 import styles from "./index.module.scss";
 import {
@@ -28,6 +30,7 @@ const normalizeQuotes = (text: string) =>
 export function I18nInspectorPage() {
   const mode: TranslateMode = "text"; // 단일 텍스트/파일 불러오기 모드 고정
   const pattern: LocalePattern = "flat";
+  const toast = useToast();
   const [baseLocale, setBaseLocale] = useState("en");
   const [targetLocale, setTargetLocale] = useState("ko");
   const [root, setRoot] = useState("");
@@ -334,11 +337,7 @@ export function I18nInspectorPage() {
 
   const copyLocale = async (role: "base" | "target") => {
     const text = role === "base" ? baseText : targetText;
-    try {
-      await navigator.clipboard.writeText(text);
-    } catch {
-      // ignore clipboard errors silently
-    }
+    await copyWithToast(text, toast);
   };
 
   return (

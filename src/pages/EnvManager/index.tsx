@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import styles from "./index.module.scss";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ToastProvider";
+import { copyWithToast } from "@/utils/clipboard";
 import {
   diffEnvDetailed,
   generateExample,
@@ -53,14 +54,8 @@ export function EnvManagerPage() {
     [diff, maskMode],
   );
 
-  const handleCopy = async (text: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      toast.show("복사 완료", { type: "success" });
-    } catch {
-      toast.show("복사 실패", { type: "error" });
-    }
-  };
+  const handleCopy = async (text: string) =>
+    copyWithToast(text, toast, { success: "복사 완료", error: "복사 실패" });
 
   const renderDiffRow = (item: DiffItem & { base?: any; compare?: any }) => {
     const status = item.status;

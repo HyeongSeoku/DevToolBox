@@ -2,6 +2,8 @@ import { useState } from "react";
 
 import { generateJSDoc } from "@/modules/jsdoc/generator";
 import { parseInterfaces } from "@/modules/jsdoc/parser";
+import { useToast } from "@/components/ToastProvider";
+import { copyWithToast } from "@/utils/clipboard";
 
 import styles from "./QuickJSDocPane.module.scss";
 
@@ -11,6 +13,7 @@ export function QuickJSDocPane() {
   );
   const [output, setOutput] = useState<string>("");
   const [error, setError] = useState<string>("");
+  const toast = useToast();
 
   const generate = () => {
     try {
@@ -48,7 +51,7 @@ export function QuickJSDocPane() {
         </button>
         <button
           className="ghost"
-          onClick={() => navigator.clipboard.writeText(output || "")}
+          onClick={() => copyWithToast(output || "", toast)}
         >
           복사
         </button>

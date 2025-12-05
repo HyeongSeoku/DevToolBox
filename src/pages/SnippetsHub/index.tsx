@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 
 import styles from "./index.module.scss";
 import { useToast } from "@/components/ToastProvider";
+import { copyWithToast } from "@/utils/clipboard";
 import {
   loadSnippetsByKind,
   filterSnippets,
@@ -86,14 +87,11 @@ export function SnippetHubPage() {
     [snippets],
   );
 
-  const handleCopy = async (content: string) => {
-    try {
-      await navigator.clipboard.writeText(content);
-      toast.show("클립보드에 복사했습니다.", { type: "success" });
-    } catch (error) {
-      toast.show(`복사 실패: ${error}`, { type: "error" });
-    }
-  };
+  const handleCopy = async (content: string) =>
+    copyWithToast(content, toast, {
+      success: "클립보드에 복사했습니다.",
+      error: "복사 실패",
+    });
 
   const tabs: SnippetKind[] = ["git", "linux", "fe", "be"];
 

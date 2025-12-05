@@ -4,6 +4,7 @@ import { useToast } from "@/components/ToastProvider";
 import { Button } from "@/components/ui/Button";
 import { useTauriEnv } from "@/hooks/useTauriEnv";
 import { useVaultStore } from "@/stores/useVaultStore";
+import { copyWithToast } from "@/utils/clipboard";
 import {
   detectJwtStrings,
   detectTimestamps,
@@ -81,6 +82,8 @@ export function JWTDecoderPage() {
     () => summarizeClaims(parsed?.payloadJson),
     [parsed],
   );
+
+  const handleCopy = (text: string) => copyWithToast(text, toast);
 
   useEffect(() => {
     const found = detectJwtStrings(input);
@@ -280,11 +283,11 @@ export function JWTDecoderPage() {
             <div className={styles.panelActions}>
               <Button
                 variant="ghost"
-                onClick={() => copyText(parsed?.headerB64 || "")}
+                onClick={() => handleCopy(parsed?.headerB64 || "")}
               >
                 Copy Base64URL
               </Button>
-              <Button variant="ghost" onClick={() => copyText(decodedHeader)}>
+              <Button variant="ghost" onClick={() => handleCopy(decodedHeader)}>
                 Copy JSON
               </Button>
             </div>
@@ -316,14 +319,14 @@ export function JWTDecoderPage() {
             <div className={styles.panelActions}>
               <Button
                 variant="ghost"
-                onClick={() => copyText(parsed?.payloadB64 || "")}
+                onClick={() => handleCopy(parsed?.payloadB64 || "")}
               >
                 Copy Base64URL
               </Button>
-              <Button variant="ghost" onClick={() => copyText(decodedPayload)}>
+              <Button variant="ghost" onClick={() => handleCopy(decodedPayload)}>
                 Copy JSON
               </Button>
-              <Button variant="ghost" onClick={() => copyText(minifiedPayload)}>
+              <Button variant="ghost" onClick={() => handleCopy(minifiedPayload)}>
                 Minify & Copy
               </Button>
               <Button variant="ghost" onClick={handleExport}>
@@ -403,12 +406,4 @@ export function JWTDecoderPage() {
 function maskMiddle(token: string) {
   if (token.length < 20) return token;
   return `${token.slice(0, 10)}…${token.slice(-10)}`;
-}
-
-async function copyText(text: string) {
-  try {
-    await navigator.clipboard.writeText(text);
-  } catch {
-    // ignore
-  }
 }

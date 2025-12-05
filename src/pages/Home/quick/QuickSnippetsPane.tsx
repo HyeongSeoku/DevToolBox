@@ -5,10 +5,13 @@ import { feSeedCore } from "@/modules/snippets/seeds/fe";
 import { gitSeedCore } from "@/modules/snippets/seeds/git";
 import { linuxSeedCore } from "@/modules/snippets/seeds/linux";
 import { type Snippet } from "@/modules/snippets/types";
+import { useToast } from "@/components/ToastProvider";
+import { copyWithToast } from "@/utils/clipboard";
 
 import styles from "./QuickSnippetsPane.module.scss";
 
 export function QuickSnippetsPane() {
+  const toast = useToast();
   const seeds: Snippet[] = useMemo(
     () => [
       ...gitSeedCore.slice(0, 2),
@@ -30,7 +33,7 @@ export function QuickSnippetsPane() {
           <button
             key={s.id}
             className={styles.snippet}
-            onClick={() => navigator.clipboard.writeText(s.content || "")}
+            onClick={() => copyWithToast(s.content || "", toast)}
           >
             <p className={styles.title}>{s.title}</p>
             <p className="subtle">{s.content?.slice(0, 80) ?? ""}</p>

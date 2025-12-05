@@ -1,4 +1,5 @@
 import { useToast } from "@/components/ToastProvider";
+import { copyWithToast } from "@/utils/clipboard";
 import { Button } from "@/components/ui/Button";
 import { useJSDocGenerator } from "@/hooks/useJSDocGenerator";
 
@@ -130,22 +131,13 @@ export function JSDocGeneratorPage() {
             <div className={styles.inline}>
               <Button
                 variant="primary"
-                onClick={() => {
-                  navigator.clipboard.writeText(code).then(
-                    () => toast.show("복사 완료", { type: "success" }),
-                    () => toast.show("클립보드 복사 실패", { type: "error" }),
-                  );
-                }}
+                onClick={() => copyWithToast(code, toast)}
               >
                 Copy
               </Button>
               <Button
                 variant="ghost"
-                onClick={() => {
-                  navigator.clipboard.writeText(code).catch(() => {
-                    toast.show("복사 실패", { type: "error" });
-                  });
-                }}
+                onClick={() => copyWithToast(code, toast)}
               >
                 Generate
               </Button>

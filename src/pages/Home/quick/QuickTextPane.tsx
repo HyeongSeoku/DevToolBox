@@ -1,5 +1,7 @@
 import { useMemo, useState } from "react";
 
+import { useToast } from "@/components/ToastProvider";
+import { copyWithToast } from "@/utils/clipboard";
 import {
   processLines,
   type CaseStyle,
@@ -12,6 +14,7 @@ export function QuickTextPane() {
   const [value, setValue] = useState("");
   const [targetCase, setTargetCase] = useState<CaseStyle>("upper");
   const [trim, setTrim] = useState(true);
+  const toast = useToast();
 
   const baseOptions = useMemo(
     (): LineProcessOptions => ({
@@ -46,14 +49,6 @@ export function QuickTextPane() {
     setValue(processLines(value, opts).combined);
   };
 
-  const handleCopy = async (text: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-    } catch {
-      // ignore clipboard error
-    }
-  };
-
   return (
     <div className={styles.pane}>
       <div className={styles.paneHeader}>
@@ -85,7 +80,7 @@ export function QuickTextPane() {
         </button>
         <button
           className="primary"
-          onClick={() => handleCopy(processed.combined)}
+          onClick={() => copyWithToast(processed.combined, toast)}
         >
           복사
         </button>
