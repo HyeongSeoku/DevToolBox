@@ -1,4 +1,5 @@
 import { useToast } from "@/components/ToastProvider";
+import { Checkbox } from "@/components/ui/Checkbox";
 import { copyWithToast } from "@/utils/clipboard";
 import { Button } from "@/components/ui/Button";
 import { useJSDocGenerator } from "@/hooks/useJSDocGenerator";
@@ -33,7 +34,7 @@ export function JSDocGeneratorPage() {
         <p className="eyebrow">JSDoc Generator</p>
         <h1>TypeScript 인터페이스 → JSDoc 주석 생성</h1>
         <p className="micro">
-          props 정의를 붙여 넣고 Typedef/Param 모드로 JSDoc을 만들어 보세요.
+          props 정의를 붙여 넣고 Interface/Typedef/Param 모드로 JSDoc을 만들어 보세요.
         </p>
       </header>
 
@@ -66,14 +67,18 @@ export function JSDocGeneratorPage() {
             <div className={styles.inline}>
               <label className={styles.label}>모드</label>
               <div className={styles.tabRow}>
-                {(["typedef", "param"] as const).map((m) => (
+                {(["interface", "typedef", "param"] as const).map((m) => (
                   <Button
                     key={m}
                     variant="pill"
                     active={mode === m}
                     onClick={() => setMode(m)}
                   >
-                    {m === "typedef" ? "Typedef" : "Param"}
+                    {m === "interface"
+                      ? "Interface"
+                      : m === "typedef"
+                        ? "Typedef"
+                        : "Param"}
                   </Button>
                 ))}
               </div>
@@ -98,28 +103,25 @@ export function JSDocGeneratorPage() {
             </div>
             <div className={styles.inline}>
               <label className={styles.checkbox}>
-                <input
-                  type="checkbox"
+                <Checkbox
                   checked={simplifyTypes}
                   onChange={(e) => setSimplifyTypes(e.target.checked)}
+                  label="JS 친화 타입으로 단순화"
                 />
-                JS 친화 타입으로 단순화
               </label>
               <label className={styles.checkbox}>
-                <input
-                  type="checkbox"
+                <Checkbox
                   checked={autoDescription}
                   onChange={(e) => setAutoDescription(e.target.checked)}
+                  label="자동 description 생성"
                 />
-                자동 description 생성
               </label>
               <label className={styles.checkbox}>
-                <input
-                  type="checkbox"
+                <Checkbox
                   checked={detectSetter}
                   onChange={(e) => setDetectSetter(e.target.checked)}
+                  label="setter 자동 감지"
                 />
-                setter 자동 감지
               </label>
             </div>
           </div>

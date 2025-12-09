@@ -7,7 +7,6 @@ import { useQuickLayoutStore } from "@/stores/useQuickLayout";
 import { type NavKey } from "@/types/nav";
 import { AddCard } from "./quick/AddCard";
 import { QuickEnvPane } from "./quick/QuickEnvPane";
-import { QuickHistoryPane } from "./quick/QuickHistoryPane";
 import { QuickJSDocPane } from "./quick/QuickJSDocPane";
 import { QuickJwtPane } from "./quick/QuickJwtPane";
 import { QuickRegexPane } from "./quick/QuickRegexPane";
@@ -35,7 +34,7 @@ const navMeta: Record<NavKey, { title: string; detail: string }> = {
   convert: { title: "이미지 변환", detail: "JPEG/PNG/WebP 변환" },
   typegen: { title: "API 타입 생성", detail: "Swagger/OpenAPI 변환" },
   settings: { title: "설정", detail: "앱/데이터 설정" },
-  history: { title: "작업 History", detail: "최근 기록 목록" },
+  base64: { title: "Base64", detail: "텍스트/파일 인코딩" },
   jwt: { title: "JWT 디코더", detail: "토큰 복호화/검증" },
   text: { title: "텍스트 변환", detail: "케이스/치환/트리밍" },
   regex: { title: "Regex Tester", detail: "정규식 테스트" },
@@ -56,7 +55,6 @@ const allKeys: NavKey[] = [
   "regex",
   "json",
   "env",
-  "history",
   "i18n",
 ];
 
@@ -86,8 +84,8 @@ function PaneRenderer({
       return <QuickEnvPane />;
     case "json":
       return <QuickJsonPane />;
-    case "history":
-      return <QuickHistoryPane recent={recent} />;
+    case "base64":
+      return null;
     case "i18n":
       return <QuickI18nPane />;
     default:

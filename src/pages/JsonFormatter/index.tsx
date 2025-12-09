@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 
 import { useToast } from "@/components/ToastProvider";
+import { Checkbox } from "@/components/ui/Checkbox";
 import { ScrollArea } from "@/components/ui/ScrollArea";
 import { copyWithToast } from "@/utils/clipboard";
 import { computePosition, formatJson } from "@/utils/jsonFormat";
@@ -63,20 +64,18 @@ export function JsonFormatterPage() {
             </select>
           </label>
           <label className={styles.inline}>
-            <input
-              type="checkbox"
+            <Checkbox
               checked={allowJsLike}
               onChange={(e) => setAllowJsLike(e.target.checked)}
+              label="JS 스타일 허용(단일따옴표, 트레일링콤마)"
             />
-            JS 스타일 허용(단일따옴표, 트레일링콤마)
           </label>
           <label className={styles.inline}>
-            <input
-              type="checkbox"
+            <Checkbox
               checked={sortAll}
               onChange={(e) => setSortAll(e.target.checked)}
+              label="키 정렬(재귀)"
             />
-            키 정렬(재귀)
           </label>
           <button className="primary" onClick={() => format()}>
             Format

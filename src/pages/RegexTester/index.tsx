@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 
 import { useToast } from "@/components/ToastProvider";
+import { Checkbox } from "@/components/ui/Checkbox";
 import { copyWithToast } from "@/utils/clipboard";
 import { useVaultStore } from "@/stores/useVaultStore";
 import {
@@ -189,14 +190,11 @@ export function RegexTesterPage() {
           />
 
           <div className={styles.replaceRow}>
-            <label className={styles.checkbox}>
-              <input
-                type="checkbox"
-                checked={useReplace}
-                onChange={(e) => setUseReplace(e.target.checked)}
-              />
-              Replace 프리뷰
-            </label>
+            <Checkbox
+              checked={useReplace}
+              onChange={(e) => setUseReplace(e.target.checked)}
+              label="Replace 프리뷰"
+            />
             <input
               className={styles.input}
               value={replace}

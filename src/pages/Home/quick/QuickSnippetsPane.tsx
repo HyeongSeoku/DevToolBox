@@ -1,26 +1,41 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
+import { useToast } from "@/components/ToastProvider";
+import { Pagination } from "@/components/ui/Pagination";
 import { beSeedCore } from "@/modules/snippets/seeds/be";
 import { feSeedCore } from "@/modules/snippets/seeds/fe";
 import { gitSeedCore } from "@/modules/snippets/seeds/git";
 import { linuxSeedCore } from "@/modules/snippets/seeds/linux";
 import { type Snippet } from "@/modules/snippets/types";
-import { useToast } from "@/components/ToastProvider";
 import { copyWithToast } from "@/utils/clipboard";
 
 import styles from "./QuickSnippetsPane.module.scss";
 
 export function QuickSnippetsPane() {
+  const [tab, setTab] = useState<"git" | "linux" | "fe" | "be">("git");
+  const [page, setPage] = useState(0);
   const toast = useToast();
-  const seeds: Snippet[] = useMemo(
-    () => [
-      ...gitSeedCore.slice(0, 2),
-      ...linuxSeedCore.slice(0, 1),
-      ...feSeedCore.slice(0, 1),
-      ...beSeedCore.slice(0, 1),
-    ],
-    [],
-  );
+  const perPage = 6;
+
+  const seedsAll: Snippet[] = useMemo(() => {
+    switch (tab) {
+      case "git":
+        return gitSeedCore;
+      case "linux":
+        return linuxSeedCore;
+      case "fe":
+        return feSeedCore;
+      case "be":
+        return beSeedCore;
+      default:
+        return [];
+    }
+  }, [tab]);
+
+  const paged = useMemo(() => {
+    const start = page * perPage;
+    return seedsAll.slice(start, start + perPage);
+  }, [seedsAll, page]);
 
   return (
     <div className={styles.pane}>
@@ -28,8 +43,22 @@ export function QuickSnippetsPane() {
         <p className={styles.title}>Snippets</p>
         <p className="subtle">기본 스니펫 빠른 복사</p>
       </div>
+      <div className={styles.tabRow}>
+        {(["git", "linux", "fe", "be"] as const).map((kind) => (
+          <button
+            key={kind}
+            className={`${styles.tabButton} ${tab === kind ? styles.active : ""}`}
+            onClick={() => {
+              setTab(kind);
+              setPage(0);
+            }}
+          >
+            {kind.toUpperCase()}
+          </button>
+        ))}
+      </div>
       <div className={styles.historyList}>
-        {seeds.map((s) => (
+        {paged.map((s) => (
           <button
             key={s.id}
             className={styles.snippet}
@@ -39,7 +68,18 @@ export function QuickSnippetsPane() {
             <p className="subtle">{s.content?.slice(0, 80) ?? ""}</p>
           </button>
         ))}
+        {paged.length === 0 && (
+          <p className="subtle">표시할 스니펫이 없습니다.</p>
+        )}
       </div>
+      {seedsAll.length > perPage && (
+        <Pagination
+          page={page}
+          pageSize={perPage}
+          total={seedsAll.length}
+          onPageChange={setPage}
+        />
+      )}
     </div>
   );
 }

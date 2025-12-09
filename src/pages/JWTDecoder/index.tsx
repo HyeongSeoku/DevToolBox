@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { useToast } from "@/components/ToastProvider";
 import { Button } from "@/components/ui/Button";
+import { Checkbox } from "@/components/ui/Checkbox";
 import { useTauriEnv } from "@/hooks/useTauriEnv";
 import { useVaultStore } from "@/stores/useVaultStore";
 import { copyWithToast } from "@/utils/clipboard";
@@ -215,22 +216,19 @@ export function JWTDecoderPage() {
                 클립보드에서 가져오기
               </Button>
             )}
-            <label className={styles.checkbox}>
-              <input
-                type="checkbox"
-                checked={autoPaste}
-                onChange={(e) => {
-                  setAutoPaste(e.target.checked);
-                  if (typeof window !== "undefined") {
-                    window.localStorage.setItem(
-                      "jwt-auto-paste",
-                      e.target.checked ? "1" : "0",
-                    );
-                  }
-                }}
-              />
-              Cmd+V 자동 디코드 허용
-            </label>
+            <Checkbox
+              checked={autoPaste}
+              onChange={(e) => {
+                setAutoPaste(e.target.checked);
+                if (typeof window !== "undefined") {
+                  window.localStorage.setItem(
+                    "jwt-auto-paste",
+                    e.target.checked ? "1" : "0",
+                  );
+                }
+              }}
+              label="Cmd+V 자동 디코드 허용"
+            />
             <Button variant="primary" onClick={handleParse}>
               디코드
             </Button>

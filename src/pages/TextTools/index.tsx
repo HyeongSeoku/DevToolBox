@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import styles from "./index.module.scss";
 import { Button } from "@/components/ui/Button";
+import { Checkbox } from "@/components/ui/Checkbox";
 import { useToast } from "@/components/ToastProvider";
 import { copyWithToast } from "@/utils/clipboard";
 import { useVaultStore } from "@/stores/useVaultStore";
@@ -227,46 +228,31 @@ export function TextToolsPage() {
           </div>
 
           <div className={styles.inline}>
-            <label className={styles.checkbox}>
-              <input
-                type="checkbox"
-                checked={trim}
-                onChange={(e) => setTrim(e.target.checked)}
-              />
-              좌우 공백 제거
-            </label>
-            <label className={styles.checkbox}>
-              <input
-                type="checkbox"
-                checked={skipEmpty}
-                onChange={(e) => setSkipEmpty(e.target.checked)}
-              />
-              빈 줄 스킵
-            </label>
-            <label className={styles.checkbox}>
-              <input
-                type="checkbox"
-                checked={dedupe}
-                onChange={(e) => setDedupe(e.target.checked)}
-              />
-              중복 제거
-            </label>
-            <label className={styles.checkbox}>
-              <input
-                type="checkbox"
-                checked={uppercaseSplit}
-                onChange={(e) => setUppercaseSplit(e.target.checked)}
-              />
-              대문자 묶음 분리(HTTPServer → http-server)
-            </label>
-            <label className={styles.checkbox}>
-              <input
-                type="checkbox"
-                checked={useDatePrefix}
-                onChange={(e) => setUseDatePrefix(e.target.checked)}
-              />
-              날짜 프리픽스(YYYYMMDD_)
-            </label>
+            <Checkbox
+              checked={trim}
+              onChange={(e) => setTrim(e.target.checked)}
+              label="좌우 공백 제거"
+            />
+            <Checkbox
+              checked={skipEmpty}
+              onChange={(e) => setSkipEmpty(e.target.checked)}
+              label="빈 줄 스킵"
+            />
+            <Checkbox
+              checked={dedupe}
+              onChange={(e) => setDedupe(e.target.checked)}
+              label="중복 제거"
+            />
+            <Checkbox
+              checked={uppercaseSplit}
+              onChange={(e) => setUppercaseSplit(e.target.checked)}
+              label="대문자 묶음 분리(HTTPServer → http-server)"
+            />
+            <Checkbox
+              checked={useDatePrefix}
+              onChange={(e) => setUseDatePrefix(e.target.checked)}
+              label="날짜 프리픽스(YYYYMMDD_)"
+            />
           </div>
 
           <div>
@@ -279,43 +265,35 @@ export function TextToolsPage() {
           </div>
 
           <div className={styles.inline}>
-            <label className={styles.checkbox}>
-              <input
-                type="checkbox"
-                checked={splitNumbers}
-                onChange={(e) => setSplitNumbers(e.target.checked)}
-              />
-              숫자 앞뒤 분리
-            </label>
-            <label className={styles.checkbox}>
-              <input
-                type="checkbox"
-                checked={joinMode === "one"}
-                onChange={(e) =>
-                  setJoinMode(e.target.checked ? "one" : "lines")
-                }
-              />
-              결과를 한 줄로 합치기
-            </label>
+            <Checkbox
+              checked={splitNumbers}
+              onChange={(e) => setSplitNumbers(e.target.checked)}
+              label="숫자 앞뒤 분리"
+            />
+            <Checkbox
+              checked={joinMode === "one"}
+              onChange={(e) =>
+                setJoinMode(e.target.checked ? "one" : "lines")
+              }
+              label="결과를 한 줄로 합치기"
+            />
           </div>
 
           <div className={styles.delimiterRow}>
             <p className={styles.label}>구분자</p>
             {delimitersPreset.map((delim) => (
-              <label key={delim} className={styles.checkbox}>
-                <input
-                  type="checkbox"
-                  checked={delimiters.includes(delim)}
-                  onChange={(e) => {
-                    setDelimiters((prev) =>
-                      e.target.checked
-                        ? Array.from(new Set([...prev, delim]))
-                        : prev.filter((d) => d !== delim),
-                    );
-                  }}
-                />
-                {delim === " " ? "[space]" : delim}
-              </label>
+              <Checkbox
+                key={delim}
+                checked={delimiters.includes(delim)}
+                onChange={(e) => {
+                  setDelimiters((prev) =>
+                    e.target.checked
+                      ? Array.from(new Set([...prev, delim]))
+                      : prev.filter((d) => d !== delim),
+                  );
+                }}
+                label={delim === " " ? "[space]" : delim}
+              />
             ))}
             <div className={styles.inline}>
               <input

@@ -1,0 +1,107 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.row {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--space-3);
+}
+
+.card {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.textarea {
+  width: 100%;
+  min-height: 150px;
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: var(--space-2);
+  border-radius: var(--radius-lg);
+  resize: vertical;
+}
+
+.output {
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-2);
+  min-height: 160px;
+  white-space: pre-wrap;
+  color: var(--text);
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.modeButtons {
+  display: inline-flex;
+  gap: var(--space-2);
+}
+
+.modeButtonActive {
+  background: var(--secondary-100);
+  border-color: var(--secondary-300);
+}
+
+.modeTabs {
+  display: inline-flex;
+  gap: var(--space-2);
+}
+
+.modeButton {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+}
+
+.modeActive {
+  background: var(--secondary-100);
+  border-color: var(--secondary-300);
+}
+
+.badgeRow {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.badge {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  padding: 4px 10px;
+  font-size: 12px;
+}
+
+.warn {
+  color: var(--secondary-300);
+  border-color: var(--secondary-300);
+  background: var(--overlay-secondary-08);
+}
