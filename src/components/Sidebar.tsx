@@ -21,10 +21,10 @@ const navItems: { key: NavKey; label: string }[] = [
   { key: "text", label: "텍스트 변환" },
   { key: "regex", label: "Regex Tester" },
   { key: "json", label: "JSON Formatter" },
+  { key: "base64", label: "Base64 인/디코딩" },
   { key: "env", label: ".env Manager" },
   { key: "snippets", label: "Snippets" },
   { key: "jsdoc", label: "JSDoc Generator" },
-  { key: "history", label: "작업 History" },
   { key: "i18n", label: "i18n Inspector" },
   { key: "settings", label: "설정" },
 ];

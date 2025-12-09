@@ -1,5 +1,6 @@
 import panelStyles from "./Panels.module.scss";
 import { Button } from "@/components/ui/Button";
+import { Checkbox } from "@/components/ui/Checkbox";
 
 type FileListProps = {
   files: string[];
@@ -23,14 +24,11 @@ export function FileList({
             {files.length ? `${files.length}개` : "없음"}
           </p>
         </div>
-        <label className="switch">
-          <input
-            type="checkbox"
-            checked={batchMode}
-            onChange={(e) => onToggleBatch(e.target.checked)}
-          />
-          <span>일괄 변환</span>
-        </label>
+        <Checkbox
+          checked={batchMode}
+          onChange={(e) => onToggleBatch(e.target.checked)}
+          label="일괄 변환"
+        />
       </div>
       <div className={panelStyles.fileScroll}>
         {files.length === 0 && (

@@ -8,6 +8,7 @@ export type NavKey =
   | "text"
   | "regex"
   | "json"
+  | "base64"
   | "env"
   | "snippets"
   | "jsdoc"

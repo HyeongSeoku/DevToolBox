@@ -9,9 +9,9 @@ import { ToastProvider } from "./components/ToastProvider";
 import { useRecentActivity } from "./hooks/useRecentActivity";
 import { useTauriEnv } from "./hooks/useTauriEnv";
 import { Layout } from "./layout";
+import { Base64Page } from "./pages/Base64";
 import { ConvertPage } from "./pages/Convert";
 import { EnvManagerPage } from "./pages/EnvManager";
-import { HistoryPage } from "./pages/History";
 import { HomePage } from "./pages/Home";
 import { I18nInspectorPage } from "./pages/I18nInspector";
 import { JSDocGeneratorPage } from "./pages/JSDocGenerator";
@@ -44,10 +44,6 @@ export function App() {
               element={<ConvertPage recentAdd={recent.addActivity} />}
             />
             <Route
-              path="history"
-              element={<HistoryPage recent={recent.items} />}
-            />
-            <Route
               path="gif"
               element={
                 <ConvertPage
@@ -58,6 +54,7 @@ export function App() {
             />
             <Route path="jwt" element={<JWTDecoderPage />} />
             <Route path="json" element={<JsonFormatterPage />} />
+            <Route path="base64" element={<Base64Page />} />
             <Route path="text" element={<TextToolsPage />} />
             <Route path="regex" element={<RegexTesterPage />} />
             <Route path="i18n" element={<I18nInspectorPage />} />

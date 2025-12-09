@@ -20,7 +20,6 @@ const allowed: NavKey[] = [
   "env",
   "snippets",
   "jsdoc",
-  "history",
   "i18n",
 ];
 const defaultPanes: NavKey[] = ["convert", "typegen", "jsdoc", "snippets"];

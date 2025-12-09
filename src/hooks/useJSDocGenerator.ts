@@ -18,8 +18,8 @@ const SAMPLE = `interface UserProfileProps {
 
 export function useJSDocGenerator() {
   const [input, setInput] = useState(SAMPLE);
-  const [mode, setMode] = useState<JSDocMode>("typedef");
-  const [rootName, setRootName] = useState("ParkingManageContextValue");
+  const [mode, setMode] = useState<JSDocMode>("interface");
+  const [rootName, setRootName] = useState("");
   const [rootParam, setRootParam] = useState("props");
   const [simplifyTypes, setSimplifyTypes] = useState(false);
   const [autoDescription, setAutoDescription] = useState(true);

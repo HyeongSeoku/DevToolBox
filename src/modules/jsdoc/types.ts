@@ -9,7 +9,7 @@ export type ParsedInterface = {
   properties: ParsedProperty[];
 };
 
-export type JSDocMode = "typedef" | "param";
+export type JSDocMode = "typedef" | "param" | "interface";
 
 export type JSDocOptions = {
   mode: JSDocMode;

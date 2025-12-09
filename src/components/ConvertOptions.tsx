@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/Button";
+import { Checkbox } from "@/components/ui/Checkbox";
 
 import panelStyles from "./Panels.module.scss";
 import { type TargetFormat } from "../hooks/useConversionJob";
@@ -85,14 +86,11 @@ export function ConvertOptions({
         </div>
         <div>
           <p className={panelStyles.label}>EXIF 제거</p>
-          <label className="switch">
-            <input
-              type="checkbox"
-              checked={stripExif}
-              onChange={(e) => onStripExifChange(e.target.checked)}
-            />
-            <span>EXIF 제거 (기본 Off)</span>
-          </label>
+          <Checkbox
+            checked={stripExif}
+            onChange={(e) => onStripExifChange(e.target.checked)}
+            label="EXIF 제거 (기본 Off)"
+          />
         </div>
       </div>
       {qualityWarning && <p className="warning">{qualityWarning}</p>}

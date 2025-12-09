@@ -17,6 +17,25 @@ export function generateJSDoc(
   } = options;
   const name = rootName || target.name || "Root";
 
+  if (mode === "interface") {
+    const baseName = name.replace(/Props$/, "") || name;
+    const header =
+      baseName === name ? `${name} interface.` : `${baseName} component props.`;
+    const lines: string[] = [`/**`, ` * ${header}`, ` */`, `export interface ${name} {`];
+    target.properties.forEach((prop) => {
+      const desc = describeProperty(prop, {
+        auto: autoDescription,
+        isSetter: detectSetter && isSetter(prop.name),
+      });
+      lines.push(`  /** ${desc} */`);
+      lines.push(
+        `  ${prop.name}${prop.optional ? "?" : ""}: ${prop.type.trim()};`,
+      );
+    });
+    lines.push("}");
+    return lines.join("\n");
+  }
+
   if (mode === "typedef") {
     const lines: string[] = [`/**`, ` * @typedef {Object} ${name}`];
     target.properties.forEach((prop) => {
