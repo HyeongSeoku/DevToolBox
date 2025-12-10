@@ -8,7 +8,10 @@ type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
 };
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ id, label, helperText, error, required, className = "", ...rest }, ref) => {
+  (
+    { id, label, helperText, error, required, className = "", ...rest },
+    ref,
+  ) => {
     const inputId = id || rest.name || undefined;
     const helpId = helperText ? `${inputId}-help` : undefined;
     const errId = error ? `${inputId}-error` : undefined;
@@ -17,7 +20,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     const inputType = unsafeCheckbox ? "text" : rest.type;
 
     if (unsafeCheckbox && typeof console !== "undefined") {
-      console.warn('Input does not support type="checkbox"; use <Checkbox> instead.');
+      console.warn(
+        'Input does not support type="checkbox"; use <Checkbox> instead.',
+      );
     }
 
     return (
@@ -38,12 +43,18 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           {...rest}
         />
         {helperText && (
-          <span id={helpId} style={{ fontSize: 12, color: "var(--text-subtle)" }}>
+          <span
+            id={helpId}
+            style={{ fontSize: 12, color: "var(--text-subtle)" }}
+          >
             {helperText}
           </span>
         )}
         {error && (
-          <span id={errId} style={{ fontSize: 12, color: "var(--secondary-300)" }}>
+          <span
+            id={errId}
+            style={{ fontSize: 12, color: "var(--secondary-300)" }}
+          >
             {error}
           </span>
         )}
