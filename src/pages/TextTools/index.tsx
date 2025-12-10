@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import styles from "./index.module.scss";
 import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox";
+import { Input } from "@/components/ui/Input";
 import { useToast } from "@/components/ToastProvider";
 import { copyWithToast } from "@/utils/clipboard";
 import { useVaultStore } from "@/stores/useVaultStore";
@@ -181,7 +182,7 @@ export function TextToolsPage() {
           <div className={styles.inline}>
             <div>
               <p className={styles.label}>Prefix</p>
-              <input
+              <Input
                 className={styles.input}
                 value={prefix}
                 onChange={(e) => setPrefix(e.target.value)}
@@ -189,7 +190,7 @@ export function TextToolsPage() {
             </div>
             <div>
               <p className={styles.label}>Suffix</p>
-              <input
+              <Input
                 className={styles.input}
                 value={suffix}
                 onChange={(e) => setSuffix(e.target.value)}
@@ -216,7 +217,7 @@ export function TextToolsPage() {
             {numbering === "padded" && (
               <div>
                 <p className={styles.label}>패딩 길이</p>
-                <input
+                <Input
                   className={styles.input}
                   type="number"
                   min={2}
@@ -257,7 +258,7 @@ export function TextToolsPage() {
 
           <div>
             <p className={styles.label}>Wrap 템플릿 ({"{{text}}"} 치환)</p>
-            <input
+            <Input
               className={styles.input}
               value={wrapTemplate}
               onChange={(e) => setWrapTemplate(e.target.value)}
@@ -296,7 +297,7 @@ export function TextToolsPage() {
               />
             ))}
             <div className={styles.inline}>
-              <input
+              <Input
                 className={styles.input}
                 placeholder="커스텀 구분자 추가"
                 value={customDelimiter}

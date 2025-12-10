@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 
+import { Input } from "@/components/ui/Input";
 import { runRegex } from "@/utils/regex";
 
 import styles from "./QuickRegexPane.module.scss";
@@ -37,7 +38,7 @@ export function QuickRegexPane() {
         <p className={styles.title}>빠른 Regex 테스트</p>
         <p className="subtle">g 플래그 기본 적용</p>
       </div>
-      <input
+      <Input
         className={styles.input}
         placeholder="패턴 (예: foo\\d+)"
         value={pattern}

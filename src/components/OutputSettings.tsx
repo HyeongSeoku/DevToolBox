@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
 
 import panelStyles from "./Panels.module.scss";
 
@@ -22,7 +23,7 @@ export function OutputSettings({
       <div>
         <p className={panelStyles.label}>출력 폴더</p>
         <div className="inline-row">
-          <input
+          <Input
             type="text"
             value={outputDir || ""}
             placeholder="입력 폴더와 동일"
@@ -35,7 +36,7 @@ export function OutputSettings({
       </div>
       <div>
         <p className={panelStyles.label}>파일 이름 패턴</p>
-        <input
+        <Input
           type="text"
           value={renamePattern}
           onChange={(e) => onRenamePatternChange(e.target.value)}

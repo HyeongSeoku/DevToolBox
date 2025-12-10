@@ -1,5 +1,6 @@
 import { useToast } from "@/components/ToastProvider";
 import { Checkbox } from "@/components/ui/Checkbox";
+import { Input } from "@/components/ui/Input";
 import { copyWithToast } from "@/utils/clipboard";
 import { Button } from "@/components/ui/Button";
 import { useJSDocGenerator } from "@/hooks/useJSDocGenerator";
@@ -85,7 +86,7 @@ export function JSDocGeneratorPage() {
             </div>
             <div className={styles.inline}>
               <label className={styles.label}>루트 이름</label>
-              <input
+              <Input
                 className={styles.input}
                 value={rootName}
                 onChange={(e) => setRootName(e.target.value)}
@@ -93,7 +94,7 @@ export function JSDocGeneratorPage() {
               {mode === "param" && (
                 <>
                   <label className={styles.label}>루트 파라미터</label>
-                  <input
+                  <Input
                     className={styles.input}
                     value={rootParam}
                     onChange={(e) => setRootParam(e.target.value)}

@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
 import { copyWithToast } from "@/utils/clipboard";
 
 import styles from "./index.module.scss";
@@ -157,7 +158,7 @@ export function TypeGenPage() {
           </p>
           {!isJsonTab && (
             <div className={styles.inlineRow}>
-              <input
+              <Input
                 className={styles.input}
                 placeholder="https://api.example.com/openapi.json"
                 value={url}
@@ -177,7 +178,7 @@ export function TypeGenPage() {
           {isJsonTab && (
             <div className={styles.inlineRow}>
               <label className={styles.label}>타입 이름</label>
-              <input
+              <Input
                 className={styles.input}
                 type="text"
                 value={typeName}

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 
 import styles from "./index.module.scss";
 import { useToast } from "@/components/ToastProvider";
+import { Input } from "@/components/ui/Input";
 import { copyWithToast } from "@/utils/clipboard";
 import {
   loadSnippetsByKind,
@@ -116,7 +117,7 @@ export function SnippetHubPage() {
       </div>
 
       <section className={styles.filters}>
-        <input
+        <Input
           className={styles.input}
           placeholder="검색 (제목/설명/태그)"
           value={search}

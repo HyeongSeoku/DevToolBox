@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 
 import { useToast } from "@/components/ToastProvider";
 import { Checkbox } from "@/components/ui/Checkbox";
+import { Input } from "@/components/ui/Input";
 import { copyWithToast } from "@/utils/clipboard";
 import { useVaultStore } from "@/stores/useVaultStore";
 import {
@@ -147,7 +148,7 @@ export function RegexTesterPage() {
       <section className={styles.grid}>
         <div className={styles.card}>
           <label className={styles.label}>패턴</label>
-          <input
+          <Input
             className={styles.input}
             value={pattern}
             onChange={(e) => setPattern(e.target.value)}
@@ -195,7 +196,7 @@ export function RegexTesterPage() {
               onChange={(e) => setUseReplace(e.target.checked)}
               label="Replace 프리뷰"
             />
-            <input
+            <Input
               className={styles.input}
               value={replace}
               onChange={(e) => setReplace(e.target.value)}
@@ -248,19 +249,19 @@ export function RegexTesterPage() {
             </div>
             <div className={styles.customForm}>
               <p className={styles.label}>커스텀 스니펫 추가</p>
-              <div className={styles.customRow}>
-                <input
-                  className={styles.input}
-                  placeholder="제목"
-                  value={customTitle}
-                  onChange={(e) => setCustomTitle(e.target.value)}
-                />
-                <input
-                  className={styles.input}
-                  placeholder="플래그 (예: gim)"
-                  value={customFlags}
-                  onChange={(e) => setCustomFlags(e.target.value)}
-                />
+            <div className={styles.customRow}>
+              <Input
+                className={styles.input}
+                placeholder="제목"
+                value={customTitle}
+                onChange={(e) => setCustomTitle(e.target.value)}
+              />
+              <Input
+                className={styles.input}
+                placeholder="플래그 (예: gim)"
+                value={customFlags}
+                onChange={(e) => setCustomFlags(e.target.value)}
+              />
               </div>
               <textarea
                 className={styles.textarea}
@@ -268,7 +269,7 @@ export function RegexTesterPage() {
                 value={customPattern}
                 onChange={(e) => setCustomPattern(e.target.value)}
               />
-              <input
+              <Input
                 className={styles.input}
                 placeholder="설명 (선택)"
                 value={customDescription}
