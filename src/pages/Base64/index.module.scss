@@ -48,6 +48,15 @@
   color: var(--text);
 }
 
+.output pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+  width: 100%;
+  min-width: 0;
+  display: block;
+  margin: 0;
+}
+
 .actions {
   display: flex;
   gap: var(--space-2);

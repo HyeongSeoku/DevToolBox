@@ -148,11 +148,31 @@ $line-height-relaxed: 1.7;
   --white: #{$white};
   --black: #{$black};
 
-  --overlay-secondary-08: color-mix(in srgb, var(--secondary-300) 8%, transparent);
-  --overlay-secondary-12: color-mix(in srgb, var(--secondary-300) 12%, transparent);
-  --overlay-secondary-18: color-mix(in srgb, var(--secondary-300) 18%, transparent);
-  --overlay-secondary-30: color-mix(in srgb, var(--secondary-300) 30%, transparent);
-  --overlay-secondary-35: color-mix(in srgb, var(--secondary-300) 35%, transparent);
+  --overlay-secondary-08: color-mix(
+    in srgb,
+    var(--secondary-300) 8%,
+    transparent
+  );
+  --overlay-secondary-12: color-mix(
+    in srgb,
+    var(--secondary-300) 12%,
+    transparent
+  );
+  --overlay-secondary-18: color-mix(
+    in srgb,
+    var(--secondary-300) 18%,
+    transparent
+  );
+  --overlay-secondary-30: color-mix(
+    in srgb,
+    var(--secondary-300) 30%,
+    transparent
+  );
+  --overlay-secondary-35: color-mix(
+    in srgb,
+    var(--secondary-300) 35%,
+    transparent
+  );
   --overlay-primary-35: color-mix(in srgb, var(--primary-500) 35%, transparent);
   --overlay-primary-78: color-mix(in srgb, var(--primary-500) 78%, transparent);
   --overlay-primary-94: color-mix(in srgb, var(--primary-500) 94%, transparent);

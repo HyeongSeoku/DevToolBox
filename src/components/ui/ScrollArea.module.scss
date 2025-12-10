@@ -9,8 +9,9 @@
   width: 100%;
   height: 100%;
   overflow-y: auto;
-  overflow-x: hidden;
-  padding-right: var(--space-5); /* 가짜 스크롤 영역만큼 여백 */
+  overflow-x: auto;
+  padding-right: var(--space-5); /* 세로 thumb 공간 */
+  padding-bottom: var(--space-4); /* 가로 스크롤이 생길 때 여백 */
 
   /* 네이티브 스크롤바 숨기기 */
   scrollbar-width: none; /* Firefox */
@@ -34,11 +35,23 @@
   pointer-events: auto;
 }
 
+.trackX {
+  position: absolute;
+  left: 4px;
+  right: 10px; /* 세로 트랙 영역만큼 여백 */
+  bottom: 2px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--overlay-white-04);
+  pointer-events: auto;
+}
+
 /* 가짜 thumb */
 .thumb {
   position: absolute;
   left: 0;
-  right: 0;
+  width: 100%;
+  height: 100%;
   border-radius: 999px;
   background: linear-gradient(
     180deg,
