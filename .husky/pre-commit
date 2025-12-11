@@ -1,0 +1,5 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+pnpm exec lint-staged || exit 1
+pnpm exec tsc --noEmit --pretty false || exit 1
