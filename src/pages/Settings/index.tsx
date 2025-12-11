@@ -2,11 +2,12 @@ import { useEffect } from "react";
 
 import { invoke } from "@tauri-apps/api/core";
 
-import styles from "./index.module.scss";
 import { useToast } from "@/components/ToastProvider";
 import { Button } from "@/components/ui/Button";
 import { useTauriEnv } from "@/hooks/useTauriEnv";
 import { useVaultStore } from "@/stores/useVaultStore";
+
+import styles from "./index.module.scss";
 
 export function SettingsPage() {
   const toast = useToast();

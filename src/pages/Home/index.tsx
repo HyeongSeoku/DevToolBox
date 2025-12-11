@@ -1,23 +1,25 @@
 import { useMemo, useState } from "react";
+
 import { useNavigate } from "react-router-dom";
 
 import { useToast } from "@/components/ToastProvider";
-import { ScrollArea } from "@/components/ui/ScrollArea";
 import { Button } from "@/components/ui/Button";
+import { ScrollArea } from "@/components/ui/ScrollArea";
 import { useQuickLayoutStore } from "@/stores/useQuickLayout";
 import { type NavKey } from "@/types/nav";
+
+import styles from "./index.module.scss";
 import { AddCard } from "./quick/AddCard";
+import { QuickConvertPane } from "./quick/QuickConvertPane";
 import { QuickEnvPane } from "./quick/QuickEnvPane";
+import { QuickI18nPane } from "./quick/QuickI18nPane";
 import { QuickJSDocPane } from "./quick/QuickJSDocPane";
+import { QuickJsonPane } from "./quick/QuickJsonPane";
 import { QuickJwtPane } from "./quick/QuickJwtPane";
 import { QuickRegexPane } from "./quick/QuickRegexPane";
 import { QuickSnippetsPane } from "./quick/QuickSnippetsPane";
 import { QuickTextPane } from "./quick/QuickTextPane";
 import { QuickTypegenPane } from "./quick/QuickTypegenPane";
-import { QuickConvertPane } from "./quick/QuickConvertPane";
-import { QuickI18nPane } from "./quick/QuickI18nPane";
-import { QuickJsonPane } from "./quick/QuickJsonPane";
-import styles from "./index.module.scss";
 
 type RecentItem = {
   id: string;

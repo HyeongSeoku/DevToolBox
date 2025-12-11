@@ -1,5 +1,5 @@
-import { Range } from "@/components/ui/Range";
 import { Button } from "@/components/ui/Button";
+import { Range } from "@/components/ui/Range";
 
 import panelStyles from "./Panels.module.scss";
 import { type GifQuality } from "../hooks/useConversionJob";

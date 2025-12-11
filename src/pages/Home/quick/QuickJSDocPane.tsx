@@ -1,9 +1,9 @@
 import { useState } from "react";
 
-import { generateJSDoc } from "@/modules/jsdoc/generator";
-import { parseInterfaces } from "@/modules/jsdoc/parser";
 import { useToast } from "@/components/ToastProvider";
 import { Button } from "@/components/ui/Button";
+import { generateJSDoc } from "@/modules/jsdoc/generator";
+import { parseInterfaces } from "@/modules/jsdoc/parser";
 import { copyWithToast } from "@/utils/clipboard";
 
 import styles from "./QuickJSDocPane.module.scss";

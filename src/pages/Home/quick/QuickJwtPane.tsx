@@ -1,7 +1,7 @@
 import { useState } from "react";
 
-import { decodeFirstJwt } from "@/utils/jwt";
 import { Button } from "@/components/ui/Button";
+import { decodeFirstJwt } from "@/utils/jwt";
 
 import styles from "./QuickJwtPane.module.scss";
 

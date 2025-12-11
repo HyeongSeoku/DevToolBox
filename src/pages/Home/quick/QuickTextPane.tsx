@@ -1,13 +1,13 @@
 import { useMemo, useState } from "react";
 
 import { useToast } from "@/components/ToastProvider";
+import { Button } from "@/components/ui/Button";
 import { copyWithToast } from "@/utils/clipboard";
 import {
   processLines,
   type CaseStyle,
   type LineProcessOptions,
 } from "@/utils/textTransform";
-import { Button } from "@/components/ui/Button";
 
 import styles from "./QuickTextPane.module.scss";
 

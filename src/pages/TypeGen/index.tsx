@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { copyWithToast } from "@/utils/clipboard";
+import { generateInterfaces } from "@/utils/typegen";
 
 import styles from "./index.module.scss";
 import { useToast } from "../../components/ToastProvider";
@@ -10,7 +11,6 @@ import {
   generateTypesFromSchemas,
   parseOpenApiText,
 } from "../../utils/openapi";
-import { generateInterfaces } from "@/utils/typegen";
 
 type Tab = "openapi" | "json";
 

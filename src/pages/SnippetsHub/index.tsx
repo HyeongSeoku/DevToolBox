@@ -1,11 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
+
 import { useParams, useNavigate } from "react-router-dom";
 
-import styles from "./index.module.scss";
 import { useToast } from "@/components/ToastProvider";
-import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { copyWithToast } from "@/utils/clipboard";
+import { Input } from "@/components/ui/Input";
 import {
   loadSnippetsByKind,
   filterSnippets,
@@ -14,6 +13,9 @@ import {
 } from "@/modules/snippets/core";
 import { type Snippet } from "@/modules/snippets/types";
 import { useVaultStore } from "@/stores/useVaultStore";
+import { copyWithToast } from "@/utils/clipboard";
+
+import styles from "./index.module.scss";
 
 const FAVORITE_KEYS: Record<SnippetKind, string> = {
   git: "snippets-git-favorites",

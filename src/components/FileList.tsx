@@ -1,6 +1,7 @@
-import panelStyles from "./Panels.module.scss";
 import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox";
+
+import panelStyles from "./Panels.module.scss";
 
 type FileListProps = {
   files: string[];

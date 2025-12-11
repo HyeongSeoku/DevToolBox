@@ -1,5 +1,6 @@
-import styles from "./Hero.module.scss";
 import { Button } from "@/components/ui/Button";
+
+import styles from "./Hero.module.scss";
 import { type ImageConvertMode } from "../hooks/useConversionJob";
 
 type HeroProps = {

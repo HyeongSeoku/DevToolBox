@@ -1,12 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 
-import styles from "./index.module.scss";
+import { useToast } from "@/components/ToastProvider";
 import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { Input } from "@/components/ui/Input";
-import { useToast } from "@/components/ToastProvider";
-import { copyWithToast } from "@/utils/clipboard";
 import { useVaultStore } from "@/stores/useVaultStore";
+import { copyWithToast } from "@/utils/clipboard";
 import {
   generateCaseVariants,
   guessDominantCase,
@@ -14,6 +13,8 @@ import {
   splitWords,
   type CaseStyle,
 } from "@/utils/textTransform";
+
+import styles from "./index.module.scss";
 
 const defaultSample = `user_id
 user_name

@@ -1,11 +1,11 @@
 import { useMemo, useState } from "react";
 
 import { useToast } from "@/components/ToastProvider";
-import { Checkbox } from "@/components/ui/Checkbox";
 import { Button } from "@/components/ui/Button";
+import { Checkbox } from "@/components/ui/Checkbox";
 import { Input } from "@/components/ui/Input";
-import { copyWithToast } from "@/utils/clipboard";
 import { useVaultStore } from "@/stores/useVaultStore";
+import { copyWithToast } from "@/utils/clipboard";
 import {
   commonRegexSnippets,
   runRegex,

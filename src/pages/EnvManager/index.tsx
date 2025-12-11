@@ -1,8 +1,7 @@
 import { useMemo, useState } from "react";
 
-import styles from "./index.module.scss";
-import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ToastProvider";
+import { Button } from "@/components/ui/Button";
 import { copyWithToast } from "@/utils/clipboard";
 import {
   diffEnvDetailed,
@@ -12,6 +11,8 @@ import {
   scanSecrets,
   type DiffItem,
 } from "@/utils/env";
+
+import styles from "./index.module.scss";
 
 type MaskMode = "none" | "partial" | "full";
 type Tab = "compare" | "example" | "security";
