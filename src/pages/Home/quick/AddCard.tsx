@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { Button } from "@/components/ui/Button";
 import { type NavKey } from "@/types/nav";
 
 import styles from "./AddCard.module.scss";
@@ -14,13 +15,14 @@ export function AddCard({ options, onAdd, labels }: AddCardProps) {
   const [selected, setSelected] = useState<NavKey | "">("");
   return (
     <div className={styles.addCard}>
-      <button
+      <Button
+        variant="ghost"
         className={styles.addButton}
         onClick={() => selected && onAdd(selected)}
         disabled={!selected}
       >
         +
-      </button>
+      </Button>
       <select
         className={styles.select}
         value={selected}

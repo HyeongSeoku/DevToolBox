@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { useToast } from "@/components/ToastProvider";
+import { Button } from "@/components/ui/Button";
 import { useTauriEnv } from "@/hooks/useTauriEnv";
 import {
   convertImagesQuick,
@@ -59,9 +60,9 @@ export function QuickConvertPane() {
         <p className={styles.title}>빠른 이미지 변환</p>
         <p className="subtle">WebP · 품질 90% · 최대 2개</p>
       </div>
-      <button className="primary" disabled={busy} onClick={handlePick}>
+      <Button variant="primary" disabled={busy} onClick={handlePick}>
         {busy ? "변환 중..." : "이미지 선택해서 변환"}
-      </button>
+      </Button>
       {status && <p className="micro">{status}</p>}
     </div>
   );

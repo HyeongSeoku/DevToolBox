@@ -2,6 +2,8 @@ import { useMemo } from "react";
 
 import { useNavigate } from "react-router-dom";
 
+import { Button } from "@/components/ui/Button";
+
 import styles from "./index.module.scss";
 
 type RecentItem = {
@@ -53,12 +55,12 @@ export function HistoryPage({ recent }: HistoryPageProps) {
               <p className="micro">{formatTime(item.timestamp)}</p>
             </div>
             <div className={styles.actions}>
-              <button
-                className="ghost"
+              <Button
+                variant="ghost"
                 onClick={() => navigate(resolveRoute(item.title))}
               >
                 다시 실행
-              </button>
+              </Button>
             </div>
           </div>
         ))}

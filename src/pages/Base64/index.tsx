@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useToast } from "@/components/ToastProvider";
 import { ScrollArea } from "@/components/ui/ScrollArea";
 import { Checkbox } from "@/components/ui/Checkbox";
+import { Button } from "@/components/ui/Button";
 import { copyWithToast } from "@/utils/clipboard";
 
 import styles from "./index.module.scss";
@@ -127,18 +128,20 @@ export function Base64Page() {
           <h1>텍스트 ↔ Base64 변환</h1>
         </div>
         <div className={styles.modeButtons}>
-          <button
-            className={`ghost ${mode === "encode" ? styles.modeButtonActive : ""}`}
+          <Button
+            variant="ghost"
+            className={`${mode === "encode" ? styles.modeButtonActive : ""}`}
             onClick={() => setMode("encode")}
           >
             Encode
-          </button>
-          <button
-            className={`ghost ${mode === "decode" ? styles.modeButtonActive : ""}`}
+          </Button>
+          <Button
+            variant="ghost"
+            className={`${mode === "decode" ? styles.modeButtonActive : ""}`}
             onClick={() => setMode("decode")}
           >
             Decode
-          </button>
+          </Button>
         </div>
       </header>
 
@@ -173,12 +176,12 @@ export function Base64Page() {
             placeholder="텍스트를 입력해 Encode, Base64를 입력해 Decode"
           />
           <div className={styles.actions}>
-            <button className="primary" onClick={handleEncode}>
+            <Button variant="primary" onClick={handleEncode}>
               Encode
-            </button>
-            <button className="ghost" onClick={handleDecode}>
+            </Button>
+            <Button variant="ghost" onClick={handleDecode}>
               Decode
-            </button>
+            </Button>
           </div>
           {error && <p className="micro warning">{error}</p>}
           <div className={styles.badgeRow}>
@@ -197,13 +200,13 @@ export function Base64Page() {
         <div className={styles.card}>
           <div className={styles.row}>
             <p className="micro">결과</p>
-            <button
-              className="ghost"
+            <Button
+              variant="ghost"
               onClick={() => copyWithToast(output, toast)}
               disabled={!output}
             >
               Copy
-            </button>
+            </Button>
           </div>
           <ScrollArea className={styles.output}>
             <pre>{output || "// 결과 없음"}</pre>

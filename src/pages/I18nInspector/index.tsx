@@ -5,6 +5,7 @@ import { join } from "@tauri-apps/api/path";
 import { readDir, readTextFile } from "@tauri-apps/plugin-fs";
 
 import { ScrollArea } from "@/components/ui/ScrollArea";
+import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ToastProvider";
 import { copyWithToast } from "@/utils/clipboard";
 
@@ -348,9 +349,9 @@ export function I18nInspectorPage() {
           <h1>텍스트 비교 뷰</h1>
         </div>
         <div className={styles.row}>
-          <button className="ghost" onClick={pickRoot} disabled={loading}>
+          <Button variant="ghost" onClick={pickRoot} disabled={loading}>
             폴더 선택
-          </button>
+          </Button>
         </div>
       </header>
 
@@ -396,12 +397,13 @@ export function I18nInspectorPage() {
                     </option>
                   ))}
                 </select>
-                <button
-                  className={`ghost ${styles.noWrap}`}
+                <Button
+                  variant="ghost"
+                  className={styles.noWrap}
                   onClick={() => handleFileLoad(idx === 0 ? "base" : "target")}
                 >
                   파일
-                </button>
+                </Button>
               </div>
             </div>
             <ScrollArea maxHeight={700}>
@@ -429,18 +431,18 @@ export function I18nInspectorPage() {
               />
             </ScrollArea>
             <div className={styles.paneActions}>
-              <button
-                className="ghost"
+              <Button
+                variant="ghost"
                 onClick={() => beautifyLocale(idx === 0 ? "base" : "target")}
               >
                 Beautify (정렬)
-              </button>
-              <button
-                className="ghost"
+              </Button>
+              <Button
+                variant="ghost"
                 onClick={() => copyLocale(idx === 0 ? "base" : "target")}
               >
                 복사
-              </button>
+              </Button>
               {(idx === 0 ? formattedBase : formattedTarget) && (
                 <span className={`${styles.badge} ${styles.badgeAccent}`}>
                   정렬됨

@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { useToast } from "@/components/ToastProvider";
+import { Button } from "@/components/ui/Button";
 import { copyWithToast } from "@/utils/clipboard";
 import { generateInterfaces } from "@/utils/typegen";
 
@@ -38,15 +39,12 @@ export function QuickTypegenPane() {
         onChange={(e) => setInput(e.target.value)}
       />
       <div className={styles.paneActions}>
-        <button className="primary" onClick={generate}>
+        <Button variant="primary" onClick={generate}>
           타입 생성
-        </button>
-        <button
-          className="ghost"
-          onClick={() => copyWithToast(output, toast)}
-        >
+        </Button>
+        <Button variant="ghost" onClick={() => copyWithToast(output, toast)}>
           복사
-        </button>
+        </Button>
       </div>
       {output && <pre className={styles.code}>{output}</pre>}
     </div>

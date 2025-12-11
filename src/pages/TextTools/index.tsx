@@ -303,8 +303,8 @@ export function TextToolsPage() {
                 value={customDelimiter}
                 onChange={(e) => setCustomDelimiter(e.target.value)}
               />
-              <button
-                className="ghost"
+              <Button
+                variant="ghost"
                 onClick={() => {
                   const value = customDelimiter.trim();
                   if (!value) return;
@@ -315,11 +315,11 @@ export function TextToolsPage() {
                 }}
               >
                 추가
-              </button>
+              </Button>
             </div>
             <div className={styles.activeDelims}>
               {delimiters.map((d) => (
-                <button
+                <Button
                   key={d || "space"}
                   className={styles.delimChip}
                   onClick={() =>
@@ -328,7 +328,7 @@ export function TextToolsPage() {
                   title="클릭하면 제거"
                 >
                   {d === " " ? "[space]" : d}
-                </button>
+                </Button>
               ))}
             </div>
           </div>
@@ -346,18 +346,18 @@ export function TextToolsPage() {
               </Button>
             </div>
           </div>
-          <div className={styles.variants}>
-            {Object.entries(variants).map(([style, value]) => (
-              <button
-                key={style}
-                className={styles.variant}
-                onClick={() => copyWithToast(value, toast)}
-              >
-                <span className={styles.variantLabel}>{style}</span>
-                <span className={styles.variantValue}>{value}</span>
-              </button>
-            ))}
-          </div>
+            <div className={styles.variants}>
+              {Object.entries(variants).map(([style, value]) => (
+                <Button
+                  key={style}
+                  className={styles.variant}
+                  onClick={() => copyWithToast(value, toast)}
+                >
+                  <span className={styles.variantLabel}>{style}</span>
+                  <span className={styles.variantValue}>{value}</span>
+                </Button>
+              ))}
+            </div>
           <pre className={styles.result}>{processed.combined}</pre>
           {joinMode === "lines" && (
             <div className={styles.lineList}>

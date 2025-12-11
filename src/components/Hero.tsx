@@ -1,4 +1,5 @@
 import styles from "./Hero.module.scss";
+import { Button } from "@/components/ui/Button";
 import { type ImageConvertMode } from "../hooks/useConversionJob";
 
 type HeroProps = {
@@ -45,9 +46,9 @@ export function Hero({
             <p className={styles.statLabel}>선택된 파일</p>
           </div>
         </div>
-        <button className="primary" onClick={onRun} disabled={busy}>
+        <Button variant="primary" onClick={onRun} disabled={busy}>
           {busy ? "처리 중..." : mode === "gif" ? "GIF 만들기" : "변환 실행"}
-        </button>
+        </Button>
         <p className={`${styles.heroFootnote} micro`}>
           PNG는 무손실 저장 · 비디오 → GIF 지원 (ffmpeg 필요)
         </p>

@@ -1,4 +1,5 @@
-import { Input } from "@/components/ui/Input";
+import { Range } from "@/components/ui/Range";
+import { Button } from "@/components/ui/Button";
 
 import panelStyles from "./Panels.module.scss";
 import { type GifQuality } from "../hooks/useConversionJob";
@@ -23,37 +24,38 @@ export function GifOptions({
   return (
     <div className="option-grid">
         <div>
-          <p className={panelStyles.label}>FPS {fps}</p>
-          <Input
-            type="range"
+          <Range
+            label="FPS"
+            valueText={`${fps}`}
             min={1}
             max={30}
             value={fps}
             onChange={(e) => onFpsChange(Number(e.target.value))}
           />
       </div>
-      <div>
-        <p className={panelStyles.label}>GIF 품질</p>
-        <div className={panelStyles.chipRow}>
-          {(["low", "medium", "high"] as GifQuality[]).map((preset) => (
-            <button
-              key={preset}
-              className={`chip ${gifQuality === preset ? "active" : ""}`}
-              onClick={() => onQualityChange(preset)}
-            >
-              {preset === "low"
-                ? "Low"
-                : preset === "medium"
-                  ? "Medium"
-                  : "High"}
-            </button>
-          ))}
-        </div>
-      </div>
         <div>
-          <p className={panelStyles.label}>스케일 {scalePercent}%</p>
-          <Input
-            type="range"
+          <p className={panelStyles.label}>GIF 품질</p>
+          <div className={panelStyles.chipRow}>
+            {(["low", "medium", "high"] as GifQuality[]).map((preset) => (
+              <Button
+                key={preset}
+                variant="pill"
+                className={`chip ${gifQuality === preset ? "active" : ""}`}
+                onClick={() => onQualityChange(preset)}
+              >
+                {preset === "low"
+                  ? "Low"
+                  : preset === "medium"
+                    ? "Medium"
+                    : "High"}
+              </Button>
+            ))}
+          </div>
+        </div>
+        <div>
+          <Range
+            label="스케일"
+            valueText={`${scalePercent}%`}
             min={10}
             max={100}
             value={scalePercent}

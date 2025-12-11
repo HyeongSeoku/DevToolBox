@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox";
-import { Input } from "@/components/ui/Input";
+import { Range } from "@/components/ui/Range";
 
 import panelStyles from "./Panels.module.scss";
 import { type TargetFormat } from "../hooks/useConversionJob";
@@ -51,9 +51,9 @@ export function ConvertOptions({
           </div>
         </div>
         <div>
-          <p className={panelStyles.label}>품질 {qualityPercent}%</p>
-          <Input
-            type="range"
+          <Range
+            label="품질"
+            valueText={`${qualityPercent}%`}
             min={50}
             max={100}
             value={qualityPercent}
@@ -75,9 +75,9 @@ export function ConvertOptions({
 
       <div className="option-grid">
         <div>
-          <p className={panelStyles.label}>스케일 {scalePercent}%</p>
-          <Input
-            type="range"
+          <Range
+            label="스케일"
+            valueText={`${scalePercent}%`}
             min={10}
             max={100}
             value={scalePercent}

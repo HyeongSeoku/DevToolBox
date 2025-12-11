@@ -4,6 +4,7 @@ import { invoke } from "@tauri-apps/api/core";
 
 import styles from "./index.module.scss";
 import { useToast } from "@/components/ToastProvider";
+import { Button } from "@/components/ui/Button";
 import { useTauriEnv } from "@/hooks/useTauriEnv";
 import { useVaultStore } from "@/stores/useVaultStore";
 
@@ -81,15 +82,15 @@ export function SettingsPage() {
           {loading && <p className="micro">저장 위치를 확인하는 중...</p>}
         </div>
         <div className={styles.actions}>
-          <button className="ghost" onClick={handleReload}>
+          <Button variant="ghost" onClick={handleReload}>
             새로고침
-          </button>
-          <button className="ghost" onClick={handleUseDefault}>
+          </Button>
+          <Button variant="ghost" onClick={handleUseDefault}>
             기본 위치 사용
-          </button>
-          <button className="primary" onClick={handlePickVault}>
+          </Button>
+          <Button variant="primary" onClick={handlePickVault}>
             다른 폴더 선택
-          </button>
+          </Button>
         </div>
       </section>
 

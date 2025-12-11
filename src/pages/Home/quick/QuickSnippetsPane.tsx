@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 
 import { useToast } from "@/components/ToastProvider";
+import { Button } from "@/components/ui/Button";
 import { Pagination } from "@/components/ui/Pagination";
 import { beSeedCore } from "@/modules/snippets/seeds/be";
 import { feSeedCore } from "@/modules/snippets/seeds/fe";
@@ -45,7 +46,7 @@ export function QuickSnippetsPane() {
       </div>
       <div className={styles.tabRow}>
         {(["git", "linux", "fe", "be"] as const).map((kind) => (
-          <button
+          <Button
             key={kind}
             className={`${styles.tabButton} ${tab === kind ? styles.active : ""}`}
             onClick={() => {
@@ -54,19 +55,19 @@ export function QuickSnippetsPane() {
             }}
           >
             {kind.toUpperCase()}
-          </button>
+          </Button>
         ))}
       </div>
       <div className={styles.historyList}>
         {paged.map((s) => (
-          <button
+          <Button
             key={s.id}
             className={styles.snippet}
             onClick={() => copyWithToast(s.content || "", toast)}
           >
             <p className={styles.title}>{s.title}</p>
             <p className="subtle">{s.content?.slice(0, 80) ?? ""}</p>
-          </button>
+          </Button>
         ))}
         {paged.length === 0 && (
           <p className="subtle">표시할 스니펫이 없습니다.</p>

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { generateJSDoc } from "@/modules/jsdoc/generator";
 import { parseInterfaces } from "@/modules/jsdoc/parser";
 import { useToast } from "@/components/ToastProvider";
+import { Button } from "@/components/ui/Button";
 import { copyWithToast } from "@/utils/clipboard";
 
 import styles from "./QuickJSDocPane.module.scss";
@@ -46,15 +47,12 @@ export function QuickJSDocPane() {
         onChange={(e) => setInput(e.target.value)}
       />
       <div className={styles.paneActions}>
-        <button className="primary" onClick={generate}>
+        <Button variant="primary" onClick={generate}>
           생성
-        </button>
-        <button
-          className="ghost"
-          onClick={() => copyWithToast(output || "", toast)}
-        >
+        </Button>
+        <Button variant="ghost" onClick={() => copyWithToast(output || "", toast)}>
           복사
-        </button>
+        </Button>
       </div>
       {error && <p className="micro warning">{error}</p>}
       {output && <pre className={styles.code}>{output}</pre>}

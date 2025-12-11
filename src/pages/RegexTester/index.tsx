@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 
 import { useToast } from "@/components/ToastProvider";
 import { Checkbox } from "@/components/ui/Checkbox";
+import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { copyWithToast } from "@/utils/clipboard";
 import { useVaultStore } from "@/stores/useVaultStore";
@@ -159,7 +160,7 @@ export function RegexTesterPage() {
 
           <div className={styles.flags}>
             {(["g", "i", "m", "s", "u"] as FlagKey[]).map((f) => (
-              <button
+              <Button
                 key={f}
                 className={`${styles.button} ${styles.flag} ${flags.includes(f) ? styles.active : ""}`}
                 onClick={() => toggleFlag(f)}
@@ -167,7 +168,7 @@ export function RegexTesterPage() {
                 onMouseLeave={handleFlagLeave}
               >
                 {f}
-              </button>
+              </Button>
             ))}
 
             {tooltipFlag && (
@@ -203,18 +204,18 @@ export function RegexTesterPage() {
               placeholder="$1, $<name> 사용 가능"
               disabled={!useReplace}
             />
-            <button
+            <Button
               className={`${styles.button} ${styles.ghost}`}
               onClick={() => copyWithToast(pattern, toast)}
             >
               패턴 복사
-            </button>
-            <button
+            </Button>
+            <Button
               className={`${styles.button} ${styles.ghost}`}
               onClick={saveHistory}
             >
               Vault 저장
-            </button>
+            </Button>
           </div>
 
           <div className={styles.snippets}>
@@ -223,18 +224,18 @@ export function RegexTesterPage() {
               {(
                 ["all", "frontend", "backend", "common", "custom"] as const
               ).map((cat) => (
-                <button
+                <Button
                   key={cat}
                   className={`${styles.button} ${styles.tab} ${snippetCategory === cat ? styles.active : ""}`}
                   onClick={() => setSnippetCategory(cat)}
                 >
                   {cat}
-                </button>
+                </Button>
               ))}
             </div>
             <div className={styles.snippetList}>
               {filteredSnippets.map((s) => (
-                <button
+                <Button
                   key={s.key}
                   className={`${styles.button} ${styles.snippet} ${selectedSnippet?.key === s.key ? styles.active : ""}`}
                   onClick={() => applySnippet(s)}
@@ -244,7 +245,7 @@ export function RegexTesterPage() {
                   {s.description && (
                     <span className={styles.snippetDesc}>{s.description}</span>
                   )}
-                </button>
+                </Button>
               ))}
             </div>
             <div className={styles.customForm}>
@@ -275,7 +276,7 @@ export function RegexTesterPage() {
                 value={customDescription}
                 onChange={(e) => setCustomDescription(e.target.value)}
               />
-              <button
+              <Button
                 className={`${styles.button} ${styles.ghost}`}
                 onClick={() => {
                   if (!customTitle || !customPattern) return;
@@ -307,7 +308,7 @@ export function RegexTesterPage() {
                 }}
               >
                 추가
-              </button>
+              </Button>
             </div>
           </div>
         </div>

@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 
 import { useToast } from "@/components/ToastProvider";
 import { Checkbox } from "@/components/ui/Checkbox";
+import { Button } from "@/components/ui/Button";
 import { ScrollArea } from "@/components/ui/ScrollArea";
 import { copyWithToast } from "@/utils/clipboard";
 import { computePosition, formatJson } from "@/utils/jsonFormat";
@@ -77,15 +78,15 @@ export function JsonFormatterPage() {
               label="키 정렬(재귀)"
             />
           </label>
-          <button className="primary" onClick={() => format()}>
+          <Button variant="primary" onClick={() => format()}>
             Format
-          </button>
-          <button className="ghost" onClick={() => format({ minify: true })}>
+          </Button>
+          <Button variant="ghost" onClick={() => format({ minify: true })}>
             Minify
-          </button>
-          <button className="ghost" onClick={() => format({ sort: true })}>
+          </Button>
+          <Button variant="ghost" onClick={() => format({ sort: true })}>
             Beautify + Sort
-          </button>
+          </Button>
         </div>
         {error && <p className="micro warning">{error}</p>}
       </header>
@@ -118,12 +119,12 @@ export function JsonFormatterPage() {
 
             <div className={styles.cardHeaderSubContainer}>
               <p className="micro subtle">포맷/미니파이/정렬 결과</p>
-              <button
-                className="ghost"
+              <Button
+                variant="ghost"
                 onClick={() => copyWithToast(output || "", toast)}
               >
                 Copy
-              </button>
+              </Button>
             </div>
           </div>
           <ScrollArea className={styles.scrollArea}>

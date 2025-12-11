@@ -4,6 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import styles from "./index.module.scss";
 import { useToast } from "@/components/ToastProvider";
 import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
 import { copyWithToast } from "@/utils/clipboard";
 import {
   loadSnippetsByKind,
@@ -106,13 +107,13 @@ export function SnippetHubPage() {
 
       <div className={styles.tabRow}>
         {tabs.map((tab) => (
-          <button
+          <Button
             key={tab}
             className={`${styles.button} ${styles.tab} ${tab === kind ? styles.active : ""}`}
             onClick={() => navigate(`/snippets/${tab}`)}
           >
             {titles[tab]}
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -173,7 +174,7 @@ export function SnippetHubPage() {
                   <p className={styles.title}>{s.title}</p>
                   {s.description && <p className="micro">{s.description}</p>}
                 </div>
-                <button
+                <Button
                   className={`${styles.button} ${isFav ? styles.active : ""}`}
                   onClick={() => {
                     const next = toggleFavorite(s.id);
@@ -185,7 +186,7 @@ export function SnippetHubPage() {
                   title="즐겨찾기"
                 >
                   ★
-                </button>
+                </Button>
               </div>
               <div className={styles.meta}>
                 <span className={styles.badge}>{s.category ?? "기타"}</span>
@@ -200,12 +201,12 @@ export function SnippetHubPage() {
               </div>
               <pre className={styles.code}>{s.content}</pre>
               <div className={styles.actions}>
-                <button
+                <Button
                   className={styles.button}
                   onClick={() => handleCopy(s.content)}
                 >
                   Copy
-                </button>
+                </Button>
               </div>
             </div>
           );

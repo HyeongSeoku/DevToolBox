@@ -1,5 +1,6 @@
 import classNames from "classnames";
 
+import { Button } from "@/components/ui/Button";
 import { type NavKey } from "@/types/nav";
 
 import styles from "./Sidebar.module.scss";
@@ -55,9 +56,8 @@ export function Sidebar({
       <ScrollArea className={styles.scroll}>
         <nav className={styles.nav}>
           {navItems.map((item) => (
-            <button
+            <Button
               key={item.key}
-              // className={`${styles.navItem} ${active === item.key ? styles.active : ""}`}
               className={classNames(styles.navItem, {
                 [styles.active]: item.key === active,
               })}
@@ -69,14 +69,14 @@ export function Sidebar({
               }}
             >
               {item.label}
-            </button>
+            </Button>
           ))}
         </nav>
 
         <div className={styles.footer}>
-          <button className={styles.navItem} onClick={onThemeCycle}>
+          <Button className={styles.navItem} onClick={onThemeCycle}>
             테마: {themeLabel}
-          </button>
+          </Button>
         </div>
       </ScrollArea>
     </aside>

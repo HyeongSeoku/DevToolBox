@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { decodeFirstJwt } from "@/utils/jwt";
+import { Button } from "@/components/ui/Button";
 
 import styles from "./QuickJwtPane.module.scss";
 
@@ -33,9 +34,9 @@ export function QuickJwtPane() {
         onChange={(e) => setToken(e.target.value)}
       />
       <div className={styles.paneActions}>
-        <button className="primary" onClick={decode}>
+        <Button variant="primary" onClick={decode}>
           디코드
-        </button>
+        </Button>
         {error && <p className="micro warning">{error}</p>}
         {payload && <pre className={styles.code}>{payload}</pre>}
       </div>

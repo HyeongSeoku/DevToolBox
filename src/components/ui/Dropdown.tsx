@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 
+import { Button } from "@/components/ui/Button";
+
 export type DropdownOption = { label: string; value: string; disabled?: boolean };
 
 type DropdownProps = {
@@ -34,7 +36,8 @@ export const Dropdown: React.FC<DropdownProps> = ({
 
   return (
     <div style={{ position: "relative", display: "inline-block" }}>
-      <button
+      <Button
+        variant="ghost"
         ref={btnRef}
         type="button"
         aria-haspopup="listbox"
@@ -42,7 +45,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
         onClick={() => setOpen((v) => !v)}
       >
         {label}
-      </button>
+      </Button>
       {open && (
         <ul
           ref={listRef}
@@ -65,7 +68,8 @@ export const Dropdown: React.FC<DropdownProps> = ({
         >
           {options.map((opt) => (
             <li key={opt.value} role="option" aria-disabled={opt.disabled}>
-              <button
+              <Button
+                variant="ghost"
                 type="button"
                 disabled={opt.disabled}
                 style={{ width: "100%", textAlign: "left" }}
@@ -76,7 +80,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
                 }}
               >
                 {opt.label}
-              </button>
+              </Button>
             </li>
           ))}
         </ul>

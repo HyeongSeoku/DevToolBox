@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useToast } from "@/components/ToastProvider";
 import { ScrollArea } from "@/components/ui/ScrollArea";
+import { Button } from "@/components/ui/Button";
 import { useQuickLayoutStore } from "@/stores/useQuickLayout";
 import { type NavKey } from "@/types/nav";
 import { AddCard } from "./quick/AddCard";
@@ -115,9 +116,9 @@ export function HomePage({ recent }: HomePageProps) {
           <h1>빠른 시작</h1>
           <p className="micro">모든 기능을 4분할로 바로 사용할 수 있습니다.</p>
         </div>
-        <button className="ghost" onClick={() => navigate("/history")}>
+        <Button variant="ghost" onClick={() => navigate("/history")}>
           작업 History 보기
-        </button>
+        </Button>
       </header>
 
       <section
@@ -151,9 +152,9 @@ export function HomePage({ recent }: HomePageProps) {
             </p>
           </div>
           {panes.length > 0 && (
-            <button className="ghost" onClick={resetPanes}>
+            <Button variant="ghost" onClick={resetPanes}>
               기본 4분할로 되돌리기
-            </button>
+            </Button>
           )}
         </div>
         <div
@@ -166,12 +167,12 @@ export function HomePage({ recent }: HomePageProps) {
                   <p className={styles.title}>{navMeta[key].title}</p>
                   <p className="subtle">{navMeta[key].detail}</p>
                 </div>
-                <button
+                <Button
                   className={styles.remove}
                   onClick={() => removePane(key)}
                 >
                   ×
-                </button>
+                </Button>
               </div>
               <div className={styles.cardContent}>
                 <ScrollArea className={styles.paneScroll}>

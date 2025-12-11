@@ -7,6 +7,7 @@ import {
   type CaseStyle,
   type LineProcessOptions,
 } from "@/utils/textTransform";
+import { Button } from "@/components/ui/Button";
 
 import styles from "./QuickTextPane.module.scss";
 
@@ -62,14 +63,14 @@ export function QuickTextPane() {
         onChange={(e) => setValue(e.target.value)}
       />
       <div className={styles.paneActions}>
-        <button className="ghost" onClick={() => applyCase("upper")}>
+        <Button variant="ghost" onClick={() => applyCase("upper")}>
           대문자
-        </button>
-        <button className="ghost" onClick={() => applyCase("lower")}>
+        </Button>
+        <Button variant="ghost" onClick={() => applyCase("lower")}>
           소문자
-        </button>
-        <button
-          className="ghost"
+        </Button>
+        <Button
+          variant="ghost"
           onClick={() => {
             setTrim(true);
             const opts = { ...baseOptions, trim: true };
@@ -77,13 +78,10 @@ export function QuickTextPane() {
           }}
         >
           Trim
-        </button>
-        <button
-          className="primary"
-          onClick={() => copyWithToast(processed.combined, toast)}
-        >
+        </Button>
+        <Button variant="primary" onClick={() => copyWithToast(processed.combined, toast)}>
           복사
-        </button>
+        </Button>
       </div>
     </div>
   );

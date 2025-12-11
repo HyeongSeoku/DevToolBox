@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 
+import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { runRegex } from "@/utils/regex";
 
@@ -51,9 +52,9 @@ export function QuickRegexPane() {
         onChange={(e) => setText(e.target.value)}
       />
       <div className={styles.paneActions}>
-        <button className="primary" onClick={run}>
+        <Button variant="primary" onClick={run}>
           실행
-        </button>
+        </Button>
         {result && <p className="micro">{result}</p>}
       </div>
     </div>
