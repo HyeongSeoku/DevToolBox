@@ -1,0 +1,18 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+msg_file=$1
+msg=$(cat "$msg_file")
+
+# 허용 프리픽스: feature|fix|chore|docs|style|refactor|test|ci|perf|build|revert
+case "$msg" in
+  feature:*|fix:*|chore:*|docs:*|style:*|refactor:*|test:*|ci:*|perf:*|build:*|revert:*)
+    exit 0
+    ;;
+  *)
+    echo "✖ 커밋 메시지는 다음 프리픽스 중 하나로 시작해야 합니다:"
+    echo "  feature:, fix:, chore:, docs:, style:, refactor:, test:, ci:, perf:, build:, revert:"
+    echo "메시지: $msg"
+    exit 1
+    ;;
+esac
