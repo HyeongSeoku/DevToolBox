@@ -84,7 +84,7 @@ export function generateInterfaces(
     });
   }
 
-  const mergeObjectShapes = (nodes: any[], name: string) => {
+  const mergeObjectShapes = (nodes: any[]) => {
     const shape: Record<string, any[]> = {};
     nodes.forEach((n) => {
       if (!n || typeof n !== "object" || Array.isArray(n)) return;
@@ -123,7 +123,7 @@ export function generateInterfaces(
         (el) => el && typeof el === "object" && !Array.isArray(el),
       );
       if (allObjects) {
-        const merged = mergeObjectShapes(elements, name);
+        const merged = mergeObjectShapes(elements);
         const ifaceName = uniqueName(name + "Item");
         const lines = Object.entries(merged).map(
           ([key, { values, optional }]) => {

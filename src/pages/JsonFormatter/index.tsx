@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import { useToast } from "@/components/ToastProvider";
 import { Checkbox } from "@/components/ui/Checkbox";
@@ -19,11 +19,6 @@ export function JsonFormatterPage() {
   const [indent, setIndent] = useState<"2" | "4" | "tab">("2");
   const [sortAll, setSortAll] = useState(false);
   const toast = useToast();
-
-  const indentValue = useMemo(() => {
-    if (indent === "tab") return "\t";
-    return Number(indent);
-  }, [indent]);
 
   const format = (opts?: { minify?: boolean; sort?: boolean }) => {
     try {

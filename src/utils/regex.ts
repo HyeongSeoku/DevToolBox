@@ -16,7 +16,7 @@ export type RegexSnippet = {
   flags?: string;
   replace?: string | ((...args: any[]) => string);
   description?: string;
-  category?: "common" | "frontend" | "backend";
+  category?: "common" | "frontend" | "backend" | "custom";
 };
 
 export const commonRegexSnippets: RegexSnippet[] = [

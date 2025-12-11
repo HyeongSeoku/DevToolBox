@@ -1,8 +1,13 @@
-import { type ToastContextValue } from "@/components/ToastProvider";
+type ToastLike = {
+  show: (
+    msg: string,
+    opts?: { type?: "success" | "error" | "info"; duration?: number },
+  ) => void;
+};
 
 export async function copyWithToast(
   text: string,
-  toast?: ToastContextValue,
+  toast?: ToastLike,
   opts?: { success?: string; error?: string },
 ) {
   try {

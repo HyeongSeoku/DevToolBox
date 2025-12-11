@@ -1,9 +1,10 @@
+import { useVaultStore } from "@/stores/useVaultStore";
+
+import { beSeedCore } from "./seeds/be";
+import { feSeedCore } from "./seeds/fe";
 import { gitSeedAdvanced, gitSeedCore } from "./seeds/git";
 import { linuxSeedAdmin, linuxSeedCore } from "./seeds/linux";
-import { feSeedCore } from "./seeds/fe";
-import { beSeedCore } from "./seeds/be";
 import { type Snippet, type SnippetFilter } from "./types";
-import { useVaultStore } from "@/stores/useVaultStore";
 
 export type SnippetKind = "git" | "linux" | "fe" | "be";
 
@@ -87,7 +88,7 @@ export async function loadGitSnippets(
         const text = await readFile(snippetFiles[key]);
         const parsed = JSON.parse(text) as { snippets: Snippet[] };
         fromVault.push(
-          ...(parsed.snippets || []).map((s) => ({ ...s, source: "vault" })),
+          ...(parsed.snippets || []).map((s) => ({ ...s, source: "vault" as const })),
         );
       } catch {
         // ignore missing files
@@ -121,7 +122,7 @@ export async function loadSnippetsByKind(
         const text = await readFile(snippetFiles[key]);
         const parsed = JSON.parse(text) as { snippets: Snippet[] };
         fromVault.push(
-          ...(parsed.snippets || []).map((s) => ({ ...s, source: "vault" })),
+          ...(parsed.snippets || []).map((s) => ({ ...s, source: "vault" as const })),
         );
       } catch {
         // ignore missing files

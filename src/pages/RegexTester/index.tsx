@@ -44,7 +44,6 @@ export function RegexTesterPage() {
   const [snippetCategory, setSnippetCategory] = useState<
     "all" | "frontend" | "backend" | "common" | "custom"
   >("all");
-  const [hoverFlag, setHoverFlag] = useState<FlagKey | null>(null);
   const [tooltipFlag, setTooltipFlag] = useState<FlagKey | null>(null);
   const [timerId, setTimerId] = useState<number | null>(null);
   const [customSnippets, setCustomSnippets] = useState<RegexSnippet[]>(() => {
@@ -75,7 +74,6 @@ export function RegexTesterPage() {
   };
 
   const handleFlagEnter = (f: FlagKey) => {
-    setHoverFlag(f);
     if (timerId) {
       clearTimeout(timerId);
     }
@@ -84,7 +82,6 @@ export function RegexTesterPage() {
   };
 
   const handleFlagLeave = () => {
-    setHoverFlag(null);
     if (timerId) clearTimeout(timerId);
     setTimerId(null);
     setTooltipFlag(null);

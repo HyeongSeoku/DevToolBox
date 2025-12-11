@@ -85,7 +85,7 @@ export function ConvertOptions({
           />
           <p className="micro">10~100% 리사이즈. 100%는 원본 크기.</p>
         </div>
-        <div>
+        <div className={panelStyles.stableRow}>
           <p className={panelStyles.label}>EXIF 제거</p>
           <Checkbox
             checked={stripExif}

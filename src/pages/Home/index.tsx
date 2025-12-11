@@ -59,13 +59,7 @@ const allKeys: NavKey[] = [
   "i18n",
 ];
 
-function PaneRenderer({
-  keyName,
-  recent,
-}: {
-  keyName: NavKey;
-  recent: RecentItem[];
-}) {
+function PaneRenderer({ keyName }: { keyName: NavKey }) {
   switch (keyName) {
     case "convert":
       return <QuickConvertPane />;
@@ -94,7 +88,7 @@ function PaneRenderer({
   }
 }
 
-export function HomePage({ recent }: HomePageProps) {
+export function HomePage({}: HomePageProps) {
   const navigate = useNavigate();
   const toast = useToast();
   const panes = useQuickLayoutStore((state) => state.panes);
@@ -176,7 +170,7 @@ export function HomePage({ recent }: HomePageProps) {
               </div>
               <div className={styles.cardContent}>
                 <ScrollArea className={styles.paneScroll}>
-                  <PaneRenderer keyName={key} recent={recent} />
+                  <PaneRenderer keyName={key} />
                 </ScrollArea>
               </div>
             </div>

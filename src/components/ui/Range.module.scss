@@ -46,7 +46,9 @@
   border: 2px solid var(--surface);
   margin-top: -5px;
   box-shadow: 0 2px 6px var(--overlay-secondary-25);
-  transition: transform 0.1s ease, box-shadow 0.15s ease;
+  transition:
+    transform 0.1s ease,
+    box-shadow 0.15s ease;
 }
 
 .track:active::-webkit-slider-thumb {
@@ -73,7 +75,9 @@
   );
   border: 2px solid var(--surface);
   box-shadow: 0 2px 6px var(--overlay-secondary-25);
-  transition: transform 0.1s ease, box-shadow 0.15s ease;
+  transition:
+    transform 0.1s ease,
+    box-shadow 0.15s ease;
 }
 
 .track:active::-moz-range-thumb {

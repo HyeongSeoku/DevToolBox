@@ -8,9 +8,7 @@ import { useQuickLayoutStore } from "@/stores/useQuickLayout";
 import { useVaultStore } from "@/stores/useVaultStore";
 import { type NavKey } from "@/types/nav";
 
-import styles from "./index.module.scss";
 import { Sidebar } from "../components/Sidebar";
-import { type ImageConvertMode } from "../hooks/useConversionJob";
 import { useTheme } from "../hooks/useTheme";
 
 export function Layout() {

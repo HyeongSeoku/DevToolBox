@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { invoke } from "@tauri-apps/api/core";
-import { join } from "@tauri-apps/api/path";
-import { readDir, readTextFile } from "@tauri-apps/plugin-fs";
 
 import { ScrollArea } from "@/components/ui/ScrollArea";
 import { Button } from "@/components/ui/Button";
@@ -10,31 +8,19 @@ import { useToast } from "@/components/ToastProvider";
 import { copyWithToast } from "@/utils/clipboard";
 
 import styles from "./index.module.scss";
-import {
-  type I18nKeyStatus,
-  type LocalePattern,
-  type ScanResult,
-} from "./types";
-import {
-  compareLocales,
-  detectLanguage,
-  extractLocaleInfo,
-  flattenJson,
-  groupScanResult,
-} from "./utils";
-
-type TranslateMode = "file" | "text" | "mixed";
+import { type I18nKeyStatus, type ScanResult } from "./types";
+import { compareLocales, detectLanguage, flattenJson, groupScanResult } from "./utils";
 
 const normalizeQuotes = (text: string) =>
   text.replace(/[\u201C\u201D]/g, '"').replace(/[\u2018\u2019]/g, "'");
 
 export function I18nInspectorPage() {
-  const mode: TranslateMode = "text"; // 단일 텍스트/파일 불러오기 모드 고정
-  const pattern: LocalePattern = "flat";
+  const readTextFile = (path: string) =>
+    invoke<string>("read_text_file", { path });
   const toast = useToast();
   const [baseLocale, setBaseLocale] = useState("en");
   const [targetLocale, setTargetLocale] = useState("ko");
-  const [root, setRoot] = useState("");
+  const [, setRoot] = useState("");
   const [baseText, setBaseText] = useState("{}");
   const [targetText, setTargetText] = useState("{}");
   const [baseError, setBaseError] = useState<string | null>(null);
@@ -91,21 +77,6 @@ export function I18nInspectorPage() {
     } catch (err) {
       setError(String(err));
     }
-  };
-
-  const walk = async (dir: string): Promise<string[]> => {
-    const stack = [dir];
-    const files: string[] = [];
-    while (stack.length) {
-      const current = stack.pop() as string;
-      const entries = await readDir(current);
-      for (const entry of entries) {
-        const full = await join(current, entry.name);
-        if (entry.isDirectory) stack.push(full);
-        else if (entry.isFile) files.push(full);
-      }
-    }
-    return files;
   };
 
   const parseTextEntries = () => {
@@ -190,38 +161,7 @@ export function I18nInspectorPage() {
         path: string;
       }[] = [];
 
-      if (mode !== "text") {
-        if (!root.trim()) {
-          setError("폴더를 선택하세요.");
-          setLoading(false);
-          return;
-        }
-        const files = await walk(root.trim());
-        for (const file of files) {
-          const info = extractLocaleInfo(file, pattern);
-          if (!info) continue;
-          try {
-            const text = await readTextFile(file);
-            const json = JSON.parse(text);
-            const flat = flattenJson(json);
-            Object.entries(flat).forEach(([key, value]) => {
-              flattened.push({
-                locale: info.locale,
-                namespace: info.namespace,
-                key,
-                value,
-                path: file,
-              });
-            });
-          } catch (err) {
-            setError(`JSON 파싱 실패 (${file}): ${err}`);
-          }
-        }
-      }
-
-      if (mode !== "file") {
-        flattened.push(...parseTextEntries());
-      }
+      flattened.push(...parseTextEntries());
 
       if (!flattened.length) {
         setError("비교할 데이터가 없습니다.");

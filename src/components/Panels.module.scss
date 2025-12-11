@@ -127,6 +127,13 @@
   flex-wrap: wrap;
 }
 
+.stableRow {
+  min-height: 50px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
 .results {
   display: flex;
   flex-direction: column;

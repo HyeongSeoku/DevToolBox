@@ -3,7 +3,6 @@ export type NavKey =
   | "convert"
   | "typegen"
   | "settings"
-  | "history"
   | "jwt"
   | "text"
   | "regex"
