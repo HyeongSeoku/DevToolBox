@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, type CSSProperties } from "react";
 
 import styles from "./Range.module.scss";
 
@@ -31,6 +31,10 @@ export const Range = forwardRef<HTMLInputElement, ExtendedRangeProps>(
     const percent = max === min ? 0 : ((clamped - min) / (max - min)) * 100;
     const trackH = trackHeight ?? 8;
     const thumb = thumbSize ?? 16;
+    const inputStyle: CSSProperties & Record<string, string | number> = {
+      height: Math.max(trackH, thumb),
+      "--range-thumb-size": `${thumb}px`,
+    };
 
     return (
       <label className={styles.wrapper}>
@@ -58,10 +62,7 @@ export const Range = forwardRef<HTMLInputElement, ExtendedRangeProps>(
             ref={ref}
             type="range"
             className={`${styles.input} ${className ?? ""}`}
-            style={{
-              height: Math.max(trackH, thumb),
-              ["--range-thumb-size" as const]: `${thumb}px`,
-            }}
+            style={inputStyle}
             {...rest}
           />
         </div>

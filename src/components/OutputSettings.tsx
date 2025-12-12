@@ -22,15 +22,19 @@ export function OutputSettings({
     <div className="option-grid">
       <div>
         <p className={panelStyles.label}>출력 폴더</p>
-        <div className="inline-row">
-          <Input
-            type="text"
-            value={outputDir || ""}
-            placeholder="입력 폴더와 동일"
-            onChange={(e) => onOutputDirChange(e.target.value || null)}
-          />
+        <p className="micro">
+          {outputDir ? outputDir : "입력 폴더와 동일 (미지정 시 자동 적용)"}
+        </p>
+        <div className="inline-row" style={{ gridTemplateColumns: "auto auto" }}>
           <Button variant="ghost" onClick={onBrowseOutput}>
-            찾기
+            폴더 선택
+          </Button>
+          <Button
+            variant="ghost"
+            onClick={() => onOutputDirChange(null)}
+            disabled={!outputDir}
+          >
+            기본 사용
           </Button>
         </div>
       </div>

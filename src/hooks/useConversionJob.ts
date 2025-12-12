@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
@@ -19,6 +19,7 @@ type ProgressPayload = {
   current: number;
   path: string;
   status: string;
+  size_bytes: number;
 };
 type CompletePayload = { job_id: string; results: ConversionResult[] };
 type PartialPayload = {
@@ -54,6 +55,14 @@ type RunArgs = {
   onCompleted?: (items: ConversionResult[]) => void;
 };
 
+type ProgressState = {
+  percent: number;
+  label: string;
+  current?: number;
+  total?: number;
+  path?: string;
+};
+
 export function useConversionJob(isTauriEnv: boolean) {
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState<string>("");
@@ -61,11 +70,15 @@ export function useConversionJob(isTauriEnv: boolean) {
   const [perFileProgress, setPerFileProgress] = useState<
     Record<string, number>
   >({});
-  const [progress, setProgress] = useState<{ percent: number; label: string }>({
+  const [progress, setProgress] = useState<ProgressState>({
     percent: 0,
     label: "",
+    current: 0,
+    total: 0,
   });
   const [jobId, setJobId] = useState<string | null>(null);
+  const jobIdRef = useRef<string | null>(null);
+  const [fileSizes, setFileSizes] = useState<Record<string, number>>({});
 
   useEffect(() => {
     if (!isTauriEnv) return;
@@ -80,14 +93,32 @@ export function useConversionJob(isTauriEnv: boolean) {
           path,
           status: currentStatus,
         } = event.payload;
-        if (!jobId || jobId !== job_id) return;
+
+        const activeJob = jobIdRef.current;
+        if (!activeJob || activeJob !== job_id) return;
         const percent = Math.round((current / Math.max(total, 1)) * 100);
-        setPerFileProgress((prev) => ({ ...prev, [path]: 100 }));
+        // 로그로도 진행률을 확인할 수 있도록 출력
+        console.info(
+          `[convert:${job_id}] ${current}/${total} (${percent}%) - ${currentStatus} - ${path}`,
+        );
+        setPerFileProgress((prev) => ({
+          ...prev,
+          [path]: percent,
+        }));
+        if (event.payload.size_bytes >= 0) {
+          setFileSizes((prev) => ({
+            ...prev,
+            [path]: event.payload.size_bytes,
+          }));
+        }
         setProgress({
           percent,
           label: `${percent}% · ${
             currentStatus === "error" ? "실패" : "진행"
           } · ${path.split(/[/\\]/).pop() || ""}`,
+          current,
+          total,
+          path,
         });
       },
     );
@@ -95,19 +126,23 @@ export function useConversionJob(isTauriEnv: boolean) {
     const completeUnlistenPromise = listen<CompletePayload>(
       "conversion-complete",
       (event) => {
-        if (!jobId || jobId !== event.payload.job_id) return;
+        const activeJob = jobIdRef.current;
+        if (!activeJob || activeJob !== event.payload.job_id) return;
         setResults(event.payload.results);
         setStatus("일괄 변환 완료");
         setBusy(false);
-        setProgress({ percent: 100, label: "완료" });
+        setProgress({ percent: 100, label: "완료", current: progress.total, total: progress.total });
         setJobId(null);
+        jobIdRef.current = null;
       },
     );
 
     const partialUnlistenPromise = listen<PartialPayload>(
       "conversion-partial",
       (event) => {
-        if (!jobId || jobId !== event.payload.job_id) return;
+        console.log("TEST conversion-partial ID ", event.payload);
+        const activeJob = jobIdRef.current;
+        if (!activeJob || activeJob !== event.payload.job_id) return;
         const { input, output, error } = event.payload;
         setPerFileProgress((prev) => ({ ...prev, [input]: 100 }));
         setResults((prev) => {
@@ -144,15 +179,22 @@ export function useConversionJob(isTauriEnv: boolean) {
         return;
       }
 
-      setBusy(true);
-      setResults([]);
-      setPerFileProgress(
-        selectedFiles.reduce<Record<string, number>>((acc, path) => {
-          acc[path] = 0;
-          return acc;
-        }, {}),
-      );
-      setProgress({ percent: 0, label: "준비 중..." });
+    setBusy(true);
+    // 초기 리스트를 미리 채워 진행률 UI를 바로 표시
+    setResults(selectedFiles.map((path) => ({ input: path, output: undefined })));
+    setPerFileProgress(
+      selectedFiles.reduce<Record<string, number>>((acc, path) => {
+        acc[path] = 0;
+        return acc;
+      }, {}),
+    );
+    setProgress({ percent: 0, label: "준비 중...", current: 0, total: 0 });
+    setFileSizes(
+      selectedFiles.reduce<Record<string, number>>((acc, path) => {
+        acc[path] = 0;
+        return acc;
+      }, {}),
+    );
 
       try {
         if (mode === "gif") {
@@ -172,6 +214,7 @@ export function useConversionJob(isTauriEnv: boolean) {
         if (batchMode && selectedFiles.length > 1) {
           const id = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
           setJobId(id);
+          jobIdRef.current = id;
           await invoke<void>("batch_convert", {
             jobId: id,
             paths: selectedFiles,
@@ -180,9 +223,13 @@ export function useConversionJob(isTauriEnv: boolean) {
           setStatus("일괄 변환 중...");
           // busy will be reset on completion event
         } else {
+          const id = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+          setJobId(id);
+          jobIdRef.current = id;
           const single = await invoke<{ input: string; output: string }>(
             "convert_image",
             {
+              jobId: id,
               path: selectedFiles[0],
               options: convertOptions,
             },
@@ -192,12 +239,15 @@ export function useConversionJob(isTauriEnv: boolean) {
           setStatus("변환 완료");
           setProgress({ percent: 100, label: "완료" });
           setBusy(false);
+          setJobId(null);
+          jobIdRef.current = null;
           onCompleted?.([{ input: single.input, output: single.output }]);
         }
       } catch (error) {
         setStatus(`오류: ${error}`);
         setBusy(false);
         setJobId(null);
+        jobIdRef.current = null;
       }
     },
     [isTauriEnv],

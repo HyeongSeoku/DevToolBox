@@ -85,6 +85,7 @@ export function ConvertPage({ modeOverride, recentAdd }: ConvertPageProps) {
 
   const [gifFps, setGifFps] = useState(15);
   const [gifQuality, setGifQuality] = useState<GifQuality>("medium");
+  const isGif = mode === "gif";
 
   const {
     busy,
@@ -107,15 +108,14 @@ export function ConvertPage({ modeOverride, recentAdd }: ConvertPageProps) {
     const unlistenPromise = getCurrentWebview().onDragDropEvent(
       (event: TauriEvent<DragDropEvent>) => {
         if (event.payload.type !== "drop") return;
-        const paths =
-          mode === "gif"
-            ? filterByExtensions(event.payload.paths || [], videoExtensions)
-            : filterByExtensions(event.payload.paths || [], imageExtensions);
+        const paths = isGif
+          ? filterByExtensions(event.payload.paths || [], videoExtensions)
+          : filterByExtensions(event.payload.paths || [], imageExtensions);
         if (paths.length) {
-          addFiles(mode === "gif" ? [paths[0]] : paths);
+          addFiles(isGif ? [paths[0]] : paths);
         } else {
           setStatus(
-            mode === "gif"
+            isGif
               ? "지원하지 않는 비디오 형식입니다."
               : "지원하지 않는 이미지 형식입니다.",
           );
@@ -126,15 +126,15 @@ export function ConvertPage({ modeOverride, recentAdd }: ConvertPageProps) {
     return () => {
       unlistenPromise.then((unlisten) => unlisten());
     };
-  }, [isTauriEnv, addFiles, mode, setStatus]);
+  }, [isTauriEnv, addFiles, isGif, setStatus]);
 
   useEffect(() => {
     if (!results.length) return;
     const latest = results[results.length - 1];
-    const kind = mode === "gif" ? "비디오→GIF" : "이미지 변환";
+    const kind = isGif ? "비디오→GIF" : "이미지 변환";
     const detail = latest.output || latest.error || latest.input;
     recentAdd(kind, detail);
-  }, [results, mode, recentAdd]);
+  }, [results, isGif, recentAdd]);
 
   const conversionSummary = useMemo(() => {
     const success = results.filter((r) => r.output).length;
@@ -162,10 +162,10 @@ export function ConvertPage({ modeOverride, recentAdd }: ConvertPageProps) {
       return;
     }
     try {
-      const exts = mode === "gif" ? videoExtensions : imageExtensions;
+      const exts = isGif ? videoExtensions : imageExtensions;
       const paths = await pickFilesByExtensions(exts, true);
       if (paths && paths.length) {
-        addFiles(mode === "gif" ? [paths[0]] : paths);
+        addFiles(isGif ? [paths[0]] : paths);
       }
     } catch (error) {
       const msg = `파일 선택 실패: ${error}`;
@@ -192,7 +192,7 @@ export function ConvertPage({ modeOverride, recentAdd }: ConvertPageProps) {
   };
 
   const handleRun = () => {
-    if (mode === "gif" && selectedFiles.length > 1) {
+    if (isGif && selectedFiles.length > 1) {
       setStatus("GIF는 첫 번째 비디오만 사용합니다.");
     }
     runConversion({
@@ -239,7 +239,7 @@ export function ConvertPage({ modeOverride, recentAdd }: ConvertPageProps) {
           이미지 변환
         </Button>
         <Button
-          variant={mode === "gif" ? "primary" : "ghost"}
+          variant={isGif ? "primary" : "ghost"}
           className={styles.modeButton}
           onClick={() => setMode("gif")}
         >
@@ -255,7 +255,7 @@ export function ConvertPage({ modeOverride, recentAdd }: ConvertPageProps) {
         onRun={handleRun}
       />
 
-      {mode === "convert" && (
+      {!isGif && (
         <div className="preset-row">
           {webPresets.map((preset) => (
             <Button
@@ -278,26 +278,25 @@ export function ConvertPage({ modeOverride, recentAdd }: ConvertPageProps) {
       <section className="layout">
         <div>
           <DropZone
-            title={mode === "gif" ? "비디오 끌어다 놓기" : "이미지 끌어다 놓기"}
+            title={isGif ? "비디오 끌어다 놓기" : "이미지 끌어다 놓기"}
             subtitle={
-              mode === "gif"
+              isGif
                 ? "비디오 → GIF: mp4, mov, mkv, avi"
-                : "이미지 변환: jpg, jpeg, png, webp, bmp, gif"
+                : "이미지 변환: jpg, jpeg, png, webp"
             }
             onFilesAdded={(paths) => {
-              const filtered =
-                mode === "gif"
-                  ? filterByExtensions(paths, videoExtensions)
-                  : filterByExtensions(paths, imageExtensions);
+              const filtered = isGif
+                ? filterByExtensions(paths, videoExtensions)
+                : filterByExtensions(paths, imageExtensions);
               if (!filtered.length) {
                 setStatus(
-                  mode === "gif"
+                  isGif
                     ? "mp4/mov/mkv/avi만 지원합니다."
                     : "이미지 파일만 지원합니다.",
                 );
                 return;
               }
-              addFiles(mode === "gif" ? [filtered[0]] : filtered);
+              addFiles(isGif ? [filtered[0]] : filtered);
             }}
             onPickFiles={pickFiles}
             onPickFolder={pickFolder}
@@ -307,13 +306,13 @@ export function ConvertPage({ modeOverride, recentAdd }: ConvertPageProps) {
           <FileList
             files={selectedFiles}
             onRemove={removeFile}
-            batchMode={mode === "gif" ? false : batchMode}
+            batchMode={isGif ? false : batchMode}
             onToggleBatch={setBatchMode}
           />
         </div>
 
         <div className="panel options-panel">
-          {mode === "convert" ? (
+          {!isGif ? (
             <ConvertOptions
               targetFormat={targetFormat}
               onTargetChange={setTargetFormat}

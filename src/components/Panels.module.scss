@@ -153,9 +153,9 @@
 
 .statGroup {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-3);
-  text-align: right;
+  grid-template-columns: repeat(2, auto);
+  gap: var(--space-4);
+  align-items: center;
 }
 
 .resultsBody {
@@ -164,22 +164,80 @@
   gap: var(--space-3);
 }
 
-.progressRow {
-  margin-top: var(--space-2);
+.statusBlock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
 }
 
-.progressBar {
-  width: 100%;
-  height: 8px;
+.ringWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.countBox {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-1);
+}
+
+.summaryRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3);
+  margin-bottom: var(--space-3);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border);
   background: var(--surface-muted);
-  border-radius: var(--radius-full);
-  overflow: hidden;
 }
 
-.progressFill {
-  height: 100%;
-  background: linear-gradient(120deg, var(--primary-100), var(--secondary-100));
-  transition: width 0.2s ease;
+.summaryMain {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.summary-count {
+  margin: 0;
+  font-weight: 600;
+}
+
+.progressRing {
+  transform: rotate(-90deg);
+}
+
+.ringTrack {
+  fill: none;
+  stroke: var(--surface-muted);
+}
+
+.ringFill {
+  fill: none;
+  stroke: var(--secondary-300);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.2s ease;
+}
+
+.ringText {
+  font-size: 12px;
+  fill: var(--text-muted);
+  transform: rotate(90deg);
+}
+.ringSubText {
+  font-size: 10px;
+  fill: var(--text-muted);
+  transform: rotate(90deg);
+}
+
+.perFileProgress {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  min-width: 96px;
 }
 
 .resultRow {

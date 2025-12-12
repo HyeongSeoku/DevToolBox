@@ -2,7 +2,7 @@ import { invoke } from "@tauri-apps/api/core";
 
 import type { GifQuality, TargetFormat } from "@/hooks/useConversionJob";
 
-export const imageExtensions = ["jpg", "jpeg", "png", "webp", "bmp", "gif"];
+export const imageExtensions = ["jpg", "jpeg", "png", "webp"];
 export const videoExtensions = ["mp4", "mov", "mkv", "avi"];
 
 export const defaultQuickConvertOptions = {
