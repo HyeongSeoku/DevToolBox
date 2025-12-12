@@ -7,8 +7,16 @@ type RangeProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, "type"> & {
   valueText?: string;
 };
 
-export const Range = forwardRef<HTMLInputElement, RangeProps>(
-  ({ label, valueText, className, ...rest }, ref) => {
+type ExtendedRangeProps = RangeProps & {
+  thumbSize?: number;
+  trackHeight?: number;
+};
+
+export const Range = forwardRef<HTMLInputElement, ExtendedRangeProps>(
+  (
+    { label, valueText, className, style, thumbSize, trackHeight, ...rest },
+    ref,
+  ) => {
     const min = rest.min !== undefined ? Number(rest.min) : 0;
     const max = rest.max !== undefined ? Number(rest.max) : 100;
     const rawVal =
@@ -21,10 +29,8 @@ export const Range = forwardRef<HTMLInputElement, RangeProps>(
       ? Math.min(Math.max(rawVal, min), max)
       : min;
     const percent = max === min ? 0 : ((clamped - min) / (max - min)) * 100;
-    const fill = `linear-gradient(90deg, var(--secondary-300) 0%, var(--secondary-300) ${percent}%, var(--surface-muted) ${percent}%, var(--surface-muted) 100%)`;
-    const trackStyle = {
-      "--range-fill": fill,
-    } as React.CSSProperties;
+    const trackH = trackHeight ?? 8;
+    const thumb = thumbSize ?? 16;
 
     return (
       <label className={styles.wrapper}>
@@ -34,13 +40,31 @@ export const Range = forwardRef<HTMLInputElement, RangeProps>(
             {valueText && <span>{valueText}</span>}
           </div>
         )}
-        <input
-          ref={ref}
-          type="range"
-          className={`${styles.track} ${className ?? ""}`}
-          style={trackStyle}
-          {...rest}
-        />
+        <div className={styles.rangeContainer} style={style}>
+          <div
+            className={styles.track}
+            style={{ height: trackH, borderRadius: trackH / 2 }}
+          >
+            <div
+              className={styles.fill}
+              style={{
+                width: `${percent}%`,
+                height: trackH,
+                borderRadius: trackH / 2,
+              }}
+            />
+          </div>
+          <input
+            ref={ref}
+            type="range"
+            className={`${styles.input} ${className ?? ""}`}
+            style={{
+              height: Math.max(trackH, thumb),
+              ["--range-thumb-size" as const]: `${thumb}px`,
+            }}
+            {...rest}
+          />
+        </div>
       </label>
     );
   },
