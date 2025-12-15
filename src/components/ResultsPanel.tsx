@@ -1,29 +1,47 @@
+import classNames from "classnames";
+
+import CancelCircle from "@/assets/icons/cancel_circle.svg?react";
+import CheckCircle from "@/assets/icons/check_circle.svg?react";
 import { Button } from "@/components/ui/Button";
 
 import panelStyles from "./Panels.module.scss";
 import { type ConversionResult } from "../hooks/useConversionJob";
 
-type Progress = { percent: number; label: string; current?: number; total?: number; path?: string };
+type Progress = {
+  percent: number;
+  label: string;
+  current?: number;
+  total?: number;
+  path?: string;
+};
 
 type RingProps = {
   percent: number;
   size?: number;
   stroke?: number;
-  primary?: string;
-  secondary?: string;
+  mainText?: string;
+  subText?: string;
 };
 
 const Ring: React.FC<RingProps> = ({
   percent,
   size = 56,
   stroke = 6,
-  primary,
-  secondary,
+  mainText,
+  subText,
 }) => {
   const radius = (size - stroke) / 2;
   const circumference = 2 * Math.PI * radius;
   const clamped = Math.max(0, Math.min(percent, 100));
   const dashoffset = circumference * (1 - clamped / 100);
+  const limitedMain =
+    mainText && mainText.length > 7
+      ? `${mainText.slice(0, 6)}…`
+      : (mainText ?? `${clamped}%`);
+  const mainClass =
+    (mainText?.length ?? 0) > 6
+      ? `${panelStyles.ringText} ${panelStyles.ringTextSmall}`
+      : panelStyles.ringText;
 
   return (
     <svg
@@ -49,12 +67,26 @@ const Ring: React.FC<RingProps> = ({
         strokeDasharray={circumference}
         strokeDashoffset={dashoffset}
       />
-      <text x="50%" y="45%" textAnchor="middle" className={panelStyles.ringText}>
-        {primary ?? `${clamped}%`}
-      </text>
-      {secondary && (
-        <text x="50%" y="62%" textAnchor="middle" className={panelStyles.ringSubText}>
-          {secondary}
+      <g transform={`rotate(90 ${size / 2} ${size / 2})`}>
+        <text
+          x="50%"
+          y="50%"
+          dominantBaseline="middle"
+          textAnchor="middle"
+          className={mainClass}
+        >
+          {limitedMain}
+        </text>
+      </g>
+      {subText && (
+        <text
+          x="50%"
+          y={size + 12}
+          dominantBaseline="middle"
+          textAnchor="middle"
+          className={panelStyles.ringSubText}
+        >
+          {subText}
         </text>
       )}
     </svg>
@@ -91,8 +123,8 @@ export function ResultsPanel({
       ? Math.floor(progress.current / Math.max(progress.total / totalFiles, 1))
       : successCount + failCount;
 
-  const formatBytes = (bytes?: number) => {
-    if (!bytes || bytes <= 0) return "-";
+  const formatBytes = (bytes?: number, opts?: { noUnit?: boolean }): string => {
+    if (bytes === undefined || bytes === null || bytes <= 0) return "-";
     const units = ["B", "KB", "MB", "GB"];
     let v = bytes;
     let i = 0;
@@ -100,7 +132,8 @@ export function ResultsPanel({
       v /= 1024;
       i += 1;
     }
-    return `${v.toFixed(v >= 10 ? 0 : 1)} ${units[i]}`;
+    const num = v.toFixed(v >= 10 ? 0 : 1);
+    return opts?.noUnit ? num : `${num} ${units[i]}`;
   };
 
   return (
@@ -111,13 +144,23 @@ export function ResultsPanel({
           <p className={panelStyles.statusText}>{status || "대기 중"}</p>
         </div>
         <div className={panelStyles.statGroup}>
-          <div>
-            <p className="stat-value small">{successCount}</p>
-            <p className="stat-label">성공</p>
+          <div
+            className={classNames(
+              panelStyles.statusContainer,
+              panelStyles.successStatus,
+            )}
+          >
+            <CheckCircle width={20} height={20} />
+            <p>{successCount}</p>
           </div>
-          <div>
-            <p className="stat-value small">{failCount}</p>
-            <p className="stat-label">실패</p>
+          <div
+            className={classNames(
+              panelStyles.statusContainer,
+              panelStyles.errorStatus,
+            )}
+          >
+            <CancelCircle width={20} height={20} />
+            <p>{failCount}</p>
           </div>
         </div>
       </div>
@@ -128,16 +171,17 @@ export function ResultsPanel({
               percent={progress.percent}
               size={68}
               stroke={7}
-              primary={`${Math.round(progress.percent)}%`}
-              secondary={
+              mainText={`${Math.round(progress.percent)}%`}
+              subText={
                 progress.total && progress.current !== undefined
                   ? `${formatBytes(progress.current)}`
                   : undefined
               }
             />
+
             <div>
               <p className="summary-count">
-                완료 {completedFiles} / 총 {totalFiles} 파일
+                {completedFiles} / {totalFiles}
               </p>
               <p className="micro subtle">
                 {progress.total && progress.current !== undefined
@@ -151,47 +195,41 @@ export function ResultsPanel({
         {results.length === 0 && (
           <p className="subtle">변환 결과가 여기에 표시됩니다.</p>
         )}
-        {results.map((item) => (
-          <div
-            key={`${item.input}-${item.output ?? item.error ?? "err"}`}
-            className={`${panelStyles.resultRow} ${item.error ? panelStyles.error : panelStyles.success}`}
-          >
-            <div>
-              <p className="file-name">{item.input.split(/[/\\]/).pop()}</p>
-              <p className="file-path">{item.output || item.error}</p>
+        {results.map((item) => {
+          const size = fileSizes?.[item.input] ?? 0;
+          const percent = perFileProgress[item.input] ?? 0;
+          const clamped = Math.min(percent, 100);
+          const processed = size > 0 ? (size * clamped) / 100 : undefined;
+          const mainText =
+            size > 0
+              ? `${formatBytes(processed, { noUnit: true })} / ${formatBytes(size)}`
+              : "- / -";
+
+          return (
+            <div
+              key={`${item.input}-${item.output ?? item.error ?? "err"}`}
+              className={`${panelStyles.resultRow} ${item.error ? panelStyles.error : panelStyles.success}`}
+            >
+              <div>
+                <p className="file-name">{item.input.split(/[/\\]/).pop()}</p>
+                <p className="file-path">{item.output || item.error}</p>
+              </div>
+              {item.output && (
+                <Button onClick={() => onOpen(item.output)}>열기</Button>
+              )}
+              <div className={panelStyles.perFileProgress}>
+                <Ring
+                  percent={percent}
+                  size={65}
+                  stroke={6}
+                  mainText={mainText}
+                  subText={`${Math.round(percent)}%`}
+                />
+                <p className="micro subtle">{`${Math.round(percent)}%`}</p>
+              </div>
             </div>
-            {item.output && (
-              <Button variant="ghost" onClick={() => onOpen(item.output)}>
-                열기
-              </Button>
-            )}
-            <div className={panelStyles.perFileProgress}>
-              <Ring
-                percent={perFileProgress[item.input] ?? 0}
-                size={52}
-                stroke={6}
-                primary={`${Math.round(perFileProgress[item.input] ?? 0)}%`}
-                secondary={
-                  fileSizes?.[item.input]
-                    ? `${formatBytes(
-                        (fileSizes?.[item.input] ?? 0) *
-                          Math.min(perFileProgress[item.input] ?? 0, 100) /
-                          100,
-                      )}`
-                    : undefined
-                }
-              />
-              <p className="micro subtle">
-                {formatBytes(
-                  (fileSizes?.[item.input] ?? 0) *
-                    Math.min(perFileProgress[item.input] ?? 0, 100) /
-                    100,
-                )}{" "}
-                / {formatBytes(fileSizes?.[item.input])}
-              </p>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );

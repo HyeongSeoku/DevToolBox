@@ -258,6 +258,7 @@ export function useConversionJob(isTauriEnv: boolean) {
     status,
     results,
     perFileProgress,
+    fileSizes,
     progress,
     runConversion,
     setStatus,

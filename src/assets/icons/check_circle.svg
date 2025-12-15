@@ -1,0 +1,8 @@
+<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <!-- 원 색상: 부모의 color (currentColor) 사용 -->
+  <circle cx="12" cy="12" r="10" fill="currentColor" />
+  <path
+    d="M10 16L6.5 12.5L7.91 11.09L10 13.17L16.09 7.09L17.5 8.5L10 16Z"
+    fill="var(--icon-accent, currentColor)"
+  />
+</svg>

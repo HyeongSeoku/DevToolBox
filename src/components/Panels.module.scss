@@ -223,19 +223,21 @@
 
 .ringText {
   font-size: 12px;
-  fill: var(--text-muted);
-  transform: rotate(90deg);
+  fill: var(--text);
+}
+.ringTextSmall {
+  font-size: 10px;
+  fill: var(--text);
 }
 .ringSubText {
   font-size: 10px;
-  fill: var(--text-muted);
-  transform: rotate(90deg);
+  fill: var(--text);
 }
 
 .perFileProgress {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: center;
   gap: 2px;
   min-width: 96px;
 }
@@ -265,4 +267,21 @@
     color-mix(in srgb, var(--secondary-300) 18%, transparent),
     var(--overlay-secondary-08)
   );
+}
+
+.statusContainer {
+  --icon-accent: var(--gray-900);
+
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+
+  &.successStatus {
+    color: var(--success-500);
+  }
+
+  &.errorStatus {
+    color: var(--danger-500);
+  }
 }

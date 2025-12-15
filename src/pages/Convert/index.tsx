@@ -93,6 +93,7 @@ export function ConvertPage({ modeOverride, recentAdd }: ConvertPageProps) {
     results,
     progress,
     perFileProgress,
+    fileSizes,
     runConversion,
     setStatus,
   } = useConversionJob(isTauriEnv);
@@ -351,6 +352,7 @@ export function ConvertPage({ modeOverride, recentAdd }: ConvertPageProps) {
         progress={progress}
         results={results}
         perFileProgress={perFileProgress}
+        fileSizes={fileSizes}
         onOpen={handleOpen}
         successCount={conversionSummary.success}
         failCount={conversionSummary.failed}

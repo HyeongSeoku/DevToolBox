@@ -1,3 +1,4 @@
+import Close from "@/assets/icons/close.svg?react";
 import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox";
 
@@ -51,7 +52,7 @@ export function FileList({
               onClick={() => onRemove(path)}
               aria-label="삭제"
             >
-              ✕
+              <Close width={14} height={14} />
             </Button>
           </div>
         ))}
