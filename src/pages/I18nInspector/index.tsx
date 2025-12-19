@@ -9,7 +9,12 @@ import { copyWithToast } from "@/utils/clipboard";
 
 import styles from "./index.module.scss";
 import { type I18nKeyStatus, type ScanResult } from "./types";
-import { compareLocales, detectLanguage, flattenJson, groupScanResult } from "./utils";
+import {
+  compareLocales,
+  detectLanguage,
+  flattenJson,
+  groupScanResult,
+} from "./utils";
 
 const normalizeQuotes = (text: string) =>
   text.replace(/[\u201C\u201D]/g, '"').replace(/[\u2018\u2019]/g, "'");
@@ -218,6 +223,35 @@ export function I18nInspectorPage() {
     { code: "ja", label: "일본어(JP)" },
   ];
 
+  const pendingJson = useMemo(() => {
+    const filtered = statuses.filter(
+      (s) => s.status === "MISSING" || s.status === "UNTRANSLATED",
+    );
+    if (!filtered.length) return "";
+
+    const record: Record<string, string> = {};
+    filtered.forEach((item) => {
+      const fullKey = item.namespace
+        ? `${item.namespace}.${item.key}`
+        : item.key;
+      record[fullKey] = item.targetValue ?? item.baseValue ?? "";
+    });
+
+    const sorted = Object.keys(record)
+      .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }))
+      .reduce<Record<string, string>>((acc, key) => {
+        acc[key] = record[key];
+        return acc;
+      }, {});
+
+    return JSON.stringify(sorted, null, 2);
+  }, [statuses]);
+
+  const copyPendingJson = async () => {
+    if (!pendingJson) return;
+    await copyWithToast(pendingJson, toast);
+  };
+
   useEffect(() => {
     const baseVal = baseText.trim();
     const targetVal = targetText.trim();
@@ -403,9 +437,28 @@ export function I18nInspectorPage() {
       {result && (
         <div className={styles.card}>
           <p className="micro">
-            로케일 {result.locales.join(", ")} · 네임스페이스{" "}
+            로케일 {result.locales.join(", ")} · 네임스페이스
             {result.namespaces.join(", ")}
           </p>
+          <div className={styles.row}>
+            <span className="micro subtle">
+              미번역/누락 키
+              {
+                statuses.filter(
+                  (s) => s.status === "MISSING" || s.status === "UNTRANSLATED",
+                ).length
+              }
+              개
+            </span>
+            <Button
+              variant="ghost"
+              onClick={copyPendingJson}
+              disabled={!pendingJson}
+              className={styles.noWrap}
+            >
+              미번역·누락 JSON 복사
+            </Button>
+          </div>
           <ScrollArea maxHeight={420}>
             <table className={styles.table}>
               <thead>
@@ -441,7 +494,7 @@ export function I18nInspectorPage() {
                       ))}
                       {item.detectedLang && (
                         <span className={styles.badge}>
-                          감지: {item.detectedLang} / 기대:{" "}
+                          감지: {item.detectedLang} / 기대:
                           {item.expectedLang ?? "-"}
                         </span>
                       )}
