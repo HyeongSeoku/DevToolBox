@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 
+import Close from "@/assets/icons/close.svg?react";
 import { useToast } from "@/components/ToastProvider";
 import { Button } from "@/components/ui/Button";
 import { ScrollArea } from "@/components/ui/ScrollArea";
@@ -167,7 +168,7 @@ export function HomePage({}: HomePageProps) {
                   className={styles.remove}
                   onClick={() => removePane(key)}
                 >
-                  ×
+                  <Close width={16} height={16} />
                 </Button>
               </div>
               <div className={styles.cardContent}>
