@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export type ThemeMode = "light" | "dark" | "system";
+export type ResolvedThemeMode = "light" | "dark";
 
 const STORAGE_KEY = "theme-mode";
 
@@ -17,35 +18,38 @@ export function useTheme() {
     const saved = window.localStorage.getItem(STORAGE_KEY) as ThemeMode | null;
     return saved ?? "system";
   });
+  const [systemTheme, setSystemTheme] = useState<ResolvedThemeMode>(() =>
+    getSystemTheme(),
+  );
+
+  const resolvedMode = useMemo<ResolvedThemeMode>(
+    () => (mode === "system" ? systemTheme : mode),
+    [mode, systemTheme],
+  );
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const system = getSystemTheme();
-    const applied = mode === "system" ? system : mode;
-    document.documentElement.dataset.theme = applied;
+    document.documentElement.dataset.theme = resolvedMode;
     window.localStorage.setItem(STORAGE_KEY, mode);
-  }, [mode]);
+  }, [mode, resolvedMode]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     const media = window.matchMedia("(prefers-color-scheme: dark)");
     const handler = () => {
-      if (mode === "system") {
-        const system = getSystemTheme();
-        document.documentElement.dataset.theme = system;
-      }
+      setSystemTheme(getSystemTheme());
     };
+    handler();
     media.addEventListener("change", handler);
     return () => media.removeEventListener("change", handler);
-  }, [mode]);
+  }, []);
 
-  const cycleMode = () => {
+  const toggleMode = () => {
     setMode((prev) => {
-      if (prev === "system") return "light";
-      if (prev === "light") return "dark";
-      return "system";
+      const base = prev === "system" ? systemTheme : prev;
+      return base === "dark" ? "light" : "dark";
     });
   };
 
-  return { mode, setMode, cycleMode };
+  return { mode, resolvedMode, setMode, toggleMode };
 }

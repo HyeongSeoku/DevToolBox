@@ -12,7 +12,7 @@ import { Sidebar } from "../components/Sidebar";
 import { useTheme } from "../hooks/useTheme";
 
 export function Layout() {
-  const { mode: themeMode, cycleMode: cycleTheme } = useTheme();
+  const { resolvedMode: themeMode, toggleMode: toggleTheme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
   const toast = useToast();
@@ -96,7 +96,7 @@ export function Layout() {
           navigate(navPaths[key] ?? "/convert");
         }}
         themeMode={themeMode}
-        onThemeCycle={cycleTheme}
+        onThemeToggle={toggleTheme}
       />
       <div className="content">
         <ScrollArea

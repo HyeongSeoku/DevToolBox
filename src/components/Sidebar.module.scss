@@ -9,6 +9,13 @@
   overflow: hidden;
 }
 
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
 .brand {
   display: flex;
   align-items: center;
@@ -49,6 +56,22 @@
   min-height: 0;
 }
 
+.themeButton {
+  background: var(--overlay-white-80);
+  border-color: var(--overlay-white-24);
+  padding: var(--space-2);
+  border-radius: var(--radius-full);
+}
+
+.themeButton:hover {
+  border-color: var(--overlay-white-70);
+}
+
+.themeIcon {
+  width: 24px;
+  height: 24px;
+}
+
 .navItem {
   width: 100%;
   text-align: left;
@@ -72,8 +95,4 @@
 .active {
   background: var(--secondary-500);
   border-color: var(--secondary-300);
-}
-
-.footer {
-  margin-top: auto;
 }

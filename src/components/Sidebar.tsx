@@ -1,17 +1,18 @@
 import classNames from "classnames";
 
+import ThemeIcon from "@/assets/icons/theme.svg?react";
 import { Button } from "@/components/ui/Button";
 import { type NavKey } from "@/types/nav";
 
 import styles from "./Sidebar.module.scss";
-import { type ThemeMode } from "../hooks/useTheme";
+import { type ResolvedThemeMode } from "../hooks/useTheme";
 import { ScrollArea } from "./ui/ScrollArea";
 
 type SidebarProps = {
   active: NavKey;
   onNavigate: (key: NavKey) => void;
-  themeMode: ThemeMode;
-  onThemeCycle: () => void;
+  themeMode: ResolvedThemeMode;
+  onThemeToggle: () => void;
 };
 
 const navItems: { key: NavKey; label: string }[] = [
@@ -34,23 +35,30 @@ export function Sidebar({
   active,
   onNavigate,
   themeMode,
-  onThemeCycle,
+  onThemeToggle,
 }: SidebarProps) {
-  const themeLabel =
-    themeMode === "system"
-      ? "System"
-      : themeMode === "light"
-        ? "Light"
-        : "Dark";
+  const isDark = themeMode === "dark";
 
   return (
     <aside className={styles.sidebar}>
-      <div className={styles.brand}>
-        <div className={styles.logo}>DT</div>
-        <div>
-          <p className={styles.brandTitle}>DevToolbox</p>
-          <p className={styles.brandSub}>Media Studio</p>
+      <div className={styles.header}>
+        <div className={styles.brand}>
+          <div className={styles.logo}>DT</div>
+          <div>
+            <p className={styles.brandTitle}>DevToolbox</p>
+            <p className={styles.brandSub}>Media Studio</p>
+          </div>
         </div>
+        <Button
+          className={styles.themeButton}
+          onClick={onThemeToggle}
+          aria-label="테마 전환"
+          aria-pressed={isDark}
+        >
+          <ThemeIcon
+            className={classNames(styles.themeIcon, isDark ? "moon" : "sun")}
+          />
+        </Button>
       </div>
 
       <ScrollArea className={styles.scroll}>
@@ -73,11 +81,6 @@ export function Sidebar({
           ))}
         </nav>
 
-        <div className={styles.footer}>
-          <Button className={styles.navItem} onClick={onThemeCycle}>
-            테마: {themeLabel}
-          </Button>
-        </div>
       </ScrollArea>
     </aside>
   );
