@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { invoke } from "@tauri-apps/api/core";
 import { type Event as TauriEvent } from "@tauri-apps/api/event";
@@ -86,6 +86,7 @@ export function ConvertPage({ modeOverride, recentAdd }: ConvertPageProps) {
   const [gifFps, setGifFps] = useState(15);
   const [gifQuality, setGifQuality] = useState<GifQuality>("medium");
   const isGif = mode === "gif";
+  const lastModeRef = useRef(mode);
 
   const {
     busy,
@@ -103,6 +104,13 @@ export function ConvertPage({ modeOverride, recentAdd }: ConvertPageProps) {
       setMode(modeOverride);
     }
   }, [modeOverride]);
+
+  useEffect(() => {
+    if (lastModeRef.current !== mode) {
+      clearFiles();
+      lastModeRef.current = mode;
+    }
+  }, [mode, clearFiles]);
 
   useEffect(() => {
     if (!isTauriEnv) return;
