@@ -1,12 +1,29 @@
 .sidebar {
-  background: linear-gradient(180deg, var(--primary-500), var(--primary-700));
-  color: var(--white);
-  padding: var(--space-5) var(--space-4);
+  position: relative;
+  background: var(--surface);
+  color: var(--text);
+  padding: 0;
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-  height: 100vh;
+  height: 100%;
+  overflow: visible;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  transition: padding 0.24s ease;
+  contain: layout;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-5) var(--space-4);
   overflow: hidden;
+  border-radius: inherit;
+  min-height: 0;
+  flex: 1;
 }
 
 .header {
@@ -14,6 +31,8 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border);
 }
 
 .brand {
@@ -26,7 +45,7 @@
   width: 42px;
   height: 42px;
   border-radius: 12px;
-  background: var(--overlay-white-08);
+  background: var(--surface-muted);
   display: grid;
   place-items: center;
   font-weight: 800;
@@ -40,7 +59,7 @@
 
 .brandSub {
   margin: 0;
-  color: var(--overlay-white-70);
+  color: var(--text-subtle);
   font-size: 13px;
 }
 
@@ -49,22 +68,34 @@
   flex-direction: column;
   gap: var(--space-2);
   margin-top: var(--space-2);
+  padding-bottom: var(--space-4);
+}
+
+.scrollWrap {
+  flex: 1;
+  min-height: 0;
+  height: 100%;
 }
 
 .scroll {
-  flex: 1;
-  min-height: 0;
+  height: 100%;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
 }
 
 .themeButton {
-  background: var(--overlay-white-80);
-  border-color: var(--overlay-white-24);
+  background: var(--surface-muted);
+  border-color: var(--border);
   padding: var(--space-2);
   border-radius: var(--radius-full);
 }
 
 .themeButton:hover {
-  border-color: var(--overlay-white-70);
+  border-color: var(--secondary-300);
 }
 
 .themeIcon {
@@ -76,11 +107,14 @@
   width: 100%;
   text-align: left;
   background: transparent;
-  border: 1px solid var(--overlay-white-08);
-  color: var(--white);
+  border: 1px solid var(--border);
+  color: var(--text-subtle);
   padding: var(--space-3);
   border-radius: var(--radius-lg);
   cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   transition:
     background 0.15s ease,
     border-color 0.15s ease,
@@ -88,11 +122,84 @@
 }
 
 .navItem:hover {
-  border-color: var(--overlay-white-24);
+  border-color: var(--secondary-300);
+  background: var(--overlay-secondary-08);
   transform: translateX(2px);
 }
 
 .active {
-  background: var(--secondary-500);
+  background: var(--overlay-secondary-12);
   border-color: var(--secondary-300);
+  color: var(--text);
+}
+
+.collapsed {
+  padding: 0;
+}
+
+.collapsed .brand {
+  display: none;
+}
+
+.collapsed .header {
+  justify-content: center;
+}
+
+.collapsed .headerActions {
+  width: 100%;
+  justify-content: center;
+}
+
+.collapsed .navItem {
+  text-align: center;
+  padding: var(--space-3) var(--space-2);
+  font-size: 12px;
+}
+
+.collapsed .body {
+  padding: var(--space-5) var(--space-3);
+}
+
+.collapseHandle {
+  position: absolute;
+  top: 50%;
+  right: -16px;
+  transform: translateY(-50%) translateX(-4px);
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--shadow-md);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 9999;
+  transition:
+    opacity 0.2s ease,
+    transform 0.25s ease,
+    box-shadow 0.2s ease;
+}
+
+.sidebar:hover .collapseHandle {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(-50%) translateX(0);
+}
+
+.collapseHandle:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.collapseIcon {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.25s ease;
+  color: var(--gray-500);
+}
+
+.collapseIconOpen {
+  transform: rotate(180deg);
 }

@@ -1,13 +1,13 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
 import { useToast } from "@/components/ToastProvider";
 import { ScrollArea } from "@/components/ui/ScrollArea";
-import { useQuickLayoutStore } from "@/stores/useQuickLayout";
 import { useVaultStore } from "@/stores/useVaultStore";
 import { type NavKey } from "@/types/nav";
 
+import { RightPanel } from "../components/RightPanel";
 import { Sidebar } from "../components/Sidebar";
 import { useTheme } from "../hooks/useTheme";
 
@@ -18,7 +18,11 @@ export function Layout() {
   const toast = useToast();
   const vaultError = useVaultStore((state) => state.error);
   const lastVaultError = useRef<string | undefined>(undefined);
-  const addPane = useQuickLayoutStore((state) => state.addPane);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
+    if (typeof window === "undefined") return false;
+    const saved = window.localStorage.getItem("sidebar-collapsed");
+    return saved === "true";
+  });
 
   useEffect(() => {
     if (vaultError && vaultError !== lastVaultError.current) {
@@ -26,6 +30,14 @@ export function Layout() {
       lastVaultError.current = vaultError;
     }
   }, [toast, vaultError]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem(
+      "sidebar-collapsed",
+      String(isSidebarCollapsed),
+    );
+  }, [isSidebarCollapsed]);
 
   const path = location.pathname;
 
@@ -71,25 +83,7 @@ export function Layout() {
   };
 
   return (
-    <div
-      className="shell"
-      onDragOver={(e) => {
-        if (e.defaultPrevented) return;
-        if (e.dataTransfer.types.includes("application/x-nav-key")) {
-          e.preventDefault();
-          e.dataTransfer.dropEffect = "copy";
-        }
-      }}
-      onDrop={(e) => {
-        if (e.defaultPrevented) return;
-        if (!e.dataTransfer.types.includes("application/x-nav-key")) return;
-        e.preventDefault();
-        const key = e.dataTransfer.getData("application/x-nav-key") as NavKey;
-        addPane(key);
-        toast.show("홈 레이아웃에 추가했습니다.", { type: "success" });
-        navigate("/");
-      }}
-    >
+    <div className={`shell ${isSidebarCollapsed ? "sidebar-collapsed" : ""}`}>
       <Sidebar
         active={active}
         onNavigate={(key) => {
@@ -97,6 +91,8 @@ export function Layout() {
         }}
         themeMode={themeMode}
         onThemeToggle={toggleTheme}
+        collapsed={isSidebarCollapsed}
+        onToggleCollapse={() => setIsSidebarCollapsed((prev) => !prev)}
       />
       <div className="content">
         <ScrollArea
@@ -106,6 +102,7 @@ export function Layout() {
           <Outlet />
         </ScrollArea>
       </div>
+      <RightPanel />
     </div>
   );
 }

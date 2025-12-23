@@ -6,6 +6,7 @@ import styles from "./ScrollArea.module.scss";
 interface ScrollAreaProps {
   maxHeight?: number | string;
   className?: string;
+  wrapperClassName?: string;
 }
 
 /**
@@ -15,6 +16,7 @@ export const ScrollArea: React.FC<PropsWithChildren<ScrollAreaProps>> = ({
   children,
   maxHeight,
   className,
+  wrapperClassName,
 }) => {
   const containerRef = React.useRef<HTMLDivElement | null>(null);
   const [thumbHeight, setThumbHeight] = React.useState(0);
@@ -234,7 +236,10 @@ export const ScrollArea: React.FC<PropsWithChildren<ScrollAreaProps>> = ({
   }
 
   return (
-    <div className={styles.wrapper} style={containerStyle}>
+    <div
+      className={`${styles.wrapper} ${wrapperClassName ?? ""}`}
+      style={containerStyle}
+    >
       <div
         ref={containerRef}
         className={`${styles.content} ${className ?? ""}`}
