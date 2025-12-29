@@ -18,24 +18,50 @@ type SidebarProps = {
   onToggleCollapse: () => void;
 };
 
-const navItems: { key: NavKey; label: string; shortLabel: string }[] = [
-  { key: "home", label: "홈", shortLabel: "홈" },
+type NavItem = { key: NavKey; label: string; shortLabel: string };
+type NavGroup = { title: string; items: NavItem[] };
+
+const navGroups: NavGroup[] = [
   {
-    key: "convert",
-    label: "이미지 변환 / 비디오→GIF",
-    shortLabel: "변환",
+    title: "",
+    items: [{ key: "home", label: "Home", shortLabel: "Home" }],
   },
-  { key: "typegen", label: "API 타입 생성", shortLabel: "API" },
-  { key: "jwt", label: "JWT 디코더", shortLabel: "JWT" },
-  { key: "text", label: "텍스트 변환", shortLabel: "텍스트" },
-  { key: "regex", label: "Regex Tester", shortLabel: "Regex" },
-  { key: "json", label: "JSON Formatter", shortLabel: "JSON" },
-  { key: "base64", label: "Base64 인/디코딩", shortLabel: "B64" },
-  { key: "env", label: ".env Manager", shortLabel: "ENV" },
-  { key: "snippets", label: "Snippets", shortLabel: "Snip" },
-  { key: "jsdoc", label: "JSDoc Generator", shortLabel: "JSDoc" },
-  { key: "i18n", label: "i18n Inspector", shortLabel: "i18n" },
-  { key: "settings", label: "설정", shortLabel: "설정" },
+  {
+    title: "Convert",
+    items: [
+      { key: "convert-image", label: "Image Converter", shortLabel: "Image" },
+      { key: "convert-gif", label: "Video → GIF", shortLabel: "GIF" },
+    ],
+  },
+  {
+    title: "Text & Code",
+    items: [
+      { key: "text", label: "Text Tools", shortLabel: "Text" },
+      { key: "regex", label: "Regex Lab", shortLabel: "Regex" },
+      { key: "json", label: "JSON Tools", shortLabel: "JSON" },
+      { key: "snippets", label: "Snippets", shortLabel: "Snip" },
+    ],
+  },
+  {
+    title: "Dev Utilities",
+    items: [
+      { key: "typegen", label: "API Types", shortLabel: "API" },
+      { key: "jsdoc", label: "JSDoc Studio", shortLabel: "JSDoc" },
+      { key: "i18n", label: "i18n Inspector", shortLabel: "i18n" },
+      { key: "jwt", label: "JWT Inspector", shortLabel: "JWT" },
+    ],
+  },
+  {
+    title: "Data & Env",
+    items: [
+      { key: "base64", label: "Base64 Tools", shortLabel: "B64" },
+      { key: "env", label: ".env Manager", shortLabel: "ENV" },
+    ],
+  },
+  {
+    title: "",
+    items: [{ key: "settings", label: "Settings", shortLabel: "Settings" }],
+  },
 ];
 
 export function Sidebar({
@@ -86,22 +112,32 @@ export function Sidebar({
           className={styles.scroll}
         >
           <nav className={styles.nav}>
-            {navItems.map((item) => (
-              <Button
-                key={item.key}
-                className={classNames(styles.navItem, {
-                  [styles.active]: item.key === active,
-                })}
-                onClick={() => onNavigate(item.key)}
-                draggable
-                title={item.label}
-                onDragStart={(e) => {
-                  e.dataTransfer.setData("application/x-nav-key", item.key);
-                  e.dataTransfer.effectAllowed = "copy";
-                }}
-              >
-                {collapsed ? item.shortLabel : item.label}
-              </Button>
+            {navGroups.map((group, index) => (
+              <div key={`${group.title || "root"}-${index}`} className={styles.navGroup}>
+                {!collapsed && group.title && (
+                  <div className={styles.navGroupTitle}>{group.title}</div>
+                )}
+                {group.items.map((item) => (
+                  <Button
+                    key={item.key}
+                    className={classNames(styles.navItem, {
+                      [styles.active]: item.key === active,
+                    })}
+                    onClick={() => onNavigate(item.key)}
+                    draggable
+                    title={item.label}
+                    onDragStart={(e) => {
+                      e.dataTransfer.setData(
+                        "application/x-nav-key",
+                        item.key,
+                      );
+                      e.dataTransfer.effectAllowed = "copy";
+                    }}
+                  >
+                    {collapsed ? item.shortLabel : item.label}
+                  </Button>
+                ))}
+              </div>
             ))}
           </nav>
         </ScrollArea>

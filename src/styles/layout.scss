@@ -1,3 +1,9 @@
+@property --sidebar-width {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 260px;
+}
+
 .shell {
   --sidebar-width: 260px;
   --right-panel-width: 320px;
@@ -11,8 +17,7 @@
   min-height: 100vh;
   padding: var(--space-4);
   box-sizing: border-box;
-  transition: grid-template-columns 0.24s ease;
-  will-change: grid-template-columns;
+  transition: --sidebar-width 0.24s ease;
   background:
     radial-gradient(
       circle at top left,

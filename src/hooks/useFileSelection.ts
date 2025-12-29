@@ -16,5 +16,9 @@ export function useFileSelection() {
 
   const clearFiles = useCallback(() => setFiles([]), []);
 
-  return { files, addFiles, removeFile, clearFiles };
+  const replaceFiles = useCallback((paths: string[]) => {
+    setFiles(Array.from(new Set(paths)));
+  }, []);
+
+  return { files, addFiles, removeFile, clearFiles, replaceFiles };
 }

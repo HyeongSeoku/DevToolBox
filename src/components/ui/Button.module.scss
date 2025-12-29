@@ -49,7 +49,6 @@
 .ghost:not(:disabled):hover,
 .default:not(:disabled):hover {
   border-color: var(--secondary-300);
-  transform: translate3d(0, -1px, 0);
 }
 
 .pill {

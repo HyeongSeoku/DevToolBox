@@ -48,6 +48,8 @@ export function Layout() {
       key: NavKey;
       prefix: string;
     }> = [
+      { key: "convert-image", prefix: "/convert/image" },
+      { key: "convert-gif", prefix: "/convert/gif" },
       { key: "typegen", prefix: "/typegen" },
       { key: "jwt", prefix: "/jwt" },
       { key: "text", prefix: "/text" },
@@ -59,16 +61,16 @@ export function Layout() {
       { key: "snippets", prefix: "/snippets" },
       { key: "jsdoc", prefix: "/jsdoc" },
       { key: "settings", prefix: "/settings" },
-      { key: "convert", prefix: "/convert" },
     ];
 
     const found = routeTable.find(({ prefix }) => path.startsWith(prefix));
-    return found?.key ?? "convert";
+    return found?.key ?? "convert-image";
   }, [path]);
 
   const navPaths: Record<NavKey, string> = {
     home: "/",
-    convert: "/convert",
+    "convert-image": "/convert/image",
+    "convert-gif": "/convert/gif",
     typegen: "/typegen",
     settings: "/settings",
     jwt: "/jwt",
@@ -87,7 +89,7 @@ export function Layout() {
       <Sidebar
         active={active}
         onNavigate={(key) => {
-          navigate(navPaths[key] ?? "/convert");
+          navigate(navPaths[key] ?? "/convert/image");
         }}
         themeMode={themeMode}
         onThemeToggle={toggleTheme}

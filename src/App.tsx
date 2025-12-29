@@ -10,7 +10,8 @@ import { useRecentActivity } from "./hooks/useRecentActivity";
 import { useTauriEnv } from "./hooks/useTauriEnv";
 import { Layout } from "./layout";
 import { Base64Page } from "./pages/Base64";
-import { ConvertPage } from "./pages/Convert";
+import { ConvertGifPage } from "./pages/ConvertGif";
+import { ConvertImagePage } from "./pages/ConvertImage";
 import { EnvManagerPage } from "./pages/EnvManager";
 import { HomePage } from "./pages/Home";
 import { I18nInspectorPage } from "./pages/I18nInspector";
@@ -41,17 +42,17 @@ export function App() {
             <Route index element={<HomePage recent={recent.items} />} />
             <Route
               path="convert"
-              element={<ConvertPage recentAdd={recent.addActivity} />}
+              element={<Navigate to="/convert/image" replace />}
             />
             <Route
-              path="gif"
-              element={
-                <ConvertPage
-                  modeOverride="gif"
-                  recentAdd={recent.addActivity}
-                />
-              }
+              path="convert/image"
+              element={<ConvertImagePage recentAdd={recent.addActivity} />}
             />
+            <Route
+              path="convert/gif"
+              element={<ConvertGifPage recentAdd={recent.addActivity} />}
+            />
+            <Route path="gif" element={<Navigate to="/convert/gif" replace />} />
             <Route path="jwt" element={<JWTDecoderPage />} />
             <Route path="json" element={<JsonFormatterPage />} />
             <Route path="base64" element={<Base64Page />} />

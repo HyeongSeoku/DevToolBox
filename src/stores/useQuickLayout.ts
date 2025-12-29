@@ -11,7 +11,7 @@ type QuickLayoutState = {
 
 const STORAGE_KEY = "quick-layout-panes";
 const allowed: NavKey[] = [
-  "convert",
+  "convert-image",
   "typegen",
   "jwt",
   "text",
@@ -22,7 +22,12 @@ const allowed: NavKey[] = [
   "jsdoc",
   "i18n",
 ];
-const defaultPanes: NavKey[] = ["convert", "typegen", "jsdoc", "snippets"];
+const defaultPanes: NavKey[] = [
+  "convert-image",
+  "typegen",
+  "jsdoc",
+  "snippets",
+];
 const MAX_PANES = 4;
 
 const loadPanes = (): NavKey[] => {
@@ -31,7 +36,10 @@ const loadPanes = (): NavKey[] => {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return defaultPanes;
     const parsed = JSON.parse(raw) as string[];
-    const filtered = parsed.filter((p): p is NavKey =>
+    const normalized = parsed.map((pane) =>
+      pane === "convert" ? "convert-image" : pane,
+    );
+    const filtered = normalized.filter((p): p is NavKey =>
       allowed.includes(p as NavKey),
     );
     return filtered.length ? filtered.slice(0, MAX_PANES) : defaultPanes;

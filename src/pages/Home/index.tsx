@@ -35,7 +35,8 @@ type HomePageProps = {
 
 const navMeta: Record<NavKey, { title: string; detail: string }> = {
   home: { title: "홈", detail: "대시보드" },
-  convert: { title: "이미지 변환", detail: "JPEG/PNG/WebP 변환" },
+  "convert-image": { title: "이미지 변환", detail: "JPEG/PNG/WebP 변환" },
+  "convert-gif": { title: "Video to GIF", detail: "비디오를 GIF로 변환" },
   typegen: { title: "API 타입 생성", detail: "Swagger/OpenAPI 변환" },
   settings: { title: "설정", detail: "앱/데이터 설정" },
   base64: { title: "Base64", detail: "텍스트/파일 인코딩" },
@@ -50,7 +51,7 @@ const navMeta: Record<NavKey, { title: string; detail: string }> = {
 };
 
 const allKeys: NavKey[] = [
-  "convert",
+  "convert-image",
   "typegen",
   "jsdoc",
   "snippets",
@@ -64,8 +65,10 @@ const allKeys: NavKey[] = [
 
 function PaneRenderer({ keyName }: { keyName: NavKey }) {
   switch (keyName) {
-    case "convert":
+    case "convert-image":
       return <QuickConvertPane />;
+    case "convert-gif":
+      return null;
     case "typegen":
       return <QuickTypegenPane />;
     case "jsdoc":

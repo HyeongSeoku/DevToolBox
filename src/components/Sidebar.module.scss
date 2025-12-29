@@ -11,8 +11,13 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-lg);
-  transition: padding 0.24s ease;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  will-change: transform;
   contain: layout;
+}
+
+.collapsed {
+  overflow: visible;
 }
 
 .body {
@@ -69,6 +74,21 @@
   gap: var(--space-2);
   margin-top: var(--space-2);
   padding-bottom: var(--space-4);
+}
+
+.navGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.navGroupTitle {
+  margin: var(--space-3) 0 var(--space-1);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-subtle);
 }
 
 .scrollWrap {

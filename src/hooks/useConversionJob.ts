@@ -44,6 +44,9 @@ type GifOptionsPayload = {
   scale_percent: number;
   output_dir: string | null;
   rename_pattern: string | null;
+  trim_start_sec?: number;
+  trim_end_sec?: number;
+  duration_sec?: number;
 };
 
 type RunArgs = {
@@ -96,7 +99,11 @@ export function useConversionJob(isTauriEnv: boolean) {
 
         const activeJob = jobIdRef.current;
         if (!activeJob || activeJob !== job_id) return;
-        const percent = Math.round((current / Math.max(total, 1)) * 100);
+        const basePercent = Math.round((current / Math.max(total, 1)) * 100);
+        const percent =
+          currentStatus === "processing" && basePercent >= 100
+            ? 99
+            : basePercent;
         // 로그로도 진행률을 확인할 수 있도록 출력
         console.info(
           `[convert:${job_id}] ${current}/${total} (${percent}%) - ${currentStatus} - ${path}`,
@@ -198,15 +205,23 @@ export function useConversionJob(isTauriEnv: boolean) {
 
       try {
         if (mode === "gif") {
+          const id = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+          setJobId(id);
+          jobIdRef.current = id;
+          setProgress({ percent: 0, label: "준비 중...", current: 0, total: 1 });
+          setStatus("GIF 변환 중...");
           const outputPath = await invoke<string>("video_to_gif", {
+            jobId: id,
             path: selectedFiles[0],
             options: gifOptions,
           });
           setResults([{ input: selectedFiles[0], output: outputPath }]);
           setPerFileProgress({ [selectedFiles[0]]: 100 });
           setStatus("GIF 생성 완료");
-          setProgress({ percent: 100, label: "완료" });
+          setProgress({ percent: 100, label: "완료", current: 1, total: 1 });
           setBusy(false);
+          setJobId(null);
+          jobIdRef.current = null;
           onCompleted?.([{ input: selectedFiles[0], output: outputPath }]);
           return;
         }

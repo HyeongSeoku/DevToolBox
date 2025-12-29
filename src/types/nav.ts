@@ -1,6 +1,7 @@
 export type NavKey =
   | "home"
-  | "convert"
+  | "convert-image"
+  | "convert-gif"
   | "typegen"
   | "settings"
   | "jwt"

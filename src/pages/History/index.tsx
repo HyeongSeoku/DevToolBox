@@ -20,8 +20,8 @@ type HistoryPageProps = {
 const formatTime = (timestamp: number) => new Date(timestamp).toLocaleString();
 
 const resolveRoute = (title: string) => {
-  if (title.toLowerCase().includes("gif")) return "/gif";
-  if (title.toLowerCase().includes("이미지")) return "/convert";
+  if (title.toLowerCase().includes("gif")) return "/convert/gif";
+  if (title.toLowerCase().includes("이미지")) return "/convert/image";
   return "/";
 };
 
