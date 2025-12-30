@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import { useVaultStore } from "@/stores/useVaultStore";
 
 import { beSeedCore } from "./seeds/be";
@@ -25,7 +27,10 @@ export const snippetFiles: Record<SnippetSourceKey, string> = {
   "be-core": "snippets/be-utils/core.json",
 };
 
-export function filterSnippets(list: Snippet[], filter: SnippetFilter) {
+export function filterSnippets<T extends Snippet>(
+  list: T[],
+  filter: SnippetFilter,
+) {
   const search = filter.search?.toLowerCase() || "";
   return list.filter((s) => {
     const matchesSearch =
@@ -49,29 +54,38 @@ export function filterSnippets(list: Snippet[], filter: SnippetFilter) {
 }
 
 export function useSnippetFavorites(storageKey: string) {
-  const existing = (() => {
-    if (typeof window === "undefined") return [];
+  const [favorites, setFavoritesState] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      setFavoritesState([]);
+      return;
+    }
     try {
       const raw = window.localStorage.getItem(storageKey);
-      return raw ? (JSON.parse(raw) as string[]) : [];
+      setFavoritesState(raw ? (JSON.parse(raw) as string[]) : []);
     } catch {
-      return [];
+      setFavoritesState([]);
     }
-  })();
+  }, [storageKey]);
+
   const setFavorites = (ids: string[]) => {
+    setFavoritesState(ids);
     if (typeof window !== "undefined") {
       window.localStorage.setItem(storageKey, JSON.stringify(ids));
     }
   };
+
   const toggleFavorite = (id: string) => {
-    const set = new Set(existing);
+    const set = new Set(favorites);
     if (set.has(id)) set.delete(id);
     else set.add(id);
     const next = Array.from(set);
     setFavorites(next);
     return next;
   };
-  return { favorites: existing, toggleFavorite };
+
+  return { favorites, toggleFavorite };
 }
 
 export async function loadGitSnippets(
@@ -88,7 +102,10 @@ export async function loadGitSnippets(
         const text = await readFile(snippetFiles[key]);
         const parsed = JSON.parse(text) as { snippets: Snippet[] };
         fromVault.push(
-          ...(parsed.snippets || []).map((s) => ({ ...s, source: "vault" as const })),
+          ...(parsed.snippets || []).map((s) => ({
+            ...s,
+            source: "vault" as const,
+          })),
         );
       } catch {
         // ignore missing files
@@ -122,7 +139,10 @@ export async function loadSnippetsByKind(
         const text = await readFile(snippetFiles[key]);
         const parsed = JSON.parse(text) as { snippets: Snippet[] };
         fromVault.push(
-          ...(parsed.snippets || []).map((s) => ({ ...s, source: "vault" as const })),
+          ...(parsed.snippets || []).map((s) => ({
+            ...s,
+            source: "vault" as const,
+          })),
         );
       } catch {
         // ignore missing files

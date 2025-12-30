@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useToast } from "@/components/ToastProvider";
 import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox";
+import { CodeBlock } from "@/components/ui/CodeBlock";
 import { Input } from "@/components/ui/Input";
 import { useVaultStore } from "@/stores/useVaultStore";
 import { copyWithToast } from "@/utils/clipboard";
@@ -122,15 +123,6 @@ export function TextToolsPage() {
 
   return (
     <div className={styles.page}>
-      <header className={styles.header}>
-        <p className="eyebrow">텍스트 변환기</p>
-        <h1>케이스 변환 · Prefix/Suffix · 라인 처리</h1>
-        <p className="micro">
-          snake, camel, kebab 등 다양한 케이스로 변환하고 줄 단위 파이프라인을
-          적용합니다.
-        </p>
-      </header>
-
       <section className={styles.grid}>
         <div className={styles.card}>
           <div className={styles.row}>
@@ -274,9 +266,7 @@ export function TextToolsPage() {
             />
             <Checkbox
               checked={joinMode === "one"}
-              onChange={(e) =>
-                setJoinMode(e.target.checked ? "one" : "lines")
-              }
+              onChange={(e) => setJoinMode(e.target.checked ? "one" : "lines")}
               label="결과를 한 줄로 합치기"
             />
           </div>
@@ -347,19 +337,21 @@ export function TextToolsPage() {
               </Button>
             </div>
           </div>
-            <div className={styles.variants}>
-              {Object.entries(variants).map(([style, value]) => (
-                <Button
-                  key={style}
-                  className={styles.variant}
-                  onClick={() => copyWithToast(value, toast)}
-                >
-                  <span className={styles.variantLabel}>{style}</span>
-                  <span className={styles.variantValue}>{value}</span>
-                </Button>
-              ))}
-            </div>
-          <pre className={styles.result}>{processed.combined}</pre>
+          <div className={styles.variants}>
+            {Object.entries(variants).map(([style, value]) => (
+              <Button
+                key={style}
+                className={styles.variant}
+                onClick={() => copyWithToast(value, toast)}
+              >
+                <span className={styles.variantLabel}>{style}</span>
+                <span className={styles.variantValue}>{value}</span>
+              </Button>
+            ))}
+          </div>
+          <CodeBlock className={styles.result} language="text">
+            {processed.combined}
+          </CodeBlock>
           {joinMode === "lines" && (
             <div className={styles.lineList}>
               {processed.lines.map((line, idx) => (

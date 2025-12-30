@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useToast } from "@/components/ToastProvider";
 import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox";
+import { CodeBlock } from "@/components/ui/CodeBlock";
 import { useTauriEnv } from "@/hooks/useTauriEnv";
 import { useVaultStore } from "@/stores/useVaultStore";
 import { copyWithToast } from "@/utils/clipboard";
@@ -193,15 +194,6 @@ export function JWTDecoderPage() {
 
   return (
     <div className={styles.page}>
-      <header className={styles.header}>
-        <p className="eyebrow">JWT 디코더</p>
-        <h1>JWT를 자동 감지하고 안전하게 디코딩</h1>
-        <p className="micro">
-          붙여넣기만 하면 header/payload를 디코드합니다. 민감 정보는 로컬에서만
-          처리됩니다.
-        </p>
-      </header>
-
       <section className={styles.inputCard}>
         <div className={styles.inputRow}>
           <textarea
@@ -290,7 +282,9 @@ export function JWTDecoderPage() {
               </Button>
             </div>
           </div>
-          <pre className={styles.code}>{decodedHeader || "// 내용 없음"}</pre>
+          <CodeBlock className={styles.code} language="json">
+            {decodedHeader || "// 내용 없음"}
+          </CodeBlock>
         </div>
 
         <div className={styles.panel}>
@@ -321,10 +315,16 @@ export function JWTDecoderPage() {
               >
                 Copy Base64URL
               </Button>
-              <Button variant="ghost" onClick={() => handleCopy(decodedPayload)}>
+              <Button
+                variant="ghost"
+                onClick={() => handleCopy(decodedPayload)}
+              >
                 Copy JSON
               </Button>
-              <Button variant="ghost" onClick={() => handleCopy(minifiedPayload)}>
+              <Button
+                variant="ghost"
+                onClick={() => handleCopy(minifiedPayload)}
+              >
                 Minify & Copy
               </Button>
               <Button variant="ghost" onClick={handleExport}>
@@ -355,7 +355,9 @@ export function JWTDecoderPage() {
             </div>
           )}
 
-          <pre className={styles.code}>{decodedPayload || "// 내용 없음"}</pre>
+          <CodeBlock className={styles.code} language="json">
+            {decodedPayload || "// 내용 없음"}
+          </CodeBlock>
         </div>
       </section>
 

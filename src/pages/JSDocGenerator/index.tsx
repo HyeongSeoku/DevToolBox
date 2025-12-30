@@ -1,6 +1,7 @@
 import { useToast } from "@/components/ToastProvider";
 import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox";
+import { CodeBlock } from "@/components/ui/CodeBlock";
 import { Input } from "@/components/ui/Input";
 import { useJSDocGenerator } from "@/hooks/useJSDocGenerator";
 import { copyWithToast } from "@/utils/clipboard";
@@ -31,14 +32,6 @@ export function JSDocGeneratorPage() {
 
   return (
     <div className={styles.page}>
-      <header className={styles.header}>
-        <p className="eyebrow">JSDoc Generator</p>
-        <h1>TypeScript 인터페이스 → JSDoc 주석 생성</h1>
-        <p className="micro">
-          props 정의를 붙여 넣고 Interface/Typedef/Param 모드로 JSDoc을 만들어 보세요.
-        </p>
-      </header>
-
       <section className={styles.layout}>
         <div className={styles.inputCard}>
           <div className={styles.row}>
@@ -147,7 +140,9 @@ export function JSDocGeneratorPage() {
             </div>
           </div>
           {error && <p className="micro">{error}</p>}
-          <pre className={styles.code}>{code}</pre>
+          <CodeBlock className={styles.code} language="ts">
+            {code}
+          </CodeBlock>
         </div>
       </section>
     </div>

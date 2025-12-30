@@ -111,11 +111,6 @@ export function HomePage({}: HomePageProps) {
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <div>
-          <p className="eyebrow">홈</p>
-          <h1>빠른 시작</h1>
-          <p className="micro">모든 기능을 4분할로 바로 사용할 수 있습니다.</p>
-        </div>
         <Button variant="ghost" onClick={() => navigate("/history")}>
           작업 History 보기
         </Button>

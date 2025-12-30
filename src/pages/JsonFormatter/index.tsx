@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useToast } from "@/components/ToastProvider";
 import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox";
+import { CodeBlock } from "@/components/ui/CodeBlock";
 import { ScrollArea } from "@/components/ui/ScrollArea";
 import { copyWithToast } from "@/utils/clipboard";
 import { computePosition, formatJson } from "@/utils/jsonFormat";
@@ -43,10 +44,6 @@ export function JsonFormatterPage() {
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <div>
-          <p className="eyebrow">JSON Formatter</p>
-          <h1>JSON 포맷 / 미니파이 / 검증</h1>
-        </div>
         <div className={styles.row}>
           <label className={styles.inline}>
             <span>들여쓰기</span>
@@ -123,7 +120,9 @@ export function JsonFormatterPage() {
             </div>
           </div>
           <ScrollArea className={styles.scrollArea}>
-            <pre className={styles.output}>{output}</pre>
+            <CodeBlock className={styles.output} language="json">
+              {output}
+            </CodeBlock>
           </ScrollArea>
         </div>
       </div>

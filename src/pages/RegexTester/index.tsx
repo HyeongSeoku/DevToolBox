@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { useToast } from "@/components/ToastProvider";
 import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox";
+import { CodeBlock } from "@/components/ui/CodeBlock";
 import { Input } from "@/components/ui/Input";
 import { useVaultStore } from "@/stores/useVaultStore";
 import { copyWithToast } from "@/utils/clipboard";
@@ -134,15 +135,6 @@ export function RegexTesterPage() {
 
   return (
     <div className={styles.page}>
-      <header className={styles.header}>
-        <p className="eyebrow">Regex Tester</p>
-        <h1>정규식 테스트 · Replace 프리뷰 · 스니펫</h1>
-        <p className="micro">
-          패턴/플래그를 조합하고 결과/치환 미리보기를 확인하세요. 로컬 Vault에
-          기록을 저장할 수 있습니다.
-        </p>
-      </header>
-
       <section className={styles.grid}>
         <div className={styles.card}>
           <label className={styles.label}>패턴</label>
@@ -247,19 +239,19 @@ export function RegexTesterPage() {
             </div>
             <div className={styles.customForm}>
               <p className={styles.label}>커스텀 스니펫 추가</p>
-            <div className={styles.customRow}>
-              <Input
-                className={styles.input}
-                placeholder="제목"
-                value={customTitle}
-                onChange={(e) => setCustomTitle(e.target.value)}
-              />
-              <Input
-                className={styles.input}
-                placeholder="플래그 (예: gim)"
-                value={customFlags}
-                onChange={(e) => setCustomFlags(e.target.value)}
-              />
+              <div className={styles.customRow}>
+                <Input
+                  className={styles.input}
+                  placeholder="제목"
+                  value={customTitle}
+                  onChange={(e) => setCustomTitle(e.target.value)}
+                />
+                <Input
+                  className={styles.input}
+                  placeholder="플래그 (예: gim)"
+                  value={customFlags}
+                  onChange={(e) => setCustomFlags(e.target.value)}
+                />
               </div>
               <textarea
                 className={styles.textarea}
@@ -344,9 +336,9 @@ export function RegexTesterPage() {
           {useReplace && (
             <div className={styles.replacePreview}>
               <p className={styles.label}>Replace Preview</p>
-              <pre className={styles.pre}>
+              <CodeBlock language="text">
                 {result.replaced ?? "// replace 실패"}
-              </pre>
+              </CodeBlock>
             </div>
           )}
         </div>

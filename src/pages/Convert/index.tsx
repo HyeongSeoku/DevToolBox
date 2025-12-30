@@ -101,7 +101,6 @@ export function ConvertPage({
   const [trimEnd, setTrimEnd] = useState(0);
   const [dragHandle, setDragHandle] = useState<"start" | "end" | null>(null);
   const [thumbnails, setThumbnails] = useState<string[]>([]);
-  const [isVideoPaused, setIsVideoPaused] = useState(true);
   const [sourceDimensions, setSourceDimensions] = useState<{
     width: number;
     height: number;
@@ -145,7 +144,6 @@ export function ConvertPage({
     setTrimStart(0);
     setTrimEnd(0);
     setThumbnails([]);
-    setIsVideoPaused(true);
   }, [selectedFiles[0], isGif]);
 
   useEffect(() => {
@@ -501,17 +499,6 @@ export function ConvertPage({
   return (
     <div className={styles.page}>
       <header className={styles.pageHeader}>
-        <div>
-          {!isGif && <p className={styles.kicker}>Image Conversion</p>}
-          <h1 className={styles.title}>
-            {isGif ? "Video to GIF" : "Image to WebP"}
-          </h1>
-          <p className={styles.subtitle}>
-            {isGif
-              ? "Convert MP4, MOV, or WEBM clips into lightweight, sharable GIFs. Optimize frame rates and dimensions for development workflows."
-              : "Convert JPG, PNG images into optimized WebP assets."}
-          </p>
-        </div>
         <div className={styles.headerActions}>
           <div className={styles.modePills}>
             <Button
@@ -598,7 +585,6 @@ export function ConvertPage({
                       key={previewSrc}
                       ref={videoRef}
                       onPlay={(event) => {
-                        setIsVideoPaused(false);
                         if (trimEnd <= 0) return;
                         const current = event.currentTarget.currentTime;
                         if (current >= Math.max(trimEnd - 0.05, 0)) {
@@ -610,13 +596,11 @@ export function ConvertPage({
                         }
                       }}
                       onPause={(event) => {
-                        setIsVideoPaused(true);
                         if (event.currentTarget.currentTime >= trimEnd) {
                           event.currentTarget.currentTime = trimStart;
                         }
                       }}
                       onEnded={(event) => {
-                        setIsVideoPaused(true);
                         event.currentTarget.currentTime = trimStart;
                       }}
                       onLoadedMetadata={(event) => {
@@ -635,7 +619,6 @@ export function ConvertPage({
                         setDurationSec(nextDuration);
                         setTrimStart(0);
                         setTrimEnd(nextDuration);
-                        setIsVideoPaused(true);
                       }}
                       onTimeUpdate={(event) => {
                         if (trimEnd <= 0) return;

@@ -126,13 +126,7 @@ select {
 }
 
 .result {
-  background: var(--surface-muted);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 10px;
   min-height: 160px;
-  white-space: pre-wrap;
-  font-family: "JetBrains Mono", Menlo, Consolas, monospace;
 }
 
 .lineList {

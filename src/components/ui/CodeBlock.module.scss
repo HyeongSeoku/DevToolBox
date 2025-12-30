@@ -1,0 +1,191 @@
+.container {
+  position: relative;
+  width: 100%;
+}
+
+.block {
+  --code-accent: var(--border);
+  --code-bg: var(--surface-muted);
+  --code-border: var(--border);
+  --code-text: var(--text);
+  --code-muted: var(--text-subtle);
+  --code-punct: var(--text);
+  --code-property: var(--secondary-300);
+  --code-number: var(--tertiary-300);
+  --code-string: var(--success-300);
+  --code-function: var(--primary-300);
+  --code-keyword: var(--secondary-300);
+  --code-regex: var(--danger-300);
+  margin: 0;
+  background: var(--code-bg);
+  border: 1px solid var(--code-border);
+  border-left: 3px solid var(--code-accent);
+  border-radius: var(--radius-lg);
+  padding: var(--space-3);
+  color: var(--code-text);
+  font-family:
+    "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.code {
+  display: block;
+}
+
+.withCopy {
+  padding-right: calc(var(--space-3) + 34px);
+}
+
+.copyButton {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  border-radius: var(--radius-full);
+  color: var(--text);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color 0.15s ease;
+  border: none;
+  padding: var(--space-1);
+  z-index: 2;
+}
+
+.scrollable .copyButton {
+  right: calc(var(--space-2) + var(--space-5));
+}
+
+.copyButton:hover {
+  color: var(--secondary-300);
+}
+
+.copyButton svg {
+  width: 16px;
+  height: 16px;
+}
+
+.scrollWrapper {
+  width: 100%;
+  height: auto;
+  min-height: 0;
+}
+
+.scrollContent {
+  width: 100%;
+}
+
+:global(pre[data-language] .token.comment),
+:global(pre[data-language] .token.prolog),
+:global(pre[data-language] .token.doctype),
+:global(pre[data-language] .token.cdata) {
+  color: var(--code-muted);
+}
+
+:global(pre[data-language] .token.punctuation) {
+  color: var(--code-punct);
+}
+
+:global(pre[data-language] .token.property),
+:global(pre[data-language] .token.tag),
+:global(pre[data-language] .token.constant),
+:global(pre[data-language] .token.symbol),
+:global(pre[data-language] .token.deleted) {
+  color: var(--code-property);
+}
+
+:global(pre[data-language] .token.boolean),
+:global(pre[data-language] .token.number) {
+  color: var(--code-number);
+}
+
+:global(pre[data-language] .token.selector),
+:global(pre[data-language] .token.attr-name),
+:global(pre[data-language] .token.string),
+:global(pre[data-language] .token.char),
+:global(pre[data-language] .token.builtin),
+:global(pre[data-language] .token.inserted) {
+  color: var(--code-string);
+}
+
+:global(pre[data-language] .token.operator),
+:global(pre[data-language] .token.entity),
+:global(pre[data-language] .token.url),
+:global(pre[data-language] .token.variable) {
+  color: var(--code-text);
+}
+
+:global(pre[data-language] .token.atrule),
+:global(pre[data-language] .token.attr-value),
+:global(pre[data-language] .token.function),
+:global(pre[data-language] .token.class-name) {
+  color: var(--code-function);
+}
+
+:global(pre[data-language] .token.keyword) {
+  color: var(--code-keyword);
+  font-weight: 600;
+}
+
+:global(pre[data-language] .token.regex),
+:global(pre[data-language] .token.important) {
+  color: var(--code-regex);
+}
+
+:global(:root[data-theme="dark"]) .block {
+  --code-bg: #0f1520;
+  --code-border: #1f2a3b;
+  --code-text: #f8fbff;
+  --code-muted: #c7d3e6;
+  --code-property: #ffd29a;
+  --code-number: #cfe4a7;
+  --code-string: #9fd7ff;
+  --code-function: #b9b6ff;
+  --code-keyword: #ffb07b;
+  --code-regex: #ffb3b3;
+}
+
+:global(:root[data-theme="light"]) .block {
+  --code-bg: #f4f7ff;
+  --code-border: #d8e0f0;
+  --code-text: #1b2332;
+  --code-muted: #6b768c;
+  --code-property: #c05621;
+  --code-number: #2f855a;
+  --code-string: #1e6bb8;
+  --code-function: #6b46c1;
+  --code-keyword: #b45309;
+  --code-regex: #c53030;
+}
+
+.lang_text {
+  --code-accent: var(--border);
+}
+
+.lang_json {
+  --code-accent: var(--secondary-300);
+}
+
+.lang_javascript {
+  --code-accent: var(--primary-300);
+}
+
+.lang_typescript {
+  --code-accent: var(--tertiary-300);
+}
+
+.lang_rust {
+  --code-accent: var(--danger-300);
+}
+
+.lang_env {
+  --code-accent: var(--success-300);
+}
+
+.lang_base64 {
+  --code-accent: var(--primary-500);
+}

@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { useToast } from "@/components/ToastProvider";
 import { Button } from "@/components/ui/Button";
+import { CodeBlock } from "@/components/ui/CodeBlock";
 import { copyWithToast } from "@/utils/clipboard";
 import { generateInterfaces } from "@/utils/typegen";
 
@@ -46,7 +47,11 @@ export function QuickTypegenPane() {
           복사
         </Button>
       </div>
-      {output && <pre className={styles.code}>{output}</pre>}
+      {output && (
+        <CodeBlock className={styles.code} language="ts">
+          {output}
+        </CodeBlock>
+      )}
     </div>
   );
 }

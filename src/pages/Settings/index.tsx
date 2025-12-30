@@ -57,15 +57,6 @@ export function SettingsPage() {
 
   return (
     <div className={styles.page}>
-      <header className={styles.header}>
-        <p className="eyebrow">설정</p>
-        <h1>Vault 및 데이터 경로</h1>
-        <p className="micro">
-          모든 히스토리와 설정은 로컬 Vault에 저장됩니다. 기본 경로가 없으면
-          실행 시 자동으로 생성합니다.
-        </p>
-      </header>
-
       {!isTauriEnv && (
         <div className={styles.callout}>
           <p>Tauri 환경에서 실행해야 파일 시스템에 접근할 수 있습니다.</p>

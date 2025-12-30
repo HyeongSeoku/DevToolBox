@@ -34,15 +34,6 @@ export function HistoryPage({ recent }: HistoryPageProps) {
 
   return (
     <div className={styles.page}>
-      <header className={styles.header}>
-        <p className="eyebrow">작업 내역</p>
-        <h1>History</h1>
-        <p className="micro">
-          로컬스토리지에 저장된 최근 20개의 작업을 확인하고 바로 이어서 작업할
-          수 있습니다.
-        </p>
-      </header>
-
       <section className={styles.listSection}>
         {ordered.length === 0 && (
           <p className="subtle">아직 기록이 없습니다.</p>

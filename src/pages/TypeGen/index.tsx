@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/Button";
+import { CodeBlock } from "@/components/ui/CodeBlock";
 import { Input } from "@/components/ui/Input";
 import { copyWithToast } from "@/utils/clipboard";
 import { generateInterfaces } from "@/utils/typegen";
@@ -127,15 +128,6 @@ export function TypeGenPage() {
 
   return (
     <div className={styles.page}>
-      <header className={styles.header}>
-        <p className="eyebrow">API 타입 생성</p>
-        <h1>OpenAPI/Swagger/JSON 샘플로 TypeScript 타입 생성</h1>
-        <p className="micro">
-          Swagger/Redoc URL이나 JSON 샘플을 붙여 넣어 타입을 만들어 보세요.
-          (OpenAPI 파서는 추후 업데이트)
-        </p>
-      </header>
-
       <div className={styles.tabRow}>
         <Button
           className={`${styles.tab} ${tab === "openapi" ? styles.active : ""}`}
@@ -216,7 +208,9 @@ export function TypeGenPage() {
               Copy
             </Button>
           </div>
-          <pre className={styles.code}>{preview}</pre>
+          <CodeBlock className={styles.code} language="ts">
+            {preview}
+          </CodeBlock>
         </div>
       </section>
     </div>

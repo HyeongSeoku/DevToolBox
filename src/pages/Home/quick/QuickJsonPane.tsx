@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { useToast } from "@/components/ToastProvider";
 import { Button } from "@/components/ui/Button";
+import { CodeBlock } from "@/components/ui/CodeBlock";
 import { ScrollArea } from "@/components/ui/ScrollArea";
 import { copyWithToast } from "@/utils/clipboard";
 import { computePosition, formatJson } from "@/utils/jsonFormat";
@@ -72,13 +73,18 @@ export function QuickJsonPane() {
         <Button variant="ghost" onClick={minify}>
           Minify
         </Button>
-        <Button variant="ghost" onClick={() => copyWithToast(output || "", toast)}>
+        <Button
+          variant="ghost"
+          onClick={() => copyWithToast(output || "", toast)}
+        >
           Copy
         </Button>
       </div>
       {error && <p className="micro warning">{error}</p>}
       <ScrollArea className={styles.paneScroll}>
-        <pre className={styles.code}>{output}</pre>
+        <CodeBlock className={styles.code} language="json">
+          {output}
+        </CodeBlock>
       </ScrollArea>
     </div>
   );

@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 
 import { useToast } from "@/components/ToastProvider";
 import { Button } from "@/components/ui/Button";
+import { CodeBlock } from "@/components/ui/CodeBlock";
 import { copyWithToast } from "@/utils/clipboard";
 import {
   diffEnvDetailed,
@@ -80,15 +81,6 @@ export function EnvManagerPage() {
 
   return (
     <div className={styles.page}>
-      <header className={styles.header}>
-        <p className="eyebrow">.env Manager</p>
-        <h1>env 비교 · 예제 생성 · 보안 검사</h1>
-        <p className="micro">
-          두 개의 env 텍스트를 붙여 넣어 차이를 확인하고, 예제/보안 점검을
-          수행하세요.
-        </p>
-      </header>
-
       <div className={styles.tabs}>
         {(["compare", "example", "security"] as Tab[]).map((t) => (
           <Button
@@ -170,7 +162,9 @@ export function EnvManagerPage() {
               Copy
             </Button>
           </div>
-          <pre className={styles.code}>{exampleText}</pre>
+          <CodeBlock className={styles.code} language="env">
+            {exampleText}
+          </CodeBlock>
         </section>
       )}
 

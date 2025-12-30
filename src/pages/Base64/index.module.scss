@@ -39,22 +39,7 @@
 }
 
 .output {
-  background: var(--surface-muted);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-2);
   min-height: 160px;
-  white-space: pre-wrap;
-  color: var(--text);
-}
-
-.output pre {
-  white-space: pre-wrap;
-  word-break: break-word;
-  width: 100%;
-  min-width: 0;
-  display: block;
-  margin: 0;
 }
 
 .actions {

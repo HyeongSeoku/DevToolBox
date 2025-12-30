@@ -7,6 +7,11 @@ interface ScrollAreaProps {
   maxHeight?: number | string;
   className?: string;
   wrapperClassName?: string;
+  onScroll?: (
+    scrollTop: number,
+    scrollHeight: number,
+    clientHeight: number,
+  ) => void;
 }
 
 /**
@@ -17,6 +22,7 @@ export const ScrollArea: React.FC<PropsWithChildren<ScrollAreaProps>> = ({
   maxHeight,
   className,
   wrapperClassName,
+  onScroll,
 }) => {
   const containerRef = React.useRef<HTMLDivElement | null>(null);
   const [thumbHeight, setThumbHeight] = React.useState(0);
@@ -39,8 +45,14 @@ export const ScrollArea: React.FC<PropsWithChildren<ScrollAreaProps>> = ({
     const el = containerRef.current;
     if (!el) return;
 
-    const { clientHeight, scrollHeight, scrollTop, clientWidth, scrollWidth, scrollLeft } =
-      el;
+    const {
+      clientHeight,
+      scrollHeight,
+      scrollTop,
+      clientWidth,
+      scrollWidth,
+      scrollLeft,
+    } = el;
 
     if (scrollHeight <= clientHeight) {
       setVisible(false);
@@ -82,8 +94,13 @@ export const ScrollArea: React.FC<PropsWithChildren<ScrollAreaProps>> = ({
 
     updateThumb();
 
-    const onScroll = () => updateThumb();
-    el.addEventListener("scroll", onScroll);
+    const handleScroll = () => {
+      updateThumb();
+      if (onScroll) {
+        onScroll(el.scrollTop, el.scrollHeight, el.clientHeight);
+      }
+    };
+    el.addEventListener("scroll", handleScroll);
 
     let resizeObserver: ResizeObserver | null = null;
     const hasWindow = typeof window !== "undefined";
@@ -95,11 +112,11 @@ export const ScrollArea: React.FC<PropsWithChildren<ScrollAreaProps>> = ({
     }
 
     return () => {
-      el.removeEventListener("scroll", onScroll);
+      el.removeEventListener("scroll", handleScroll);
       if (resizeObserver) resizeObserver.disconnect();
       else if (hasWindow) window.removeEventListener("resize", updateThumb);
     };
-  }, [updateThumb]);
+  }, [updateThumb, onScroll]);
 
   // thumb 드래그 시작
   const handleThumbMouseDown: React.MouseEventHandler<HTMLDivElement> = (e) => {
@@ -111,7 +128,9 @@ export const ScrollArea: React.FC<PropsWithChildren<ScrollAreaProps>> = ({
     document.body.classList.add(styles.noSelect);
   };
 
-  const handleThumbMouseDownX: React.MouseEventHandler<HTMLDivElement> = (e) => {
+  const handleThumbMouseDownX: React.MouseEventHandler<HTMLDivElement> = (
+    e,
+  ) => {
     e.preventDefault();
     isDraggingXRef.current = true;
     dragStartXRef.current = e.clientX;
@@ -208,7 +227,9 @@ export const ScrollArea: React.FC<PropsWithChildren<ScrollAreaProps>> = ({
     setThumbTop(nextThumbTop);
   };
 
-  const handleTrackMouseDownX: React.MouseEventHandler<HTMLDivElement> = (e) => {
+  const handleTrackMouseDownX: React.MouseEventHandler<HTMLDivElement> = (
+    e,
+  ) => {
     if (!containerRef.current) return;
 
     const el = containerRef.current;

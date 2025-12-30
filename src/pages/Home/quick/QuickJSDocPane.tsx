@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { useToast } from "@/components/ToastProvider";
 import { Button } from "@/components/ui/Button";
+import { CodeBlock } from "@/components/ui/CodeBlock";
 import { generateJSDoc } from "@/modules/jsdoc/generator";
 import { parseInterfaces } from "@/modules/jsdoc/parser";
 import { copyWithToast } from "@/utils/clipboard";
@@ -50,12 +51,19 @@ export function QuickJSDocPane() {
         <Button variant="primary" onClick={generate}>
           생성
         </Button>
-        <Button variant="ghost" onClick={() => copyWithToast(output || "", toast)}>
+        <Button
+          variant="ghost"
+          onClick={() => copyWithToast(output || "", toast)}
+        >
           복사
         </Button>
       </div>
       {error && <p className="micro warning">{error}</p>}
-      {output && <pre className={styles.code}>{output}</pre>}
+      {output && (
+        <CodeBlock className={styles.code} language="ts">
+          {output}
+        </CodeBlock>
+      )}
     </div>
   );
 }

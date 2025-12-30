@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui/Button";
+import { CodeBlock } from "@/components/ui/CodeBlock";
 import { decodeFirstJwt } from "@/utils/jwt";
 
 import styles from "./QuickJwtPane.module.scss";
@@ -38,7 +39,11 @@ export function QuickJwtPane() {
           디코드
         </Button>
         {error && <p className="micro warning">{error}</p>}
-        {payload && <pre className={styles.code}>{payload}</pre>}
+        {payload && (
+          <CodeBlock className={styles.code} language="json">
+            {payload}
+          </CodeBlock>
+        )}
       </div>
     </div>
   );

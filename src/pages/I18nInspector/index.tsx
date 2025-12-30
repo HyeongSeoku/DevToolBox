@@ -318,10 +318,6 @@ export function I18nInspectorPage() {
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <div>
-          <p className="eyebrow">i18n Inspector</p>
-          <h1>텍스트 비교 뷰</h1>
-        </div>
         <div className={styles.row}>
           <Button variant="ghost" onClick={pickRoot} disabled={loading}>
             폴더 선택

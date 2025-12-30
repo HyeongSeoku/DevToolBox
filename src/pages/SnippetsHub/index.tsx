@@ -2,9 +2,12 @@ import { useEffect, useMemo, useState } from "react";
 
 import { useParams, useNavigate } from "react-router-dom";
 
+import Star from "@/assets/icons/star.svg?react";
 import { useToast } from "@/components/ToastProvider";
 import { Button } from "@/components/ui/Button";
+import { CodeBlock } from "@/components/ui/CodeBlock";
 import { Input } from "@/components/ui/Input";
+import { Modal } from "@/components/ui/Modal";
 import {
   loadSnippetsByKind,
   filterSnippets,
@@ -31,33 +34,70 @@ const titles: Record<SnippetKind, string> = {
   be: "BE Utils",
 };
 
+type SnippetTab = SnippetKind | "favorites";
+type SnippetWithKind = Snippet & { kind: SnippetKind };
+
 export function SnippetHubPage() {
   const params = useParams();
   const navigate = useNavigate();
-  const kind = (params.kind as SnippetKind) || "git";
+  const tab = (params.kind as SnippetTab) || "git";
+  const kind: SnippetTab =
+    tab === "git" || tab === "linux" || tab === "fe" || tab === "be"
+      ? tab
+      : tab === "favorites"
+        ? tab
+        : "git";
   const vault = useVaultStore();
   const toast = useToast();
 
-  const [snippets, setSnippets] = useState<Snippet[]>([]);
+  const [snippets, setSnippets] = useState<SnippetWithKind[]>([]);
   const [search, setSearch] = useState("");
   const [tagFilter, setTagFilter] = useState<string[]>([]);
   const [categoryFilter, setCategoryFilter] = useState<string | undefined>();
   const [languageFilter, setLanguageFilter] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
-
-  const { favorites, toggleFavorite } = useSnippetFavorites(
-    FAVORITE_KEYS[kind],
+  const [activeSnippet, setActiveSnippet] = useState<SnippetWithKind | null>(
+    null,
   );
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const favoriteStores: Record<
+    SnippetKind,
+    ReturnType<typeof useSnippetFavorites>
+  > = {
+    git: useSnippetFavorites(FAVORITE_KEYS.git),
+    linux: useSnippetFavorites(FAVORITE_KEYS.linux),
+    fe: useSnippetFavorites(FAVORITE_KEYS.fe),
+    be: useSnippetFavorites(FAVORITE_KEYS.be),
+  };
 
   useEffect(() => {
     const load = async () => {
       setLoading(true);
       try {
-        const data = await loadSnippetsByKind(
-          kind,
-          vault.settings?.vaultPath ?? null,
-        );
-        setSnippets(data);
+        if (kind === "favorites") {
+          const kinds: SnippetKind[] = ["git", "linux", "fe", "be"];
+          const all = await Promise.all(
+            kinds.map(async (k) => ({
+              kind: k,
+              snippets: await loadSnippetsByKind(
+                k,
+                vault.settings?.vaultPath ?? null,
+              ),
+            })),
+          );
+          setSnippets(
+            all.flatMap((group) =>
+              group.snippets.map((s) => ({ ...s, kind: group.kind })),
+            ),
+          );
+        } else {
+          const data = await loadSnippetsByKind(
+            kind,
+            vault.settings?.vaultPath ?? null,
+          );
+          setSnippets(data.map((s) => ({ ...s, kind })));
+        }
       } catch (err) {
         toast.show(`스니펫 불러오기 실패: ${err}`, { type: "error" });
       } finally {
@@ -67,16 +107,38 @@ export function SnippetHubPage() {
     void load();
   }, [kind, vault.settings?.vaultPath, toast]);
 
-  const filtered = useMemo(
-    () =>
-      filterSnippets(snippets, {
-        search,
-        tags: tagFilter,
-        language: languageFilter,
-        category: categoryFilter,
-      }),
-    [snippets, search, tagFilter, languageFilter, categoryFilter],
-  );
+  const favoritesSet = useMemo(() => {
+    return new Set([
+      ...favoriteStores.git.favorites,
+      ...favoriteStores.linux.favorites,
+      ...favoriteStores.fe.favorites,
+      ...favoriteStores.be.favorites,
+    ]);
+  }, [
+    favoriteStores.git.favorites,
+    favoriteStores.linux.favorites,
+    favoriteStores.fe.favorites,
+    favoriteStores.be.favorites,
+  ]);
+
+  const filtered = useMemo(() => {
+    const base = filterSnippets(snippets, {
+      search,
+      tags: tagFilter,
+      language: languageFilter,
+      category: categoryFilter,
+    });
+    if (kind !== "favorites") return base;
+    return base.filter((s) => favoritesSet.has(s.id));
+  }, [
+    snippets,
+    search,
+    tagFilter,
+    languageFilter,
+    categoryFilter,
+    kind,
+    favoritesSet,
+  ]);
 
   const categories = useMemo(
     () =>
@@ -97,24 +159,34 @@ export function SnippetHubPage() {
       error: "복사 실패",
     });
 
-  const tabs: SnippetKind[] = ["git", "linux", "fe", "be"];
+  useEffect(() => {
+    if (isModalOpen) return;
+    if (!activeSnippet) return;
+    const timer = window.setTimeout(() => {
+      setActiveSnippet(null);
+    }, 180);
+    return () => window.clearTimeout(timer);
+  }, [isModalOpen, activeSnippet]);
+
+  const tabs: SnippetTab[] = ["git", "linux", "fe", "be", "favorites"];
 
   return (
     <div className={styles.page}>
-      <header className={styles.header}>
-        <p className="eyebrow">Snippets · {titles[kind]}</p>
-        <h1>{titles[kind]} 스니펫 모음</h1>
-        <p className="micro">검색/필터 후 바로 복사하세요.</p>
-      </header>
-
       <div className={styles.tabRow}>
         {tabs.map((tab) => (
           <Button
             key={tab}
-            className={`${styles.button} ${styles.tab} ${tab === kind ? styles.active : ""}`}
+            className={`${styles.button} ${styles.tab} ${tab === kind ? styles.active : ""} ${tab === "favorites" ? styles.favoriteTab : ""}`}
             onClick={() => navigate(`/snippets/${tab}`)}
           >
-            {titles[tab]}
+            {tab === "favorites" ? (
+              <>
+                <Star width={14} height={14} />
+                <span>Favorites</span>
+              </>
+            ) : (
+              titles[tab]
+            )}
           </Button>
         ))}
       </div>
@@ -168,7 +240,8 @@ export function SnippetHubPage() {
 
       <section className={styles.grid}>
         {filtered.map((s) => {
-          const isFav = favorites.includes(s.id);
+          const isFav = favoritesSet.has(s.id);
+          const favoriteStore = favoriteStores[s.kind];
           return (
             <div key={s.id} className={styles.card}>
               <div className={styles.cardHeader}>
@@ -179,7 +252,7 @@ export function SnippetHubPage() {
                 <Button
                   className={`${styles.button} ${isFav ? styles.active : ""}`}
                   onClick={() => {
-                    const next = toggleFavorite(s.id);
+                    const next = favoriteStore.toggleFavorite(s.id);
                     toast.show(
                       next.includes(s.id) ? "즐겨찾기에 추가" : "즐겨찾기 해제",
                       { type: "info" },
@@ -187,7 +260,7 @@ export function SnippetHubPage() {
                   }}
                   title="즐겨찾기"
                 >
-                  ★
+                  <Star width={14} height={14} />
                 </Button>
               </div>
               <div className={styles.meta}>
@@ -201,13 +274,24 @@ export function SnippetHubPage() {
                   ))}
                 </div>
               </div>
-              <pre className={styles.code}>{s.content}</pre>
+              <CodeBlock
+                className={styles.code}
+                language={s.language}
+                copyable
+                onCopy={handleCopy}
+                maxHeight={200}
+              >
+                {s.content}
+              </CodeBlock>
               <div className={styles.actions}>
                 <Button
                   className={styles.button}
-                  onClick={() => handleCopy(s.content)}
+                  onClick={() => {
+                    setActiveSnippet(s);
+                    setIsModalOpen(true);
+                  }}
                 >
-                  Copy
+                  전체보기
                 </Button>
               </div>
             </div>
@@ -217,6 +301,67 @@ export function SnippetHubPage() {
           <p className="subtle">조건에 맞는 스니펫이 없습니다.</p>
         )}
       </section>
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title={activeSnippet?.title}
+        description={activeSnippet?.description}
+        size="lg"
+      >
+        {activeSnippet &&
+          (() => {
+            const isFav = favoritesSet.has(activeSnippet.id);
+            const favoriteStore = favoriteStores[activeSnippet.kind];
+            return (
+              <div className={styles.modalBody}>
+                <div className={styles.modalHeader}>
+                  <div className={styles.meta}>
+                    <span className={styles.badge}>
+                      {activeSnippet.category ?? "기타"}
+                    </span>
+                    <span className={styles.badge}>
+                      {activeSnippet.language ?? "bash"}
+                    </span>
+                    <div className={styles.tags}>
+                      {activeSnippet.tags.map((t) => (
+                        <span key={t} className={styles.tag}>
+                          #{t}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <Button
+                    className={`${styles.button} ${isFav ? styles.active : ""}`}
+                    onClick={() => {
+                      const next = favoriteStore.toggleFavorite(
+                        activeSnippet.id,
+                      );
+                      toast.show(
+                        next.includes(activeSnippet.id)
+                          ? "즐겨찾기에 추가"
+                          : "즐겨찾기 해제",
+                        { type: "info" },
+                      );
+                    }}
+                    title="즐겨찾기"
+                  >
+                    <Star width={14} height={14} />
+                  </Button>
+                </div>
+                <CodeBlock
+                  className={styles.modalCode}
+                  language={activeSnippet.language}
+                  copyable
+                  onCopy={handleCopy}
+                  maxHeight="60vh"
+                >
+                  {activeSnippet.content}
+                </CodeBlock>
+              </div>
+            );
+          })()}
+      </Modal>
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useToast } from "@/components/ToastProvider";
 import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox";
+import { CodeBlock } from "@/components/ui/CodeBlock";
 import { ScrollArea } from "@/components/ui/ScrollArea";
 import { copyWithToast } from "@/utils/clipboard";
 
@@ -123,10 +124,6 @@ export function Base64Page() {
   return (
     <div className={styles.page}>
       <header className={styles.row}>
-        <div>
-          <p className="eyebrow">Base64 인/디코더</p>
-          <h1>텍스트 ↔ Base64 변환</h1>
-        </div>
         <div className={styles.modeButtons}>
           <Button
             variant="ghost"
@@ -150,12 +147,12 @@ export function Base64Page() {
           <div className={styles.row}>
             <p className="micro">옵션</p>
             <label className="inline">
-            <Checkbox
-              checked={urlSafe}
-              onChange={(e) => setUrlSafe(e.target.checked)}
-              label="URL-safe (+/ → -/_)"
-            />
-          </label>
+              <Checkbox
+                checked={urlSafe}
+                onChange={(e) => setUrlSafe(e.target.checked)}
+                label="URL-safe (+/ → -/_)"
+              />
+            </label>
             <label className="inline">
               <span>Encoding</span>
               <select
@@ -209,7 +206,9 @@ export function Base64Page() {
             </Button>
           </div>
           <ScrollArea className={styles.output}>
-            <pre>{output || "// 결과 없음"}</pre>
+            <CodeBlock language={mode === "encode" ? "base64" : "text"}>
+              {output || "// 결과 없음"}
+            </CodeBlock>
           </ScrollArea>
         </div>
       </div>
