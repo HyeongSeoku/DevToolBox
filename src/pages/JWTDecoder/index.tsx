@@ -86,6 +86,11 @@ export function JWTDecoderPage() {
   );
 
   const handleCopy = (text: string) => copyWithToast(text, toast);
+  const handleCopyHeaderB64 = () => handleCopy(parsed?.headerB64 || "");
+  const handleCopyHeaderJson = () => handleCopy(decodedHeader);
+  const handleCopyPayloadB64 = () => handleCopy(parsed?.payloadB64 || "");
+  const handleCopyPayloadJson = () => handleCopy(decodedPayload);
+  const handleCopyPayloadMinified = () => handleCopy(minifiedPayload);
 
   useEffect(() => {
     const found = detectJwtStrings(input);
@@ -271,13 +276,10 @@ export function JWTDecoderPage() {
               </div>
             </div>
             <div className={styles.panelActions}>
-              <Button
-                variant="ghost"
-                onClick={() => handleCopy(parsed?.headerB64 || "")}
-              >
+              <Button variant="ghost" onClick={handleCopyHeaderB64}>
                 Copy Base64URL
               </Button>
-              <Button variant="ghost" onClick={() => handleCopy(decodedHeader)}>
+              <Button variant="ghost" onClick={handleCopyHeaderJson}>
                 Copy JSON
               </Button>
             </div>
@@ -309,22 +311,13 @@ export function JWTDecoderPage() {
               </div>
             </div>
             <div className={styles.panelActions}>
-              <Button
-                variant="ghost"
-                onClick={() => handleCopy(parsed?.payloadB64 || "")}
-              >
+              <Button variant="ghost" onClick={handleCopyPayloadB64}>
                 Copy Base64URL
               </Button>
-              <Button
-                variant="ghost"
-                onClick={() => handleCopy(decodedPayload)}
-              >
+              <Button variant="ghost" onClick={handleCopyPayloadJson}>
                 Copy JSON
               </Button>
-              <Button
-                variant="ghost"
-                onClick={() => handleCopy(minifiedPayload)}
-              >
+              <Button variant="ghost" onClick={handleCopyPayloadMinified}>
                 Minify & Copy
               </Button>
               <Button variant="ghost" onClick={handleExport}>

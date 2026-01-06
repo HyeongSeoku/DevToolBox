@@ -58,6 +58,7 @@ export function EnvManagerPage() {
 
   const handleCopy = async (text: string) =>
     copyWithToast(text, toast, { success: "복사 완료", error: "복사 실패" });
+  const handleCopyExample = () => handleCopy(exampleText);
 
   const renderDiffRow = (item: DiffItem & { base?: any; compare?: any }) => {
     const status = item.status;
@@ -158,7 +159,7 @@ export function EnvManagerPage() {
         <section className={styles.card}>
           <div className={styles.row}>
             <p className={styles.label}>.env.example 생성</p>
-            <Button variant="primary" onClick={() => handleCopy(exampleText)}>
+            <Button variant="primary" onClick={handleCopyExample}>
               Copy
             </Button>
           </div>
