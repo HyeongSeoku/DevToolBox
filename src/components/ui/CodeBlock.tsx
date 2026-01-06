@@ -8,6 +8,7 @@ import "prismjs/components/prism-typescript";
 import "prismjs/components/prism-rust";
 
 import ContentCopy from "@/assets/icons/content_copy.svg?react";
+import { useToast } from "@/components/ToastProvider";
 import { ScrollArea } from "@/components/ui/ScrollArea";
 
 import { Button } from "./Button";
@@ -22,6 +23,10 @@ type CodeBlockProps = {
   onCopy?: (value: string) => void | Promise<void>;
   maxHeight?: number | string;
   scrollable?: boolean;
+  floatingCopy?: boolean;
+  toastOnCopy?: boolean;
+  toastMessage?: string;
+  toastErrorMessage?: string;
 };
 
 const normalizeLanguage = (language?: string) => {
@@ -45,7 +50,12 @@ export function CodeBlock({
   onCopy,
   maxHeight,
   scrollable = false,
+  floatingCopy = false,
+  toastOnCopy = true,
+  toastMessage = "클립보드에 복사했습니다.",
+  toastErrorMessage = "복사에 실패했습니다.",
 }: CodeBlockProps) {
+  const toast = useToast();
   const normalized = normalizeLanguage(language);
   const languageClass = styles[`lang_${normalized}`] ?? styles.lang_text;
   const preClasses = [
@@ -65,6 +75,26 @@ export function CodeBlock({
   const copyValue = copyText ?? content;
   const canCopy = copyable && copyValue.trim().length > 0;
   const isScrollable = scrollable || maxHeight !== undefined;
+  const isFullHeight = maxHeight === "100%";
+
+  const handleCopy = async () => {
+    try {
+      if (onCopy) {
+        await onCopy(copyValue);
+      } else if (typeof navigator !== "undefined" && navigator.clipboard) {
+        await navigator.clipboard.writeText(copyValue);
+      } else {
+        throw new Error("Clipboard API not available");
+      }
+      if (toastOnCopy) {
+        toast.show(toastMessage, { type: "success" });
+      }
+    } catch {
+      if (toastOnCopy) {
+        toast.show(toastErrorMessage, { type: "error" });
+      }
+    }
+  };
 
   const pre = (
     <pre className={preClasses} data-language={normalized}>
@@ -77,38 +107,38 @@ export function CodeBlock({
 
   return (
     <div
-      className={`${styles.container} ${isScrollable ? styles.scrollable : ""}`}
+      className={`${styles.container} ${isScrollable ? styles.scrollable : ""} ${
+        isFullHeight ? styles.fullHeight : ""
+      } ${floatingCopy ? styles.floating : ""}`}
     >
-      {canCopy && (
-        <Button
-          variant="ghost"
-          type="button"
-          className={styles.copyButton}
-          onClick={() => {
-            if (onCopy) {
-              void onCopy(copyValue);
-              return;
-            }
-            if (typeof navigator !== "undefined" && navigator.clipboard) {
-              void navigator.clipboard.writeText(copyValue);
-            }
-          }}
-          aria-label="코드 복사"
-        >
-          <ContentCopy />
-        </Button>
-      )}
-      {isScrollable ? (
-        <ScrollArea
-          className={styles.scrollContent}
-          wrapperClassName={styles.scrollWrapper}
-          maxHeight={maxHeight}
-        >
-          {pre}
-        </ScrollArea>
-      ) : (
-        pre
-      )}
+      <div className={styles.scrollFrame}>
+        {isScrollable ? (
+          <ScrollArea
+            className={styles.scrollContent}
+            wrapperClassName={`${styles.scrollWrapper} ${
+              isFullHeight ? styles.scrollWrapperFull : ""
+            }`}
+            maxHeight={maxHeight}
+          >
+            <div className={styles.inner}>{pre}</div>
+          </ScrollArea>
+        ) : (
+          pre
+        )}
+        {canCopy && (
+          <div className={styles.copyRow}>
+            <Button
+              variant="ghost"
+              type="button"
+              className={styles.copyButton}
+              onClick={handleCopy}
+              aria-label="코드 복사"
+            >
+              <ContentCopy />
+            </Button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
