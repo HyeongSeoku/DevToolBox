@@ -2,6 +2,8 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  height: 100%;
+  min-height: 0;
 }
 
 .header {
@@ -23,11 +25,24 @@
   align-items: center;
 }
 
+.select {
+  height: 36px;
+  padding: 0 var(--space-3);
+  color: var(--text);
+}
+
+.actionButton {
+  padding: 0 var(--space-3);
+  font-size: 13px;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
   gap: var(--space-3);
   min-height: 0;
+  flex: 1;
+  height: 100%;
 }
 
 .card {
@@ -39,6 +54,16 @@
   flex-direction: column;
   gap: var(--space-2);
   min-height: 0;
+  max-height: 100%;
+  height: 100%;
+}
+
+.inputBody,
+.resultBody {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  overflow: hidden;
 }
 
 .cardHeader {
@@ -60,21 +85,27 @@
 
 .textarea {
   width: 100%;
-  min-height: 320px;
+  height: auto;
+  min-height: 140px;
   background: var(--surface-muted);
   color: var(--text);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: var(--space-3);
   font-family: "JetBrains Mono", Menlo, Consolas, monospace;
+  field-sizing: content;
+  overflow: hidden;
   resize: none;
 }
 
-.output {
-  min-height: 320px;
+.textareaScroll {
+  height: 100%;
 }
 
-.scrollArea {
+.output {
   height: 100%;
-  min-height: 0;
+}
+
+.textarea::placeholder {
+  white-space: pre-wrap;
 }

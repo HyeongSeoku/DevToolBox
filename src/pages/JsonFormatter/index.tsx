@@ -1,30 +1,34 @@
 import { useState } from "react";
 
-import { useToast } from "@/components/ToastProvider";
 import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { CodeBlock } from "@/components/ui/CodeBlock";
-import { ScrollArea } from "@/components/ui/ScrollArea";
-import { copyWithToast } from "@/utils/clipboard";
+import { Select } from "@/components/ui/Select";
+import { TextArea } from "@/components/ui/TextArea";
 import { computePosition, formatJson } from "@/utils/jsonFormat";
 
 import styles from "./index.module.scss";
 
 export function JsonFormatterPage() {
-  const [input, setInput] = useState(
-    "{\n  \"hello\": 'world',\n  foo: 1,\n}\n",
-  );
+  const [input, setInput] = useState("");
   const [output, setOutput] = useState("{}");
   const [error, setError] = useState<string | null>(null);
   const [allowJsLike, setAllowJsLike] = useState(true);
   const [indent, setIndent] = useState<"2" | "4" | "tab">("2");
   const [sortAll, setSortAll] = useState(false);
-  const toast = useToast();
+  const indentOptions = [
+    { value: "2", label: "2 spaces" },
+    { value: "4", label: "4 spaces" },
+    { value: "tab", label: "tab" },
+  ];
 
-  const format = (opts?: { minify?: boolean; sort?: boolean }) => {
+  const formatWithInput = (
+    nextInput: string,
+    opts?: { minify?: boolean; sort?: boolean },
+  ) => {
     try {
       const formatted = formatJson({
-        input,
+        input: nextInput,
         allowJsLike,
         minify: opts?.minify,
         sort: opts?.sort,
@@ -35,10 +39,14 @@ export function JsonFormatterPage() {
       setError(null);
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      const pos = computePosition(input, msg);
+      const pos = computePosition(nextInput, msg);
       setError(pos ? `${msg} (line ${pos.line}, col ${pos.col})` : msg);
       setOutput("");
     }
+  };
+
+  const format = (opts?: { minify?: boolean; sort?: boolean }) => {
+    formatWithInput(input, opts);
   };
 
   return (
@@ -47,14 +55,13 @@ export function JsonFormatterPage() {
         <div className={styles.row}>
           <label className={styles.inline}>
             <span>들여쓰기</span>
-            <select
+            <Select
               value={indent}
-              onChange={(e) => setIndent(e.target.value as any)}
-            >
-              <option value="2">2 spaces</option>
-              <option value="4">4 spaces</option>
-              <option value="tab">tab</option>
-            </select>
+              onChange={(next) => setIndent(next as "2" | "4" | "tab")}
+              options={indentOptions}
+              className={styles.select}
+              ariaLabel="들여쓰기"
+            />
           </label>
           <label className={styles.inline}>
             <Checkbox
@@ -70,14 +77,26 @@ export function JsonFormatterPage() {
               label="키 정렬(재귀)"
             />
           </label>
-          <Button variant="primary" onClick={() => format()}>
+          <Button
+            variant="primary"
+            className={styles.actionButton}
+            onClick={() => format()}
+          >
             Format
           </Button>
-          <Button variant="ghost" onClick={() => format({ minify: true })}>
+          <Button
+            variant="ghost"
+            className={styles.actionButton}
+            onClick={() => format({ minify: true })}
+          >
             Minify
           </Button>
-          <Button variant="ghost" onClick={() => format({ sort: true })}>
-            Beautify + Sort
+          <Button
+            variant="ghost"
+            className={styles.actionButton}
+            onClick={() => format({ sort: true })}
+          >
+            Sort
           </Button>
         </div>
         {error && <p className="micro warning">{error}</p>}
@@ -89,20 +108,30 @@ export function JsonFormatterPage() {
             <p className={styles.title}>입력</p>
             <p className="micro subtle">붙여넣기 시 자동 포맷</p>
           </div>
-          <ScrollArea className={styles.scrollArea}>
-            <textarea
+          <div className={styles.inputBody}>
+            <TextArea
               className={styles.textarea}
               value={input}
+              placeholder={`{
+  "hello": "world",
+  "foo": 1
+}`}
               onChange={(e) => setInput(e.target.value)}
-              onPaste={() => {
+              onPaste={(event) => {
+                const el = event.currentTarget;
                 // 기본 붙여넣기를 그대로 두고, 직후 현재 값으로 포맷만 트리거
                 setTimeout(() => {
-                  format();
+                  const next = el.value;
+                  setInput(next);
+                  formatWithInput(next);
                 }, 0);
               }}
               spellCheck={false}
+              maxHeight="100%"
+              scrollable
+              wrapperClassName={styles.textareaScroll}
             />
-          </ScrollArea>
+          </div>
         </div>
 
         <div className={styles.card}>
@@ -111,19 +140,18 @@ export function JsonFormatterPage() {
 
             <div className={styles.cardHeaderSubContainer}>
               <p className="micro subtle">포맷/미니파이/정렬 결과</p>
-              <Button
-                variant="ghost"
-                onClick={() => copyWithToast(output || "", toast)}
-              >
-                Copy
-              </Button>
             </div>
           </div>
-          <ScrollArea className={styles.scrollArea}>
-            <CodeBlock className={styles.output} language="json">
+          <div className={styles.resultBody}>
+            <CodeBlock
+              className={styles.output}
+              language="json"
+              copyable
+              maxHeight="100%"
+            >
               {output}
             </CodeBlock>
-          </ScrollArea>
+          </div>
         </div>
       </div>
     </div>
