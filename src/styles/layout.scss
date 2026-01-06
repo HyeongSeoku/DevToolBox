@@ -142,15 +142,10 @@
   transition: opacity 0.15s ease;
 }
 
-.content-header-collapsed {
-  padding: var(--space-3) 0 var(--space-2);
-}
-
 .content-header-collapsed .content-subtitle,
 .content-header-collapsed .content-subinfo {
   opacity: 0;
-  max-height: 0;
-  overflow: hidden;
+  visibility: hidden;
   transition: opacity 0.15s ease;
 }
 
