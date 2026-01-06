@@ -283,17 +283,15 @@ export function SnippetHubPage() {
               >
                 {s.content}
               </CodeBlock>
-              <div className={styles.actions}>
-                <Button
-                  className={styles.button}
-                  onClick={() => {
-                    setActiveSnippet(s);
-                    setIsModalOpen(true);
-                  }}
-                >
-                  전체보기
-                </Button>
-              </div>
+              <Button
+                className={styles.button}
+                onClick={() => {
+                  setActiveSnippet(s);
+                  setIsModalOpen(true);
+                }}
+              >
+                전체보기
+              </Button>
             </div>
           );
         })}
