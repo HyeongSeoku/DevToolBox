@@ -54,6 +54,7 @@ export const ScrollArea: React.FC<PropsWithChildren<ScrollAreaProps>> = ({
       scrollLeft,
     } = el;
 
+    const trackInset = 4;
     if (scrollHeight <= clientHeight) {
       setVisible(false);
       setThumbHeight(0);
@@ -63,9 +64,10 @@ export const ScrollArea: React.FC<PropsWithChildren<ScrollAreaProps>> = ({
       const ratio = clientHeight / scrollHeight;
       const minThumb = 32; // 최소 thumb 길이
       const nextThumbHeight = Math.max(clientHeight * ratio, minThumb);
-      const maxThumbTop = clientHeight - nextThumbHeight;
+      const trackHeight = clientHeight - trackInset * 2;
+      const maxThumbTop = Math.max(trackHeight - nextThumbHeight, 0);
       const nextThumbTop =
-        (scrollTop / (scrollHeight - clientHeight)) * maxThumbTop;
+        (scrollTop / (scrollHeight - clientHeight)) * maxThumbTop + trackInset;
       setThumbHeight(nextThumbHeight);
       setThumbTop(nextThumbTop);
     }
@@ -79,9 +81,10 @@ export const ScrollArea: React.FC<PropsWithChildren<ScrollAreaProps>> = ({
       const ratioX = clientWidth / scrollWidth;
       const minThumbX = 32;
       const nextThumbWidth = Math.max(clientWidth * ratioX, minThumbX);
-      const maxThumbLeft = clientWidth - nextThumbWidth;
+      const trackWidth = clientWidth - trackInset * 2;
+      const maxThumbLeft = Math.max(trackWidth - nextThumbWidth, 0);
       const nextThumbLeft =
-        (scrollLeft / (scrollWidth - clientWidth)) * maxThumbLeft;
+        (scrollLeft / (scrollWidth - clientWidth)) * maxThumbLeft + trackInset;
       setThumbWidth(nextThumbWidth);
       setThumbLeft(nextThumbLeft);
     }
@@ -147,17 +150,20 @@ export const ScrollArea: React.FC<PropsWithChildren<ScrollAreaProps>> = ({
       const { clientHeight, scrollHeight } = el;
       if (scrollHeight <= clientHeight) return;
 
+      const trackInset = 4;
       const deltaY = e.clientY - dragStartYRef.current;
-      const maxThumbTop = clientHeight - thumbHeight;
-      let nextThumbTop = dragStartThumbTopRef.current + deltaY;
-      if (nextThumbTop < 0) nextThumbTop = 0;
-      if (nextThumbTop > maxThumbTop) nextThumbTop = maxThumbTop;
+      const minTranslate = trackInset;
+      const maxTranslate = clientHeight - trackInset - thumbHeight;
+      let nextTranslate = dragStartThumbTopRef.current + deltaY;
+      if (nextTranslate < minTranslate) nextTranslate = minTranslate;
+      if (nextTranslate > maxTranslate) nextTranslate = maxTranslate;
 
-      const scrollRatio = nextThumbTop / maxThumbTop;
+      const scrollRatio =
+        (nextTranslate - trackInset) / Math.max(maxTranslate - trackInset, 1);
       const nextScrollTop = scrollRatio * (scrollHeight - clientHeight);
 
       el.scrollTop = nextScrollTop;
-      setThumbTop(nextThumbTop);
+      setThumbTop(nextTranslate);
     };
 
     const handleMouseMoveX = (e: MouseEvent) => {
@@ -167,17 +173,20 @@ export const ScrollArea: React.FC<PropsWithChildren<ScrollAreaProps>> = ({
       const { clientWidth, scrollWidth } = el;
       if (scrollWidth <= clientWidth) return;
 
+      const trackInset = 4;
       const deltaX = e.clientX - dragStartXRef.current;
-      const maxThumbLeft = clientWidth - thumbWidth;
-      let nextThumbLeft = dragStartThumbLeftRef.current + deltaX;
-      if (nextThumbLeft < 0) nextThumbLeft = 0;
-      if (nextThumbLeft > maxThumbLeft) nextThumbLeft = maxThumbLeft;
+      const minTranslate = trackInset;
+      const maxTranslate = clientWidth - trackInset - thumbWidth;
+      let nextTranslate = dragStartThumbLeftRef.current + deltaX;
+      if (nextTranslate < minTranslate) nextTranslate = minTranslate;
+      if (nextTranslate > maxTranslate) nextTranslate = maxTranslate;
 
-      const scrollRatio = nextThumbLeft / maxThumbLeft;
+      const scrollRatio =
+        (nextTranslate - trackInset) / Math.max(maxTranslate - trackInset, 1);
       const nextScrollLeft = scrollRatio * (scrollWidth - clientWidth);
 
       el.scrollLeft = nextScrollLeft;
-      setThumbLeft(nextThumbLeft);
+      setThumbLeft(nextTranslate);
     };
 
     const handleMouseUp = () => {
@@ -211,20 +220,23 @@ export const ScrollArea: React.FC<PropsWithChildren<ScrollAreaProps>> = ({
     const el = containerRef.current;
     const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
     const clickY = e.clientY - rect.top;
+    const trackInset = 4;
 
     const { clientHeight, scrollHeight } = el;
     if (scrollHeight <= clientHeight) return;
 
-    const maxThumbTop = clientHeight - thumbHeight;
-    let nextThumbTop = clickY - thumbHeight / 2;
-    if (nextThumbTop < 0) nextThumbTop = 0;
-    if (nextThumbTop > maxThumbTop) nextThumbTop = maxThumbTop;
+    const minTranslate = trackInset;
+    const maxTranslate = clientHeight - trackInset - thumbHeight;
+    let nextTranslate = clickY - thumbHeight / 2;
+    if (nextTranslate < minTranslate) nextTranslate = minTranslate;
+    if (nextTranslate > maxTranslate) nextTranslate = maxTranslate;
 
-    const scrollRatio = nextThumbTop / maxThumbTop;
+    const scrollRatio =
+      (nextTranslate - trackInset) / Math.max(maxTranslate - trackInset, 1);
     const nextScrollTop = scrollRatio * (scrollHeight - clientHeight);
 
     el.scrollTop = nextScrollTop;
-    setThumbTop(nextThumbTop);
+    setThumbTop(nextTranslate);
   };
 
   const handleTrackMouseDownX: React.MouseEventHandler<HTMLDivElement> = (
@@ -235,20 +247,23 @@ export const ScrollArea: React.FC<PropsWithChildren<ScrollAreaProps>> = ({
     const el = containerRef.current;
     const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
     const clickX = e.clientX - rect.left;
+    const trackInset = 4;
 
     const { clientWidth, scrollWidth } = el;
     if (scrollWidth <= clientWidth) return;
 
-    const maxThumbLeft = clientWidth - thumbWidth;
-    let nextThumbLeft = clickX - thumbWidth / 2;
-    if (nextThumbLeft < 0) nextThumbLeft = 0;
-    if (nextThumbLeft > maxThumbLeft) nextThumbLeft = maxThumbLeft;
+    const minTranslate = trackInset;
+    const maxTranslate = clientWidth - trackInset - thumbWidth;
+    let nextTranslate = clickX - thumbWidth / 2;
+    if (nextTranslate < minTranslate) nextTranslate = minTranslate;
+    if (nextTranslate > maxTranslate) nextTranslate = maxTranslate;
 
-    const scrollRatio = nextThumbLeft / maxThumbLeft;
+    const scrollRatio =
+      (nextTranslate - trackInset) / Math.max(maxTranslate - trackInset, 1);
     const nextScrollLeft = scrollRatio * (scrollWidth - clientWidth);
 
     el.scrollLeft = nextScrollLeft;
-    setThumbLeft(nextThumbLeft);
+    setThumbLeft(nextTranslate);
   };
 
   const containerStyle: React.CSSProperties = {};

@@ -12,6 +12,8 @@
   overflow-x: auto;
   padding-right: var(--space-5); /* 세로 thumb 공간 */
   padding-bottom: var(--space-4); /* 가로 스크롤이 생길 때 여백 */
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable both-edges;
 
   /* 네이티브 스크롤바 숨기기 */
   scrollbar-width: none; /* Firefox */
